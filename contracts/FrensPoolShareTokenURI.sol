@@ -7,6 +7,7 @@ import "./interfaces/IFrensPoolShare.sol";
 import "./interfaces/IFrensMetaHelper.sol";
 import "./interfaces/IFrensArt.sol";
 import "./interfaces/IFrensPoolShareTokenURI.sol";
+import "./interfaces/IFrensStorage.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "base64-sol/base64.sol";
 
@@ -14,18 +15,18 @@ contract FrensPoolShareTokenURI is IFrensPoolShareTokenURI {
     using Strings for uint256;
 
     IFrensPoolShare frensPoolShare;
-    IFrensMetaHelper frensMetaHelper;
+    IFrensStorage frensStorage;
 
     constructor(
-        IFrensPoolShare _frensPoolShare,
-        IFrensMetaHelper _frensMetaHelper
+        IFrensStorage frensStorage_
     ) {
-        frensPoolShare = _frensPoolShare;
-        frensMetaHelper = _frensMetaHelper;
+        frensStorage = frensStorage_;
+        frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
     }
 
     function tokenURI(uint256 id) public view returns (string memory) {
         require(frensPoolShare.exists(id), "id does not exist");
+        IFrensMetaHelper frensMetaHelper = IFrensMetaHelper(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensMetaHelper"))));
         IStakingPool stakingPool = IStakingPool(frensPoolShare.getPoolById(id));
         string memory poolState = stakingPool.getState();
         string memory depositString = frensMetaHelper.getDepositStringForId(id);

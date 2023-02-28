@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
+//import "hardhat/console.sol";
+// import "./FrensBase.sol";
 import "./interfaces/IFrensPoolShareTokenURI.sol";
 import "./interfaces/IFrensArt.sol";
 import "./interfaces/IFrensPoolShare.sol";
 import "./interfaces/IStakingPool.sol";
+import "./interfaces/IFrensStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -16,26 +19,21 @@ contract FrensPoolShare is
     AccessControl,
     Ownable
 {
+    // Counters.Counter private _tokenIds;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-    IFrensPoolShareTokenURI frensPoolShareTokenURI;
+    
+    IFrensStorage frensStorage;
+
     mapping(uint => address) public poolByIds;
 
-    constructor() ERC721("FRENS Share", "FRENS") {
+    constructor(IFrensStorage frensStorage_) ERC721("FRENS Share", "FRENS") {
+        frensStorage = frensStorage_;
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-    }
 
-    function setFrensPoolShareTokenURI(
-        IFrensPoolShareTokenURI _frensPoolShareTokenURI
-    ) public {
-        require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender));
-        frensPoolShareTokenURI = _frensPoolShareTokenURI;
     }
 
     function mint(address userAddress) public {
-        require(
-            hasRole(MINTER_ROLE, msg.sender),
-            "you are not allowed to mint"
-        );
+        require(hasRole(MINTER_ROLE, msg.sender), "you are not allowed to mint");
         uint256 _id = totalSupply();
         poolByIds[_id] = address(msg.sender);
         _safeMint(userAddress, _id);
@@ -52,24 +50,23 @@ contract FrensPoolShare is
     function tokenURI(
         uint256 id
     ) public view override(ERC721, IFrensPoolShare) returns (string memory) {
+        IFrensPoolShareTokenURI frensPoolShareTokenURI = IFrensPoolShareTokenURI(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShareTokenURI"))));
         return frensPoolShareTokenURI.tokenURI(id);
     }
 
-    // TODO : why is this here ?? only tokenURI should be exposed ??
     function renderTokenById(uint256 id) public view returns (string memory) {
         IStakingPool pool = IStakingPool(getPoolById(id));
         IFrensArt frensArt = pool.artForPool();
         return frensArt.renderTokenById(id);
     }
 
-    // TODO : this does not compile - requires 4 args ??
     // function _beforeTokenTransfer(
     //     address from,
     //     address to,
     //     uint tokenId
     // ) internal override {
     //     super._beforeTokenTransfer(from, to, tokenId);
-    //     IStakingPool pool = IStakingPool(poolByIds(tokenId));
+    //     IStakingPool pool = IStakingPool(poolByIds(id));
     //     if (from != address(0) && to != address(0)) {
     //         require(pool.transferLocked() == false, "not transferable");
     //     }
