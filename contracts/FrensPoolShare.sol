@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
-//import "hardhat/console.sol";
-// import "./FrensBase.sol";
 import "./interfaces/IFrensPoolShareTokenURI.sol";
 import "./interfaces/IFrensArt.sol";
 import "./interfaces/IFrensPoolShare.sol";
@@ -18,7 +16,6 @@ contract FrensPoolShare is
     AccessControl,
     Ownable
 {
-    // Counters.Counter private _tokenIds;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     IFrensPoolShareTokenURI frensPoolShareTokenURI;
     mapping(uint => address) public poolByIds;
@@ -35,7 +32,10 @@ contract FrensPoolShare is
     }
 
     function mint(address userAddress) public {
-        require(hasRole(MINTER_ROLE, msg.sender), "you are not allowed to mint");
+        require(
+            hasRole(MINTER_ROLE, msg.sender),
+            "you are not allowed to mint"
+        );
         uint256 _id = totalSupply();
         poolByIds[_id] = address(msg.sender);
         _safeMint(userAddress, _id);
@@ -55,19 +55,21 @@ contract FrensPoolShare is
         return frensPoolShareTokenURI.tokenURI(id);
     }
 
+    // TODO : why is this here ?? only tokenURI should be exposed ??
     function renderTokenById(uint256 id) public view returns (string memory) {
         IStakingPool pool = IStakingPool(getPoolById(id));
         IFrensArt frensArt = pool.artForPool();
         return frensArt.renderTokenById(id);
     }
 
+    // TODO : this does not compile - requires 4 args ??
     // function _beforeTokenTransfer(
     //     address from,
     //     address to,
     //     uint tokenId
     // ) internal override {
     //     super._beforeTokenTransfer(from, to, tokenId);
-    //     IStakingPool pool = IStakingPool(poolByIds(id));
+    //     IStakingPool pool = IStakingPool(poolByIds(tokenId));
     //     if (from != address(0) && to != address(0)) {
     //         require(pool.transferLocked() == false, "not transferable");
     //     }
