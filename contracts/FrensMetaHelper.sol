@@ -45,6 +45,7 @@ contract FrensMetaHelper is IFrensMetaHelper {
         return Strings.toHexString(uint160(address(stakingPool)), 20);
     }
 
+    // SSV specific
     // function getOperatorsForPool(
     //     address poolAddress
     // ) external view returns (uint32[] memory, string memory) {

@@ -1,54 +1,56 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
-interface IStakingPool{
+import "./IFrensArt.sol";
 
-  function depositForId(uint _id) external view returns(uint);
+interface IStakingPool {
+    function depositForId(uint _id) external view returns (uint);
 
-  function owner() external view returns (address);
+    function artForPool() external view returns (IFrensArt);
 
-  function depositToPool() external payable;
+    function owner() external view returns (address);
 
-  function addToDeposit(uint _id) external payable;
+    function depositToPool() external payable;
 
-  function withdraw(uint _id, uint _amount) external;
+    function addToDeposit(uint _id) external payable;
 
-  //function distribute() external;
+    function withdraw(uint _id, uint _amount) external;
 
-  //function distributeAndClaim() external;
+    //function distribute() external;
 
-  //function distributeAndClaimAll() external;
+    //function distributeAndClaim() external;
 
-  function claim(uint id) external;
+    //function distributeAndClaimAll() external;
 
-  // function getIdsInThisPool() external view returns(uint[] memory);
+    function claim(uint id) external;
 
-  function getShare(uint _id) external view returns(uint);
+    // function getIdsInThisPool() external view returns(uint[] memory);
 
-  function getDistributableShare(uint _id) external view returns(uint);
+    function getShare(uint _id) external view returns (uint);
 
-  // function getPubKey() external view returns(bytes memory);
+    function getDistributableShare(uint _id) external view returns (uint);
 
-  function setPubKey(
-    bytes calldata pubKey,
-    bytes calldata withdrawal_credentials,
-    bytes calldata signature,
-    bytes32 deposit_data_root
+    // function getPubKey() external view returns(bytes memory);
+
+    function setPubKey(
+        bytes calldata pubKey,
+        bytes calldata withdrawal_credentials,
+        bytes calldata signature,
+        bytes32 deposit_data_root
     ) external;
 
-  function getState() external view returns(string memory);
+    function getState() external view returns (string memory);
 
-  // function getDepositAmount(uint _id) external view returns(uint);
+    // function getDepositAmount(uint _id) external view returns(uint);
 
-  function stake(
-    bytes calldata pubkey,
-    bytes calldata withdrawal_credentials,
-    bytes calldata signature,
-    bytes32 deposit_data_root
-  ) external;
+    function stake(
+        bytes calldata pubkey,
+        bytes calldata withdrawal_credentials,
+        bytes calldata signature,
+        bytes32 deposit_data_root
+    ) external;
 
-  function stake() external;
+    function stake() external;
 
     function exitPool() external;
-
 }
