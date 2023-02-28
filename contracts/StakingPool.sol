@@ -209,7 +209,7 @@ contract StakingPool is IStakingPool, Ownable {
   }
 
   function exitPool() external {
-    require(msg.sender == frensOracle, "must be called by oracle");
+    require(msg.sender == address(frensOracle), "must be called by oracle");
     currentState = State.exited;
   }
 /* not ready for mainnet release
