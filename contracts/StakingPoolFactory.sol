@@ -6,6 +6,7 @@ import "./StakingPool.sol";
 // import "./FrensBase.sol";
 import "./interfaces/IStakingPoolFactory.sol";
 import "./interfaces/IFrensPoolShare.sol";
+import "./interfaces/IFrensArt.sol";
 
 contract StakingPoolFactory is IStakingPoolFactory {
 
@@ -23,13 +24,19 @@ contract StakingPoolFactory is IStakingPoolFactory {
   }
 
   function create(
-    address owner_, 
-    bool validatorLocked// ,
+    address _owner, 
+    bool _validatorLocked,
+    IFrensArt _frensArt
     //bool frensLocked, //THESE ARE NOT MAINNET READY YET
     //uint poolMin,
     //uint poolMax
     ) public returns(address) {
-    StakingPool stakingPool = new StakingPool(owner_, validatorLocked, frensPoolShare);
+    StakingPool stakingPool = new StakingPool(
+      _owner, 
+      _validatorLocked, 
+      frensPoolShare,
+      _frensArt
+      );
     emit Create(address(stakingPool), msg.sender,address(this));
     return(address(stakingPool));
   }

@@ -5,12 +5,13 @@ pragma solidity >=0.8.0 <0.9.0;
 // import "./FrensBase.sol";
 import "./interfaces/IFrensPoolShareTokenURI.sol";
 import "./interfaces/IFrensArt.sol";
-// import "./interfaces/IFrensPoolShare.sol";
+import "./interfaces/IFrensPoolShare.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 //should ownable be replaces with an equivalent in storage/base? (needs to interface with opensea properly)
-contract FrensPoolShare is ERC721Enumerable, AccessControl {
+contract FrensPoolShare is IFrensPoolShare, ERC721Enumerable, AccessControl, Ownable {
     // Counters.Counter private _tokenIds;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     IFrensPoolShareTokenURI frensPoolShareTokenURI;
@@ -23,7 +24,9 @@ contract FrensPoolShare is ERC721Enumerable, AccessControl {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
-    function setFrensPoolShareTokenURI(IFrensPoolShareTokenURI _frensPoolShareTokenURI) public {
+    function setFrensPoolShareTokenURI(
+        IFrensPoolShareTokenURI _frensPoolShareTokenURI
+    ) public {
         require(hasRole(DEFAULT_ADMIN_ROLE, msg.sender));
         frensPoolShareTokenURI = _frensPoolShareTokenURI;
     }
@@ -39,21 +42,22 @@ contract FrensPoolShare is ERC721Enumerable, AccessControl {
         return _exists(_id);
     }
 
-    // function getPoolById(uint _id) public view returns (address) {
-    //     return (poolByIds[_id]);
-    // }
+    function getPoolById(uint _id) public view returns (address) {
+        return (poolByIds[_id]);
+    }
 
     function tokenURI(
         uint256 id
-    ) public view override(ERC721) returns (string memory) {
+    ) public view override(ERC721,IFrensPoolShare) returns (string memory) {
         return frensPoolShareTokenURI.tokenURI(id);
     }
 
-    // function renderTokenById(uint256 id) public view returns (string memory) {
-    //     IStakingPool pool = IStakingPool(getPoolById(id));
-    //     IFrensArt frensArt = pool.artForPool();
-    //     return frensArt.renderTokenById(id);
-    // }
+    function renderTokenById(uint256 id) public view returns (string memory) {
+        //     IStakingPool pool = IStakingPool(getPoolById(id));
+        //     IFrensArt frensArt = pool.artForPool();
+        //     return frensArt.renderTokenById(id);
+        return ("d34db33f");
+    }
 
     // function _beforeTokenTransfer(
     //     address from,
@@ -75,8 +79,15 @@ contract FrensPoolShare is ERC721Enumerable, AccessControl {
         _burn(tokenId);
     }
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721Enumerable, AccessControl) returns (bool) {
+    function supportsInterface(
+        bytes4 interfaceId
+    )
+        public
+        view
+        virtual
+        override(ERC721Enumerable, AccessControl, IERC165)
+        returns (bool)
+    {
         return super.supportsInterface(interfaceId);
     }
-
 }
