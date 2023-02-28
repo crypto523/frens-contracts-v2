@@ -33,6 +33,14 @@ contract StakingPool is IStakingPool, Ownable {
         _;
     }
 
+    modifier correctPoolOnly(uint _id) {
+        require(
+            frensPoolShare.poolByIds(_id) == address(this),
+            "wrong staking pool for id"
+        );
+        _;
+    }
+
     enum PoolState {
         awaitingValidatorInfo,
         acceptingDeposits,
@@ -102,12 +110,9 @@ contract StakingPool is IStakingPool, Ownable {
         emit DepositToPool(msg.value, msg.sender, id);
     }
 
-    function addToDeposit(uint _id) external payable maxTotDep mustBeAccepting {
+    function addToDeposit(uint _id) external payable maxTotDep mustBeAccepting correctPoolOnly(_id){
         require(frensPoolShare.exists(_id), "id does not exist"); //id must exist
-        require(
-            frensPoolShare.poolByIds(_id) == IStakingPool(this),
-            "wrong staking pool for id"
-        );
+        
         depositForId[_id] += msg.value;
         totalDeposits += msg.value;
     }
@@ -222,11 +227,7 @@ contract StakingPool is IStakingPool, Ownable {
         payable(msg.sender).transfer(_amount);
     }
 
-    function claim(uint _id) external {
-        require(
-            frensPoolShare.poolByIds(_id) == IStakingPool(this),
-            "wrong staking pool for id"
-        );
+    function claim(uint _id) external correctPoolOnly(_id){
         require(
             currentState != PoolState.acceptingDeposits,
             "use withdraw when not staked"
@@ -293,11 +294,7 @@ contract StakingPool is IStakingPool, Ownable {
     //     return getArray(keccak256(abi.encodePacked("ids.in.pool", address(this))));
     //   }
 
-    function getShare(uint _id) public view returns (uint) {
-        require(
-            frensPoolShare.poolByIds(_id) == IStakingPool(this),
-            "wrong staking pool for id"
-        );
+    function getShare(uint _id) public view correctPoolOnly(_id) returns (uint) {
         return _getShare(_id);
     }
 
