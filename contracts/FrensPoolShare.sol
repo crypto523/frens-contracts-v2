@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
-//import "hardhat/console.sol";
-// import "./FrensBase.sol";
 import "./interfaces/IFrensPoolShareTokenURI.sol";
 import "./interfaces/IFrensArt.sol";
 import "./interfaces/IFrensPoolShare.sol";
@@ -19,7 +17,6 @@ contract FrensPoolShare is
     AccessControl,
     Ownable
 {
-    // Counters.Counter private _tokenIds;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     
     IFrensStorage frensStorage;
@@ -33,7 +30,10 @@ contract FrensPoolShare is
     }
 
     function mint(address userAddress) public {
-        require(hasRole(MINTER_ROLE, msg.sender), "you are not allowed to mint");
+        require(
+            hasRole(MINTER_ROLE, msg.sender),
+            "you are not allowed to mint"
+        );
         uint256 _id = totalSupply();
         poolByIds[_id] = address(msg.sender);
         _safeMint(userAddress, _id);
