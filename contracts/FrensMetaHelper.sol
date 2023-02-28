@@ -6,20 +6,23 @@ import "./interfaces/IFrensPoolShare.sol";
 import "./interfaces/IENS.sol";
 import "./interfaces/IReverseResolver.sol";
 import "./interfaces/IStakingPool.sol";
+import "./interfaces/IFrensStorage.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract FrensMetaHelper is IFrensMetaHelper {
     using Strings for uint256;
     IFrensPoolShare frensPoolShare;
+    IFrensStorage frensStorage;
 
-    constructor(IFrensPoolShare _frensPoolShare) {
-        frensPoolShare = _frensPoolShare;
+    constructor(IFrensStorage frensStorage_) {
+        frensStorage = frensStorage_;
+        frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
     }
 
     function getDepositStringForId(
         uint id
     ) external view returns (string memory) {
-        IStakingPool stakingPool = frensPoolShare.getPoolById(id);
+        IStakingPool stakingPool = IStakingPool(frensPoolShare.getPoolById(id));
         return getEthDecimalString(stakingPool.depositForId(id));
     }
 
@@ -36,7 +39,7 @@ contract FrensMetaHelper is IFrensMetaHelper {
     }
 
     function getPoolString(uint id) external view returns (string memory) {
-        IStakingPool stakingPool = frensPoolShare.getPoolById(id);
+        IStakingPool stakingPool = IStakingPool(frensPoolShare.getPoolById(id));
         return Strings.toHexString(uint160(address(stakingPool)), 20);
     }
 
@@ -67,9 +70,7 @@ contract FrensMetaHelper is IFrensMetaHelper {
     }
 
     function getEns(address addr) external view returns (bool, string memory) {
-        IENS ens = IENS(address(0));
-        // TODO : lookup ENS address here
-        require(true == false, "Please set ENS first! this is a bug");
+        IENS ens = IENS(address(frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "ENS")))));
         bytes32 node = _node(addr);
         address revResAddr = ens.resolver(node);
         if (revResAddr == address(0)) return (false, "");

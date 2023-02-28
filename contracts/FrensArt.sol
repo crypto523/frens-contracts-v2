@@ -4,26 +4,23 @@ import "./interfaces/IFrensMetaHelper.sol";
 import "./interfaces/IPmFont.sol";
 import "./interfaces/IFrensLogo.sol";
 import "./interfaces/IWaves.sol";
+import "./interfaces/IFrensStorage.sol";
 
 contract FrensArt {
-    IFrensMetaHelper frensMetaHelper;
-    IPmFont pmFont;
-    IWaves waves;
-    IFrensLogo frensLogo;
 
+    IFrensStorage frensStorage;
+    
     constructor(
-        IFrensMetaHelper _frensMetaHelper,
-        IPmFont _pmFont,
-        IWaves _waves,
-        IFrensLogo _frenslogo
+        IFrensStorage frensStorage_
     ) {
-        frensMetaHelper = _frensMetaHelper;
-        pmFont = _pmFont;
-        waves = _waves;
-        frensLogo = _frenslogo;
+        frensStorage = frensStorage_;
     }
 
     function renderTokenById(uint256 id) public view returns (string memory) {
+        IFrensMetaHelper frensMetaHelper = IFrensMetaHelper(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "frensMetaHelper"))));
+        IPmFont pmFont = IPmFont(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "PmFont"))));
+        IWaves waves = IWaves(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "Waves"))));
+        IFrensLogo frensLogo = IFrensLogo(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensLogo"))));
         string memory depositString = frensMetaHelper.getDepositStringForId(id);
         string memory pool = frensMetaHelper.getPoolString(id);
         bytes memory permanentMarker = pmFont.getPmFont();
