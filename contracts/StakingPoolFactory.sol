@@ -7,9 +7,10 @@ import "./StakingPool.sol";
 import "./interfaces/IStakingPoolFactory.sol";
 import "./interfaces/IFrensPoolShare.sol";
 import "./interfaces/IFrensArt.sol";
+import "./interfaces/IFrensStorage.sol";
 import "@openzeppelin/contracts/access/IAccessControl.sol";
 
-contract StakingPoolFactory is IStakingPoolFactory {
+contract StakingPoolFactory is IStakingPoolFactory{
     event Create(
         address indexed contractAddress,
         address creator,
@@ -17,16 +18,16 @@ contract StakingPoolFactory is IStakingPoolFactory {
     );
 
     IFrensPoolShare frensPoolShare;
+    IFrensStorage frensStorage;
 
-    constructor(IFrensPoolShare frensPoolShare_) {
-        frensPoolShare = frensPoolShare_;
-        // version = 0;
+    constructor(IFrensStorage frensStorage_) {
+       frensStorage = frensStorage_;
+       frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
     }
 
     function create(
         address _owner,
-        bool _validatorLocked,
-        IFrensArt _frensArt
+        bool _validatorLocked
     )
         public
         returns (
@@ -39,8 +40,7 @@ contract StakingPoolFactory is IStakingPoolFactory {
         StakingPool stakingPool = new StakingPool(
             _owner,
             _validatorLocked,
-            frensPoolShare,
-            _frensArt
+            frensStorage
         );
         // allow this stakingpool to mint shares in our NFT contract
         IAccessControl(address(frensPoolShare)).grantRole(keccak256("MINTER_ROLE"),address(stakingPool));

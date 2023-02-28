@@ -26,7 +26,7 @@ contract FrensPoolShareTokenURI is IFrensPoolShareTokenURI {
 
     function tokenURI(uint256 id) public view returns (string memory) {
         require(frensPoolShare.exists(id), "id does not exist");
-        IStakingPool stakingPool = frensPoolShare.getPoolById(id);
+        IStakingPool stakingPool = IStakingPool(frensPoolShare.getPoolById(id));
         string memory poolState = stakingPool.getState();
         string memory depositString = frensMetaHelper.getDepositStringForId(id);
         uint shareForId = stakingPool.getDistributableShare(id);

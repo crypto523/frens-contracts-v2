@@ -7,8 +7,7 @@ interface IStakingPoolFactory {
 
   function create(
     address _owner, 
-    bool _validatorLocked,
-    IFrensArt _frensArt 
+    bool _validatorLocked 
     //bool frensLocked,
     //uint poolMin,
     //uint poolMax

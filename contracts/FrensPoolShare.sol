@@ -21,7 +21,7 @@ contract FrensPoolShare is
     // Counters.Counter private _tokenIds;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     IFrensPoolShareTokenURI frensPoolShareTokenURI;
-    mapping(uint => IStakingPool) public poolByIds;
+    mapping(uint => address) public poolByIds;
 
     constructor() ERC721("FRENS Share", "FRENS") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -37,7 +37,7 @@ contract FrensPoolShare is
     function mint(address userAddress) public {
         require(hasRole(MINTER_ROLE, msg.sender), "you are not allowed to mint");
         uint256 _id = totalSupply();
-        poolByIds[_id] = IStakingPool(msg.sender);
+        poolByIds[_id] = address(msg.sender);
         _safeMint(userAddress, _id);
     }
 
@@ -45,7 +45,7 @@ contract FrensPoolShare is
         return _exists(_id);
     }
 
-    function getPoolById(uint _id) public view returns (IStakingPool) {
+    function getPoolById(uint _id) public view returns (address) {
         return (poolByIds[_id]);
     }
 
@@ -56,10 +56,9 @@ contract FrensPoolShare is
     }
 
     function renderTokenById(uint256 id) public view returns (string memory) {
-        //     IStakingPool pool = IStakingPool(getPoolById(id));
-        //     IFrensArt frensArt = pool.artForPool();
-        //     return frensArt.renderTokenById(id);
-        return ("d34db33f");
+        IStakingPool pool = IStakingPool(getPoolById(id));
+        IFrensArt frensArt = pool.artForPool();
+        return frensArt.renderTokenById(id);
     }
 
     // function _beforeTokenTransfer(
