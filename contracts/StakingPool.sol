@@ -9,7 +9,7 @@ import "./interfaces/IFrensArt.sol";
 import "./interfaces/IFrensOracle.sol";
 import "./interfaces/IFrensStorage.sol";
 
-contract StakingPool is IStakingPool, Ownable {
+contract StakingPool is IStakingPool, Ownable{
     event Stake(address depositContractAddress, address caller);
     event DepositToPool(uint amount, address depositer, uint id);
 
@@ -142,7 +142,7 @@ contract StakingPool is IStakingPool, Ownable {
         require(currentState == PoolState.acceptingDeposits, "wrong state");
         require(validatorSet, "validator not set");
         
-        address depositContractAddress = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract", "DepositContract")));
+        address depositContractAddress = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "DepositContract")));
         currentState = PoolState.staked;
         IDepositContract(depositContractAddress).deposit{value: 32 ether}(
             pubKey,

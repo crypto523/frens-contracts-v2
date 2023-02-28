@@ -4,7 +4,12 @@ pragma solidity >=0.8.0 <0.9.0;
 import "./IFrensArt.sol";
 
 interface IStakingPool {
+
+    function pubKey() external view returns(bytes memory);
+
     function depositForId(uint _id) external view returns (uint);
+
+    function totalDeposits() external view returns(uint);
 
     function artForPool() external view returns (IFrensArt);
 
@@ -15,12 +20,6 @@ interface IStakingPool {
     function addToDeposit(uint _id) external payable;
 
     function withdraw(uint _id, uint _amount) external;
-
-    //function distribute() external;
-
-    //function distributeAndClaim() external;
-
-    //function distributeAndClaimAll() external;
 
     function claim(uint id) external;
 
