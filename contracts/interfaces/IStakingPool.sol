@@ -3,6 +3,8 @@ pragma solidity >=0.8.0 <0.9.0;
 
 interface IStakingPool{
 
+  function depositForId(uint _id) external view returns(uint);
+
   function owner() external view returns (address);
 
   function depositToPool() external payable;

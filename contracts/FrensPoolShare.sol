@@ -6,21 +6,24 @@ pragma solidity >=0.8.0 <0.9.0;
 import "./interfaces/IFrensPoolShareTokenURI.sol";
 import "./interfaces/IFrensArt.sol";
 import "./interfaces/IFrensPoolShare.sol";
+import "./interfaces/IStakingPool.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 //should ownable be replaces with an equivalent in storage/base? (needs to interface with opensea properly)
-contract FrensPoolShare is IFrensPoolShare, ERC721Enumerable, AccessControl, Ownable {
+contract FrensPoolShare is
+    IFrensPoolShare,
+    ERC721Enumerable,
+    AccessControl,
+    Ownable
+{
     // Counters.Counter private _tokenIds;
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     IFrensPoolShareTokenURI frensPoolShareTokenURI;
-    mapping(uint => address) public poolByIds;
+    mapping(uint => IStakingPool) public poolByIds;
 
-    constructor(
-        IFrensPoolShareTokenURI _frensPoolShareTokenURI
-    ) ERC721("FRENS Share", "FRENS") {
-        frensPoolShareTokenURI = _frensPoolShareTokenURI;
+    constructor() ERC721("FRENS Share", "FRENS") {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
 
@@ -32,9 +35,9 @@ contract FrensPoolShare is IFrensPoolShare, ERC721Enumerable, AccessControl, Own
     }
 
     function mint(address userAddress) public {
-        require(hasRole(MINTER_ROLE, msg.sender));
+        require(hasRole(MINTER_ROLE, msg.sender), "you are not allowed to mint");
         uint256 _id = totalSupply();
-        poolByIds[_id] = msg.sender;
+        poolByIds[_id] = IStakingPool(msg.sender);
         _safeMint(userAddress, _id);
     }
 
@@ -42,13 +45,13 @@ contract FrensPoolShare is IFrensPoolShare, ERC721Enumerable, AccessControl, Own
         return _exists(_id);
     }
 
-    function getPoolById(uint _id) public view returns (address) {
+    function getPoolById(uint _id) public view returns (IStakingPool) {
         return (poolByIds[_id]);
     }
 
     function tokenURI(
         uint256 id
-    ) public view override(ERC721,IFrensPoolShare) returns (string memory) {
+    ) public view override(ERC721, IFrensPoolShare) returns (string memory) {
         return frensPoolShareTokenURI.tokenURI(id);
     }
 
@@ -73,7 +76,7 @@ contract FrensPoolShare is IFrensPoolShare, ERC721Enumerable, AccessControl, Own
 
     function burn(uint tokenId) public {
         require(
-            msg.sender == poolByIds[tokenId],
+            msg.sender == address(poolByIds[tokenId]),
             "cannot burn shares from other pools"
         );
         _burn(tokenId);

@@ -27,19 +27,19 @@ contract StakingPool is IStakingPool, Ownable {
 
     modifier mustBeAccepting() {
         require(
-            currentState == State.acceptingDeposits,
+            currentState == PoolState.acceptingDeposits,
             "not accepting deposits"
         );
         _;
     }
 
-    enum State {
+    enum PoolState {
         awaitingValidatorInfo,
         acceptingDeposits,
         staked,
         exited
     }
-    State currentState;
+    PoolState currentState;
 
     mapping(uint => uint) public depositForId;
     mapping(uint => uint) public frenPastClaim;
@@ -79,9 +79,9 @@ contract StakingPool is IStakingPool, Ownable {
         frensPoolShare = frensPoolShare_; //this hardcodes the nft contract to the pool
         validatorLocked = validatorLocked;
         if (validatorLocked_) {
-            currentState = State.awaitingValidatorInfo;
+            currentState = PoolState.awaitingValidatorInfo;
         } else {
-            currentState = State.acceptingDeposits;
+            currentState = PoolState.acceptingDeposits;
         }
         _transferOwnership(owner_);
     }
@@ -105,7 +105,7 @@ contract StakingPool is IStakingPool, Ownable {
     function addToDeposit(uint _id) external payable maxTotDep mustBeAccepting {
         require(frensPoolShare.exists(_id), "id does not exist"); //id must exist
         require(
-            frensPoolShare.poolByIds(_id) == address(this),
+            frensPoolShare.poolByIds(_id) == IStakingPool(this),
             "wrong staking pool for id"
         );
         depositForId[_id] += msg.value;
@@ -140,10 +140,10 @@ contract StakingPool is IStakingPool, Ownable {
     function _stake() internal {
         require(address(this).balance >= 32 ether, "not enough eth");
         require(totalDeposits == 32 ether, "not enough deposits");
-        require(currentState == State.acceptingDeposits, "wrong state");
+        require(currentState == PoolState.acceptingDeposits, "wrong state");
         require(validatorSet, "validator not set");
 
-        currentState = State.staked;
+        currentState = PoolState.staked;
         IDepositContract(depositContractAddress).deposit{value: 32 ether}(
             pubKey,
             withdrawal_credentials,
@@ -182,11 +182,11 @@ contract StakingPool is IStakingPool, Ownable {
             "withdrawal credential mismatch"
         );
         if (validatorLocked) {
-            require(currentState == State.awaitingValidatorInfo, "wrong state");
+            require(currentState == PoolState.awaitingValidatorInfo, "wrong state");
             assert(!validatorSet); //this should never fail
-            currentState = State.acceptingDeposits;
+            currentState = PoolState.acceptingDeposits;
         }
-        require(currentState == State.acceptingDeposits, "wrong state");
+        require(currentState == PoolState.acceptingDeposits, "wrong state");
         pubKey = _pubKey;
         withdrawal_credentials = _withdrawal_credentials;
         signature = _signature;
@@ -224,11 +224,11 @@ contract StakingPool is IStakingPool, Ownable {
 
     function claim(uint _id) external {
         require(
-            frensPoolShare.poolByIds(_id) == address(this),
+            frensPoolShare.poolByIds(_id) == IStakingPool(this),
             "wrong staking pool for id"
         );
         require(
-            currentState != State.acceptingDeposits,
+            currentState != PoolState.acceptingDeposits,
             "use withdraw when not staked"
         );
         require(
@@ -237,7 +237,7 @@ contract StakingPool is IStakingPool, Ownable {
         );
         //has the validator exited?
         bool exited;
-        if (currentState != State.exited) {
+        if (currentState != PoolState.exited) {
             //where is frensOracle stored???
             exited = frensOracle.checkValidatorState(address(this));
         } else exited = true;
@@ -258,7 +258,7 @@ contract StakingPool is IStakingPool, Ownable {
 
     function exitPool() external {
         require(msg.sender == address(frensOracle), "must be called by oracle");
-        currentState = State.exited;
+        currentState = PoolState.exited;
     }
 
     /* not ready for mainnet release
@@ -295,7 +295,7 @@ contract StakingPool is IStakingPool, Ownable {
 
     function getShare(uint _id) public view returns (uint) {
         require(
-            frensPoolShare.poolByIds(_id) == address(this),
+            frensPoolShare.poolByIds(_id) == IStakingPool(this),
             "wrong staking pool for id"
         );
         return _getShare(_id);
@@ -313,11 +313,11 @@ contract StakingPool is IStakingPool, Ownable {
     }
 
     function getDistributableShare(uint _id) public view returns (uint) {
-        if (currentState == State.acceptingDeposits) {
+        if (currentState == PoolState.acceptingDeposits) {
             return 0;
         } else {
             uint share = _getShare(_id);
-            if (feePercent > 0 && currentState != State.exited) {
+            if (feePercent > 0 && currentState != PoolState.exited) {
                 uint feeAmount = (feePercent * address(this).balance) / 100;
                 share = share - feeAmount;
             }
@@ -330,12 +330,12 @@ contract StakingPool is IStakingPool, Ownable {
     //   }
 
     function getState() public view returns (string memory) {
-        if (currentState == State.awaitingValidatorInfo)
+        if (currentState == PoolState.awaitingValidatorInfo)
             return "awaiting validator info";
-        if (currentState == State.staked) return "staked";
-        if (currentState == State.acceptingDeposits)
+        if (currentState == PoolState.staked) return "staked";
+        if (currentState == PoolState.acceptingDeposits)
             return "accepting deposits";
-        if (currentState == State.exited) return "exited";
+        if (currentState == PoolState.exited) return "exited";
         return "state failure"; //should never happen
     }
 
