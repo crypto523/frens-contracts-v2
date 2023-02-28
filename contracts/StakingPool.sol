@@ -36,6 +36,7 @@ contract StakingPool is IStakingPool, Ownable {
   mapping(uint => uint) public frenPastClaim;
 
   uint public totalDeposits;
+  uint public totalClaims;
 
   uint[] public idsInPool;
 
@@ -54,6 +55,10 @@ contract StakingPool is IStakingPool, Ownable {
 
   IFrensPoolShare frensPoolShare;
   IFrensOracle frensOracle;
+
+  // TODO move these to settings contract
+  uint feePercent = 5; //TODO: fix
+
 
   constructor(address owner_, bool validatorLocked_, IFrensPoolShare frensPoolShare_){
     frensPoolShare = frensPoolShare_; //this hardcodes the nft contract to the pool
@@ -194,18 +199,17 @@ contract StakingPool is IStakingPool, Ownable {
     frenPastClaim[_id] += amount;
     totalClaims += amount;
     //fee? not applied to exited
-    uint feePercent = 5; //TODO: fix
     if(feePercent > 0 && !exited){
       address feeRecipient = 0xa53A6fE2d8Ad977aD926C485343Ba39f32D3A3F6;
       uint feeAmount = feePercent * amount / 100;
       if(feeAmount > 1) payable(feeRecipient).transfer(feeAmount-1); //-1 wei to avoid rounding error issues
       amount = amount - feeAmount;
     }
-    payable(frensPoolShare.ownerOf(id)).transfer(amount);
+    payable(frensPoolShare.ownerOf(_id)).transfer(amount);
   }
 
   function exitPool() external {
-    require(msg.sender == address(frensOracle), "must be called by oracle");
+    require(msg.sender == frensOracle, "must be called by oracle");
     currentState = State.exited;
   }
 /* not ready for mainnet release
@@ -260,8 +264,6 @@ contract StakingPool is IStakingPool, Ownable {
       return 0;
     } else {
       uint share = _getShare(_id);
-       //fee? not applied to exited
-      uint feePercent = getUint(keccak256(abi.encodePacked("protocol.fee")));
       if(feePercent > 0 && currentState != State.exited){
         uint feeAmount = feePercent * address(this).balance / 100;
         share = share - feeAmount;
@@ -303,8 +305,9 @@ contract StakingPool is IStakingPool, Ownable {
 
 //   //setters
 
-    function setOracle(address _oracle) external requirePermission {
-      frensoracle = _oracle;
+  // TODO: add access control
+    function setOracle(IFrensOracle _oracle) external {
+      frensOracle = _oracle;
     }
 
   function setArt(address newArtContract) external onlyOwner { 
