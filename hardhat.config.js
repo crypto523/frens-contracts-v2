@@ -1,5 +1,4 @@
 require("@nomicfoundation/hardhat-toolbox");
-
 require("hardhat-interface-generator");
 
 /** @type import('hardhat/config').HardhatUserConfig */
