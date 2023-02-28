@@ -1,20 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
-//import "hardhat/console.sol";
-// import "./interfaces/ISSVRegistry.sol";
 import "./interfaces/IFrensMetaHelper.sol";
 import "./interfaces/IFrensPoolShare.sol";
 import "./interfaces/IENS.sol";
 import "./interfaces/IReverseResolver.sol";
 import "./interfaces/IStakingPool.sol";
-// import "./FrensBase.sol";
-//import './ToColor.sol';
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract FrensMetaHelper is IFrensMetaHelper {
     using Strings for uint256;
-
     IFrensPoolShare frensPoolShare;
 
     constructor(IFrensPoolShare _frensPoolShare) {
@@ -73,11 +68,8 @@ contract FrensMetaHelper is IFrensMetaHelper {
 
     function getEns(address addr) external view returns (bool, string memory) {
         IENS ens = IENS(address(0));
-        require(true==false,"Please set ENS first!");
-        //     getAddress(
-        //         keccak256(abi.encodePacked("external.contract.address", "ENS"))
-        //     )
-        // );
+        // TODO : lookup ENS address here
+        require(true == false, "Please set ENS first! this is a bug");
         bytes32 node = _node(addr);
         address revResAddr = ens.resolver(node);
         if (revResAddr == address(0)) return (false, "");
@@ -100,7 +92,6 @@ contract FrensMetaHelper is IFrensMetaHelper {
             let
                 lookup
             := 0x3031323334353637383961626364656600000000000000000000000000000000
-
             for {
                 let i := 40
             } gt(i, 0) {
@@ -113,7 +104,6 @@ contract FrensMetaHelper is IFrensMetaHelper {
                 mstore8(i, byte(and(addr, 0xf), lookup))
                 addr := div(addr, 0x10)
             }
-
             ret := keccak256(0, 40)
         }
     }
