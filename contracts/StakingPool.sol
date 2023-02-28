@@ -7,6 +7,7 @@ import "./interfaces/IFrensPoolShare.sol";
 import "./interfaces/IStakingPool.sol";
 import "./interfaces/IFrensArt.sol";
 import "./interfaces/IFrensOracle.sol";
+import "./interfaces/IFrensStorage.sol";
 
 contract StakingPool is IStakingPool, Ownable {
     event Stake(address depositContractAddress, address caller);
@@ -61,30 +62,23 @@ contract StakingPool is IStakingPool, Ownable {
     bool public transferLocked;
     bool public validatorSet;
 
-    IFrensArt public artForPool;
-    //address depositContractAddress = 0x00000000219ab540356cBB839Cbe05303d7705Fa; //mainnet
-    address public depositContractAddress =
-        0xff50ed3d0ec03aC01D4C79aAd74928BFF48a7b2b; //goerli
-
     bytes public pubKey;
     bytes public withdrawal_credentials;
     bytes public signature;
     bytes32 public deposit_data_root;
 
-    IFrensPoolShare frensPoolShare;
-    IFrensOracle frensOracle;
-
-    // TODO move these to settings contract
-    uint feePercent = 5; //TODO: fix
+    IFrensPoolShare public frensPoolShare;
+    IFrensArt public artForPool;
+    IFrensStorage public frensStorage;
 
     constructor(
         address owner_,
         bool validatorLocked_,
-        IFrensPoolShare frensPoolShare_,
-        IFrensArt _artForPool
+        IFrensStorage frensStorage_
     ) {
-        artForPool = _artForPool;
-        frensPoolShare = frensPoolShare_; //this hardcodes the nft contract to the pool
+        frensStorage = frensStorage_;
+        artForPool = IFrensArt(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensArt"))));
+        frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
         validatorLocked = validatorLocked;
         if (validatorLocked_) {
             currentState = PoolState.awaitingValidatorInfo;
@@ -147,7 +141,8 @@ contract StakingPool is IStakingPool, Ownable {
         require(totalDeposits == 32 ether, "not enough deposits");
         require(currentState == PoolState.acceptingDeposits, "wrong state");
         require(validatorSet, "validator not set");
-
+        
+        address depositContractAddress = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract", "DepositContract")));
         currentState = PoolState.staked;
         IDepositContract(depositContractAddress).deposit{value: 32 ether}(
             pubKey,
@@ -239,7 +234,7 @@ contract StakingPool is IStakingPool, Ownable {
         //has the validator exited?
         bool exited;
         if (currentState != PoolState.exited) {
-            //where is frensOracle stored???
+            IFrensOracle frensOracle = IFrensOracle(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensOracle"))));
             exited = frensOracle.checkValidatorState(address(this));
         } else exited = true;
         //get share for id
@@ -248,8 +243,9 @@ contract StakingPool is IStakingPool, Ownable {
         frenPastClaim[_id] += amount;
         totalClaims += amount;
         //fee? not applied to exited
+        uint feePercent = frensStorage.getUint(keccak256(abi.encodePacked("protocol.fee.percent")));
         if (feePercent > 0 && !exited) {
-            address feeRecipient = 0xa53A6fE2d8Ad977aD926C485343Ba39f32D3A3F6;
+            address feeRecipient = frensStorage.getAddress(keccak256(abi.encodePacked("protocol.fee.recipient")));
             uint feeAmount = (feePercent * amount) / 100;
             if (feeAmount > 1) payable(feeRecipient).transfer(feeAmount - 1); //-1 wei to avoid rounding error issues
             amount = amount - feeAmount;
@@ -258,7 +254,7 @@ contract StakingPool is IStakingPool, Ownable {
     }
 
     function exitPool() external {
-        require(msg.sender == address(frensOracle), "must be called by oracle");
+        require(msg.sender == address(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensOracle")))), "must be called by oracle");
         currentState = PoolState.exited;
     }
 
@@ -314,6 +310,7 @@ contract StakingPool is IStakingPool, Ownable {
             return 0;
         } else {
             uint share = _getShare(_id);
+            uint feePercent = frensStorage.getUint(keccak256(abi.encodePacked("protocol.fee.percent")));
             if (feePercent > 0 && currentState != PoolState.exited) {
                 uint feeAmount = (feePercent * address(this).balance) / 100;
                 share = share - feeAmount;
@@ -363,13 +360,7 @@ contract StakingPool is IStakingPool, Ownable {
         return withdralDesired;
     }
 
-    //   //setters
-
-    // TODO: add access control
-    function setOracle(IFrensOracle _oracle) external {
-        frensOracle = _oracle;
-    }
-
+    //setters
     function setArt(IFrensArt newArtContract) external onlyOwner {
         IFrensArt newFrensArt = newArtContract;
         string memory newArt = newFrensArt.renderTokenById(1);
