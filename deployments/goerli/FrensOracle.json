@@ -1,0 +1,149 @@
+{
+  "address": "0x3E2100B2a976A632e2e073eC4e987eC1D63B1D14",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IFrensStorage",
+          "name": "frensStorage_",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "poolAddress",
+          "type": "address"
+        }
+      ],
+      "name": "checkValidatorState",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "name": "isExiting",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "pubKey",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bool",
+          "name": "_isExiting",
+          "type": "bool"
+        }
+      ],
+      "name": "setExiting",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xb4e25a335b546eac0358a131ef0bf1c320a4a47d63bd198ebf0f02eed32bde77",
+  "receipt": {
+    "to": null,
+    "from": "0x6C55105954b7fd0c4Bf3df00dFD739fA71e2fD20",
+    "contractAddress": "0x3E2100B2a976A632e2e073eC4e987eC1D63B1D14",
+    "transactionIndex": 144,
+    "gasUsed": "321056",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xb67b83eb3c6c967e1dfe756895eb0afa615dafba3e96bc3460547eeb28618b64",
+    "transactionHash": "0xb4e25a335b546eac0358a131ef0bf1c320a4a47d63bd198ebf0f02eed32bde77",
+    "logs": [],
+    "blockNumber": 8579331,
+    "cumulativeGasUsed": "17292441",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xE4804B47a28B3692A68B9e88b3e5aE839B24f3a4"
+  ],
+  "solcInputHash": "cdf68d564db34a5a556608fd16d4355f",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.16+commit.07a7930e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IFrensStorage\",\"name\":\"frensStorage_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"checkValidatorState\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"isExiting\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"bool\",\"name\":\"_isExiting\",\"type\":\"bool\"}],\"name\":\"setExiting\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/FrensOracle.sol\":\"FrensOracle\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/FrensOracle.sol\":{\"content\":\"pragma solidity >=0.8.0 <0.9.0;\\n//SPDX-License-Identifier: MIT\\n\\nimport \\\"./interfaces/IStakingPool.sol\\\";\\nimport \\\"./interfaces/IFrensOracle.sol\\\";\\nimport \\\"./interfaces/IFrensStorage.sol\\\";\\n\\ncontract FrensOracle is IFrensOracle {\\n\\n    mapping(bytes => bool) public isExiting;\\n\\n    IFrensStorage frensStorage;\\n\\n    constructor(IFrensStorage frensStorage_) {\\n        frensStorage = frensStorage_;\\n    }\\n\\n    function checkValidatorState(address poolAddress) external returns(bool) {\\n        IStakingPool pool = IStakingPool(poolAddress);\\n        bytes memory pubKey = pool.pubKey();\\n        if(isExiting[pubKey]){\\n            pool.exitPool();\\n        }\\n        return isExiting[pubKey];\\n    }\\n\\n   function setExiting(bytes memory pubKey, bool _isExiting) external {\\n        require(msg.sender == frensStorage.getGuardian(), \\\"must be guardian\\\");\\n        isExiting[pubKey] = _isExiting;\\n   }\\n    \\n}\",\"keccak256\":\"0x2d4440e69f6aa64badc0a0d09e0ecfd07274e1d36c857ee8821b5ffccdabe9a3\",\"license\":\"MIT\"},\"contracts/interfaces/IFrensArt.sol\":{\"content\":\"pragma solidity >=0.8.0 <0.9.0;\\n//SPDX-License-Identifier: MIT\\n\\ninterface IFrensArt {\\n  function renderTokenById(uint256 id) external view returns (string memory);\\n}\\n\",\"keccak256\":\"0xfdb4c36608a20ac7f10ccb1b5d59ec26b25587860fb596dc12414b27591db2a0\",\"license\":\"MIT\"},\"contracts/interfaces/IFrensOracle.sol\":{\"content\":\"pragma solidity >=0.8.0 <0.9.0;\\n//SPDX-License-Identifier: MIT\\n\\n\\ninterface IFrensOracle {\\n\\n   function checkValidatorState(address pool) external returns(bool);\\n\\n   function setExiting(bytes memory pubKey, bool isExiting) external;\\n\\n}\",\"keccak256\":\"0xdf2291434faca3e9976a42d2328a4347ced5978b29477e40eb75642185afdf67\",\"license\":\"MIT\"},\"contracts/interfaces/IFrensStorage.sol\":{\"content\":\"pragma solidity >=0.8.0 <0.9.0;\\n\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n//modified from IRocketStorage on 03/12/2022 by 0xWildhare\\n\\ninterface IFrensStorage {\\n\\n   \\n    // Guardian\\n    function getGuardian() external view returns(address);\\n    function setGuardian(address _newAddress) external;\\n    function confirmGuardian() external;\\n\\n    // Getters\\n    function getAddress(bytes32 _key) external view returns (address);\\n    function getUint(bytes32 _key) external view returns (uint);\\n    function getBool(bytes32 _key) external view returns (bool);   \\n\\n    // Setters\\n    function setAddress(bytes32 _key, address _value) external;\\n    function setUint(bytes32 _key, uint _value) external;\\n    function setBool(bytes32 _key, bool _value) external;    \\n\\n    // Deleters\\n    function deleteAddress(bytes32 _key) external;\\n    function deleteUint(bytes32 _key) external;\\n    function deleteBool(bytes32 _key) external;    \\n\\n    // Arithmetic \\n    function addUint(bytes32 _key, uint256 _amount) external;\\n    function subUint(bytes32 _key, uint256 _amount) external;\\n    \\n}\\n\",\"keccak256\":\"0x99fcb22e7c7a93607fc2802dc74e2d96b6f1aa251918bb27211ad33b61bb5a5c\",\"license\":\"GPL-3.0-only\"},\"contracts/interfaces/IStakingPool.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity >=0.8.0 <0.9.0;\\n\\nimport \\\"./IFrensArt.sol\\\";\\n\\ninterface IStakingPool {\\n\\n    function pubKey() external view returns(bytes memory);\\n\\n    function depositForId(uint _id) external view returns (uint);\\n\\n    function totalDeposits() external view returns(uint);\\n\\n    function transferLocked() external view returns(bool);\\n\\n    function locked(uint id) external view returns(bool);\\n\\n    function artForPool() external view returns (IFrensArt);\\n\\n    function owner() external view returns (address);\\n\\n    function depositToPool() external payable;\\n\\n    function addToDeposit(uint _id) external payable;\\n\\n    function withdraw(uint _id, uint _amount) external;\\n\\n    function claim(uint id) external;\\n\\n    // function getIdsInThisPool() external view returns(uint[] memory);\\n\\n    function getShare(uint _id) external view returns (uint);\\n\\n    function getDistributableShare(uint _id) external view returns (uint);\\n\\n    // function getPubKey() external view returns(bytes memory);\\n\\n    function setPubKey(\\n        bytes calldata pubKey,\\n        bytes calldata withdrawal_credentials,\\n        bytes calldata signature,\\n        bytes32 deposit_data_root\\n    ) external;\\n\\n    function getState() external view returns (string memory);\\n\\n    // function getDepositAmount(uint _id) external view returns(uint);\\n\\n    function stake(\\n        bytes calldata pubkey,\\n        bytes calldata withdrawal_credentials,\\n        bytes calldata signature,\\n        bytes32 deposit_data_root\\n    ) external;\\n\\n    function stake() external;\\n\\n    function exitPool() external;\\n}\\n\",\"keccak256\":\"0x7d475246b57eeec0453bd8bcfe0b0f36a1ba3e861623ecb9e351c2c6f14f9afc\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60803461007457601f6104f638819003918201601f19168301916001600160401b038311848410176100795780849260209460405283398101031261007457516001600160a01b0381169081900361007457600180546001600160a01b03191691909117905560405161046690816100908239f35b600080fd5b634e487b7160e01b600052604160045260246000fdfe6080604081815260048036101561001557600080fd5b600092833560e01c908163809bef62146101d757508063d3b150e6146100ab5763d6e65cb91461004457600080fd5b346100a75760203660031901126100a757803567ffffffffffffffff81116100a3576020809461007c60ff9461008f943691016103c1565b908286519483868095519384920161040d565b820190815203019020541690519015158152f35b8380fd5b8280fd5b50346100a757816003193601126100a757803567ffffffffffffffff81116100a3576100da90369083016103c1565b90602435918215158093036101d35760015484516353adc3e960e11b8152602093916001600160a01b039190859082908590829086165afa9081156101c957889161018f575b50163303610159575090610140918185519382858094519384920161040d565b8101868152030190209060ff8019835416911617905551f35b845162461bcd60e51b8152908101839052601060248201526f36bab9ba1031329033bab0b93234b0b760811b6044820152606490fd5b90508481813d83116101c2575b6101a6818361036d565b810103126101be575181811681036101be5738610120565b8780fd5b503d61019c565b87513d8a823e3d90fd5b8480fd5b9390503461036a57602093846003193601126103665782356001600160a01b03811693908490036100a75763ac2a5dfd60e01b825282828281875afa91821561035c57908392918794926102dd575b5085519460ff83519686818187019961024081838d61040d565b810188815203019020541661026b575b50509261008f929160ff94865194859384925192839161040d565b8091929394503b156100a3579083809282885180958193630a645e5560e21b83525af180156102d35790879493929115610250579091935067ffffffffffffffff82116102c05750845284918061008f610250565b634e487b7160e01b835260419052602482fd5b86513d86823e3d90fd5b91509192503d8084833e6102f1818361036d565b81019086818303126100a35780519067ffffffffffffffff82116101d3570181601f820112156100a357805190610327826103a5565b926103348851948561036d565b8284528883830101116101d35782916103559189808098979601910161040d565b9038610226565b85513d85823e3d90fd5b5080fd5b80fd5b90601f8019910116810190811067ffffffffffffffff82111761038f57604052565b634e487b7160e01b600052604160045260246000fd5b67ffffffffffffffff811161038f57601f01601f191660200190565b81601f82011215610408578035906103d8826103a5565b926103e6604051948561036d565b8284526020838301011161040857816000926020809301838601378301015290565b600080fd5b60005b8381106104205750506000910152565b818101518382015260200161041056fea2646970667358221220f2739c893bbe610583221a0e2bbeceaf28a8f2580a6b906e9f02b2c81b028ff764736f6c63430008100033",
+  "deployedBytecode": "0x6080604081815260048036101561001557600080fd5b600092833560e01c908163809bef62146101d757508063d3b150e6146100ab5763d6e65cb91461004457600080fd5b346100a75760203660031901126100a757803567ffffffffffffffff81116100a3576020809461007c60ff9461008f943691016103c1565b908286519483868095519384920161040d565b820190815203019020541690519015158152f35b8380fd5b8280fd5b50346100a757816003193601126100a757803567ffffffffffffffff81116100a3576100da90369083016103c1565b90602435918215158093036101d35760015484516353adc3e960e11b8152602093916001600160a01b039190859082908590829086165afa9081156101c957889161018f575b50163303610159575090610140918185519382858094519384920161040d565b8101868152030190209060ff8019835416911617905551f35b845162461bcd60e51b8152908101839052601060248201526f36bab9ba1031329033bab0b93234b0b760811b6044820152606490fd5b90508481813d83116101c2575b6101a6818361036d565b810103126101be575181811681036101be5738610120565b8780fd5b503d61019c565b87513d8a823e3d90fd5b8480fd5b9390503461036a57602093846003193601126103665782356001600160a01b03811693908490036100a75763ac2a5dfd60e01b825282828281875afa91821561035c57908392918794926102dd575b5085519460ff83519686818187019961024081838d61040d565b810188815203019020541661026b575b50509261008f929160ff94865194859384925192839161040d565b8091929394503b156100a3579083809282885180958193630a645e5560e21b83525af180156102d35790879493929115610250579091935067ffffffffffffffff82116102c05750845284918061008f610250565b634e487b7160e01b835260419052602482fd5b86513d86823e3d90fd5b91509192503d8084833e6102f1818361036d565b81019086818303126100a35780519067ffffffffffffffff82116101d3570181601f820112156100a357805190610327826103a5565b926103348851948561036d565b8284528883830101116101d35782916103559189808098979601910161040d565b9038610226565b85513d85823e3d90fd5b5080fd5b80fd5b90601f8019910116810190811067ffffffffffffffff82111761038f57604052565b634e487b7160e01b600052604160045260246000fd5b67ffffffffffffffff811161038f57601f01601f191660200190565b81601f82011215610408578035906103d8826103a5565b926103e6604051948561036d565b8284526020838301011161040857816000926020809301838601378301015290565b600080fd5b60005b8381106104205750506000910152565b818101518382015260200161041056fea2646970667358221220f2739c893bbe610583221a0e2bbeceaf28a8f2580a6b906e9f02b2c81b028ff764736f6c63430008100033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 4066,
+        "contract": "contracts/FrensOracle.sol:FrensOracle",
+        "label": "isExiting",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_bytes_memory_ptr,t_bool)"
+      },
+      {
+        "astId": 4069,
+        "contract": "contracts/FrensOracle.sol:FrensOracle",
+        "label": "frensStorage",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_contract(IFrensStorage)6452"
+      }
+    ],
+    "types": {
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes_memory_ptr": {
+        "encoding": "bytes",
+        "label": "bytes",
+        "numberOfBytes": "32"
+      },
+      "t_contract(IFrensStorage)6452": {
+        "encoding": "inplace",
+        "label": "contract IFrensStorage",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_bytes_memory_ptr,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_bytes_memory_ptr",
+        "label": "mapping(bytes => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      }
+    }
+  }
+}
