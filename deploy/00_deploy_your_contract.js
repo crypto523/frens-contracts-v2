@@ -209,8 +209,8 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     const factoryHash = ethers.utils.solidityKeccak256(["string", "string"], ["contract.address", "StakingPoolFactory"]);
     const factoryInit = await FrensStorage.setAddress(factoryHash, StakingPoolFactory.address);
     await factoryInit.wait();
-    await FrensPoolShare.grantRole(ethers.constants.HashZero,  StakingPoolFactory.address);
     await FrensPoolShare.revokeRole(ethers.constants.HashZero,  StakingPoolFactoryOld.address);
+    await FrensPoolShare.grantRole(ethers.constants.HashZero,  StakingPoolFactory.address);
     console.log('\x1b[36m%s\x1b[0m', "StakingPoolFactory updated", StakingPoolFactory.address);
   }
 

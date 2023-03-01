@@ -9,6 +9,7 @@ import "./interfaces/IFrensStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+//import "hardhat/console.sol";
 
 //should ownable be replaces with an equivalent in storage/base? (needs to interface with opensea properly)
 contract FrensPoolShare is
@@ -63,12 +64,13 @@ contract FrensPoolShare is
     function _beforeTokenTransfer(
         address from,
         address to,
-        uint tokenId
-    ) internal {
-        _beforeTokenTransfer(from, to, tokenId, 1);
+        uint tokenId,
+        uint batchSize
+    ) internal override {
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
         IStakingPool pool = IStakingPool(poolByIds[tokenId]);
         if (from != address(0) && to != address(0)) {
-            require(pool.transferLocked() == false, "not transferable");
+            require(pool.locked(tokenId) == false, "not transferable");
         }
     }
 

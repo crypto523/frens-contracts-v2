@@ -13,6 +13,8 @@ interface IStakingPool {
 
     function transferLocked() external view returns(bool);
 
+    function locked(uint id) external view returns(bool);
+
     function artForPool() external view returns (IFrensArt);
 
     function owner() external view returns (address);
