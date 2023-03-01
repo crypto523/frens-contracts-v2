@@ -1,6 +1,7 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-interface-generator");
 require("dotenv/config");
+require("hardhat-gas-reporter");
 
 const defaultNetwork = "localhost";
 
@@ -15,41 +16,24 @@ module.exports = {
    * More here: https://hardhat.org/plugins/hardhat-gas-reporter.html
    */
   gasReporter: {
-    currency: "USD",
-    coinmarketcap: process.env.COINMARKETCAP || null,
+    enabled: true
+    // currency: "USD",
+    // coinmarketcap: process.env.COINMARKETCAP || null,
   },
-
-  // if you want to deploy to a testnet, mainnet, or xdai, you will need to configure:
-  // 1. An Infura key (or similar)
-  // 2. A private key for the deployer
-  // DON'T PUSH THESE HERE!!!
-  // An `example.env` has been provided in the Hardhat root. Copy it and rename it `.env`
-  // Follow the directions, and uncomment the network you wish to deploy to.
 
   networks: {
     localhost: {
       url: "http://localhost:8545",
-      /*
-        notice no mnemonic here? it will just use account 0 of the hardhat node to deploy
-        (you can put in a mnemonic here to set the deployer locally)
-
-      */
     },
     mainnet: {
-      url: "https://mainnet.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad", // <---- YOUR INFURA ID! (or it won't work)
-      //      url: "https://speedy-nodes-nyc.moralis.io/XXXXXXXXXXXXXXXXXXXXXXXXX/eth/mainnet", // <---- YOUR MORALIS ID! (not limited to infura)
+      url: `https://mainnet.infura.io/v3/${process.env.INFURA_KEY}`,
       gasPrice: mainnetGwei * 1000000000,
-      accounts: {
-        mnemonic: process.env.MNEMONIC_MAINNET,
-      },
+      accounts: [process.env.PK_MAINNET]
     },
     goerli: {
-      url: "https://goerli.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad", // <---- YOUR INFURA ID! (or it won't work)
-      //      url: "https://speedy-nodes-nyc.moralis.io/XXXXXXXXXXXXXXXXXXXXXXXXX/eth/goerli", // <---- YOUR MORALIS ID! (not limited to infura)
-      accounts: {
-        mnemonic: process.env.MNEMONIC_GOERLI,
-      },
-    }
+      url: `https://goerli.infura.io/v3/${process.env.INFURA_KEY}`,
+      accounts: [process.env.PK_GOERLI]
+    },
   },
 
   solidity: {
@@ -85,8 +69,8 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
-      mainnet: "1369MW881SKMW5GM4JCFSM5623ZXA9ERUD",
-      goerli: "1369MW881SKMW5GM4JCFSM5623ZXA9ERUD"
+      mainnet: process.env.INFURA_KEY,
+      goerli: process.env.INFURA_KEY
       // add other network's API key here
     },
   },
