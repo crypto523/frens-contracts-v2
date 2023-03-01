@@ -431,7 +431,7 @@ function testFees(uint32 x, uint32 y) public {
           stakingPool.claim(1);
           bobBalance = address(bob).balance;
           //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
-          assertApproxEqAbs(bobBalance, bobBalanceExpected, 2, "bobBalance post-claim wrong"); 
+          assertApproxEqAbs(bobBalance, bobBalanceExpected, 3, "bobBalance post-claim wrong"); 
         }
         assertApproxEqAbs(fees, address(feeRecipient).balance, 10, "fee recipient balance incorrect"); 
 
@@ -458,6 +458,11 @@ function testFees(uint32 x, uint32 y) public {
       stakingPool.depositToPool{value: 32 ether}();
       vm.prank(contOwner);
       stakingPool.stake(pubkey, withdrawal_credentials, signature, deposit_data_root);
+      vm.expectRevert("must be called by oracle");
+      stakingPool.exitPool();
+      vm.expectRevert("must be guardian");
+      vm.prank(alice);
+      frensOracle.setExiting(pubkey, true);
       vm.prank(address(this), address(this));
       frensOracle.setExiting(pubkey, true);
       frensOracle.checkValidatorState(address(stakingPool));

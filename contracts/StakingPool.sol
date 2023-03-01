@@ -288,9 +288,9 @@ contract StakingPool is IStakingPool, Ownable{
 */
     //getters
 
-    //   function getIdsInThisPool() public view returns(uint[] memory) {
-    //     return getArray(keccak256(abi.encodePacked("ids.in.pool", address(this))));
-    //   }
+    function getIdsInThisPool() public view returns(uint[] memory) {
+      return idsInPool;
+    }
 
     function getShare(uint _id) public view correctPoolOnly(_id) returns (uint) {
         return _getShare(_id);
@@ -320,10 +320,6 @@ contract StakingPool is IStakingPool, Ownable{
             return share;
         }
     }
-
-    //   function getPubKey() public view returns(bytes memory){
-    //     return getBytes(keccak256(abi.encodePacked("pubKey", address(this))));
-    //   }
 
     function getState() public view returns (string memory) {
         if (currentState == PoolState.awaitingValidatorInfo)
