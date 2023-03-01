@@ -95,7 +95,7 @@ contract MiscTest is Test {
       //console.log the pool address for fun  if(FrensPoolShareOld == 0){
       //console.log("pool", pool);
 
-      //create a second staking pool through proxy contract
+      //create a second staking pool
       (address pool2) = stakingPoolFactory.create(contOwner, false/*, false, 0, 32000000000000000000*/);
       //connect to staking pool
       stakingPool2 = StakingPool(payable(pool2));
@@ -106,17 +106,17 @@ contract MiscTest is Test {
 
     function testMintingDirectly() public {
       hoax(alice);
-      vm.expectRevert("Invalid Pool");
+      vm.expectRevert("you are not allowed to mint");
       frensPoolShare.mint(address(alice));
     }
 
     function testApprove() public {
       startHoax(alice);
-      uint i = 1;
+      uint i = 0;
       while( i < 255 ){ //255 is arbitrarily chosen, the point is to check a few different values.
         stakingPool.depositToPool{value: 1}();
  
-        uint id = frensPoolShare.tokenOfOwnerByIndex(alice, i-1);
+        uint id = frensPoolShare.tokenOfOwnerByIndex(alice, i);
         assertTrue(id == i );
 
         address shouldBeZero = frensPoolShare.getApproved(i);
@@ -131,13 +131,13 @@ contract MiscTest is Test {
 
     function testBalanceOf() public {
       startHoax(alice);
-      uint i = 1;
+      uint i = 0;
       while( i < 255 ){
         stakingPool.depositToPool{value: 1}();
-        uint id = frensPoolShare.tokenOfOwnerByIndex(alice, i-1);
-        assertTrue(id == i );
+        uint id = frensPoolShare.tokenOfOwnerByIndex(alice, i);
+        assertTrue(id == i, "first is is 0");
         uint balanceOfAlice = frensPoolShare.balanceOf(alice);
-        assertEq(balanceOfAlice, i);
+        assertEq(balanceOfAlice, i + 1, "should have i + 1");
         i++;
       }
     }
@@ -145,7 +145,7 @@ contract MiscTest is Test {
     function testexists() public {
       startHoax(alice);
       
-      uint i = 1;
+      uint i = 0;
        while( i < 255 ){
         assertFalse(frensPoolShare.exists(i));
         stakingPool.depositToPool{value: 1}();
@@ -157,7 +157,7 @@ contract MiscTest is Test {
 
     function testGetPoolById() public {
       startHoax(alice);
-      uint i = 1;
+      uint i = 0;
       while( i < 255 ){
         stakingPool.depositToPool{value: 1}();
         address sbStakingPool = frensPoolShare.getPoolById(i);
@@ -176,7 +176,7 @@ contract MiscTest is Test {
 
     function testIsApprovedForAll() public {
       startHoax(alice);
-      uint i = 1;
+      uint i = 0;
       while( i < 64 ){
         stakingPool.depositToPool{value: 1}();
         i++;
@@ -197,7 +197,7 @@ contract MiscTest is Test {
     }
 
     function testOwnerOf() public {
-      uint i = 1;
+      uint i = 0;
       while( i < 255 ){
         hoax(alice);
         stakingPool.depositToPool{value: 1}();
@@ -223,7 +223,7 @@ contract MiscTest is Test {
       uint id = frensPoolShare.tokenOfOwnerByIndex(alice, 0);
       assertEq(alice, frensPoolShare.ownerOf(id));
       hoax(bob);
-      vm.expectRevert("ERC721: transfer caller is not owner nor approved");
+      vm.expectRevert("ERC721: caller is not token owner or approved");
       frensPoolShare.safeTransferFrom(alice, bob, id);
       hoax(alice);
       frensPoolShare.safeTransferFrom(alice, bob, id);
@@ -241,10 +241,10 @@ contract MiscTest is Test {
 
     function testTokenByIndex() public {
       startHoax(alice);
-      uint i = 1;
+      uint i = 0;
       while( i < 255 ){
         stakingPool.depositToPool{value: 1}();
-        uint id = frensPoolShare.tokenByIndex(i-1);
+        uint id = frensPoolShare.tokenByIndex(i);
         assertTrue(id == i );
         i++;
       }
@@ -256,7 +256,7 @@ contract MiscTest is Test {
       uint id = frensPoolShare.tokenOfOwnerByIndex(alice, 0);
       assertEq(alice, frensPoolShare.ownerOf(id));
       hoax(bob);
-      vm.expectRevert("ERC721: transfer caller is not owner nor approved");
+      vm.expectRevert("ERC721: caller is not token owner or approved");
       frensPoolShare.transferFrom(alice, bob, id);
       hoax(alice);
       frensPoolShare.transferFrom(alice, bob, id);

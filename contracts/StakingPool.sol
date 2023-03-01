@@ -92,8 +92,8 @@ contract StakingPool is IStakingPool, Ownable{
         external
         payable
         noZeroValueTxn
-        maxTotDep
         mustBeAccepting
+        maxTotDep
     {
         uint id = frensPoolShare.totalSupply();
         depositForId[id] = msg.value;
@@ -104,7 +104,7 @@ contract StakingPool is IStakingPool, Ownable{
         emit DepositToPool(msg.value, msg.sender, id);
     }
 
-    function addToDeposit(uint _id) external payable maxTotDep mustBeAccepting correctPoolOnly(_id){
+    function addToDeposit(uint _id) external payable mustBeAccepting maxTotDep mustBeAccepting correctPoolOnly(_id){
         require(frensPoolShare.exists(_id), "id does not exist"); //id must exist
         
         depositForId[_id] += msg.value;

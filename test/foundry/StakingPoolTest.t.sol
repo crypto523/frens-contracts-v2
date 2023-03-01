@@ -61,6 +61,8 @@ contract StakingPoolTest is Test {
       frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "DepositContract")), depCont);
       //initialise ENS 
       frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "ENS")), ENSAddress);
+      //feeReceipient
+      frensStorage.setAddress(keccak256(abi.encodePacked("protocol.fee.recipient")), feeRecipient);
       //deploy NFT contract
       frensPoolShare = new FrensPoolShare(frensStorage);
       //initialise NFT contract
@@ -114,11 +116,11 @@ contract StakingPoolTest is Test {
         startHoax(alice);
         stakingPool.depositToPool{value: x}();
         uint id = frensPoolShare.tokenOfOwnerByIndex(alice, 0);
-        assertTrue(id != 0 );
+        assertTrue(id == 0, "first id is 0");
         uint depAmt = stakingPool.depositForId(id);
-        assertEq(x, depAmt);
+        assertEq(x, depAmt, "x = depAmt");
         uint totDep = stakingPool.totalDeposits();
-        assertEq(x, totDep);
+        assertEq(x, totDep, "x=totDep");
       } else if(x == 0) {
         vm.expectRevert("must deposit ether");
         startHoax(alice);
@@ -135,12 +137,12 @@ contract StakingPoolTest is Test {
         startHoax(alice);
         stakingPool.depositToPool{value: x}();
         uint id = frensPoolShare.tokenOfOwnerByIndex(alice, 0);
-        assertTrue(id != 0 );
+        assertTrue(id == 0, "first id is 0");
         uint depAmt = stakingPool.depositForId(id);
         assertEq(x, depAmt);
         //should throw for non-existant id
-        vm.expectRevert("id does not exist");
-        stakingPool.addToDeposit{value: y}(0);
+        vm.expectRevert("wrong staking pool for id");
+        stakingPool.addToDeposit{value: y}(69);
         //existing id should work fine
         stakingPool.addToDeposit{value: y}(id);
         uint depAmt2 = stakingPool.depositForId(id);
@@ -166,11 +168,11 @@ contract StakingPoolTest is Test {
         startHoax(alice);
         stakingPool.depositToPool{value: x}();
         uint id = frensPoolShare.tokenOfOwnerByIndex(alice, 0);
-        assertTrue(id != 0 );
+        assertTrue(id == 0, "first id is 0");
         uint depAmt = stakingPool.depositForId(id);
-        assertEq(x, depAmt);
+        assertEq(x, depAmt, "x = depAmt");
         //should throw for wrong pool
-        vm.expectRevert("wrong staking pool");
+        vm.expectRevert("wrong staking pool for id");
         stakingPool2.addToDeposit{value: y}(id);
         //existing id should work fine (redundant with previous test)
         stakingPool.addToDeposit{value: y}(id);
@@ -195,13 +197,13 @@ contract StakingPoolTest is Test {
         startHoax(alice);
         stakingPool.depositToPool{value: x}();
         uint id = frensPoolShare.tokenOfOwnerByIndex(alice, 0);
-        assertTrue(id != 0 );
+        assertTrue(id == 0, "first id should be 0");
         uint depAmt = stakingPool.depositForId(id);
-        assertEq(x, depAmt);
+        assertEq(x, depAmt, "deposit amount should be x");
         stakingPool.withdraw(id, y);
         uint depAmt2 = stakingPool.depositForId(id);
         uint tot = uint(x) - uint(y);
-        assertEq(tot, depAmt2);
+        assertEq(tot, depAmt2, "x - y s/b = tot");
       } else if(x == 0) {
         vm.expectRevert("must deposit ether");
         startHoax(alice);
@@ -214,7 +216,7 @@ contract StakingPoolTest is Test {
         startHoax(alice);
         stakingPool.depositToPool{value: x}();
         uint id = frensPoolShare.tokenOfOwnerByIndex(alice, 0);
-        assertTrue(id != 0 );
+        assertTrue(id == 0, "first id is 0");
         vm.expectRevert("not enough deposited");
         stakingPool.withdraw(id, y);
       }
@@ -259,174 +261,6 @@ contract StakingPoolTest is Test {
       assertEq(initialBalance, address(stakingPool).balance);
       assertFalse(keccak256(depositContract.get_deposit_count()) == deposit_count_hash);
     }
-/*
-    function testDistribute(uint32 x, uint32 y) public {
-      uint maxUint32 = 4294967295;
-      uint aliceDeposit = uint(x) * 31999999999999999999 / maxUint32;
-      uint bobDeposit = 32000000000000000000 - aliceDeposit;
-      if(x != 0 && y > 100){
-        hoax(alice);
-        stakingPool.depositToPool{value: aliceDeposit}();
-        hoax(bob);
-        stakingPool.depositToPool{value: bobDeposit}();
-        payable(stakingPool).transfer(y);
-        vm.expectRevert("use withdraw when not staked");
-        stakingPool.distribute();
-        hoax(contOwner);
-        stakingPool.stake(pubkey, withdrawal_credentials, signature, deposit_data_root);
-        uint aliceBalance = address(alice).balance;
-        uint bobBalance = address(bob).balance;
-        uint aliceShare = (address(stakingPool).balance) * aliceDeposit / 32000000000000000000;
-        uint bobShare = (address(stakingPool).balance) - aliceShare;
-        stakingPool.distribute();
-        uint frensClaimBalance = address(frensClaim).balance;
-        assertEq(frensClaimBalance, aliceShare + bobShare, "frensClaim balance pre-claim wrong");
-        if(aliceShare == 1) aliceShare = 0;
-        if(bobShare == 1) bobShare =0;
-        
-        uint aliceBalanceExpected = aliceBalance + aliceShare;
-        //distribute was called, no claim, so there should be no change yet
-        assertEq(aliceBalance, address(alice).balance, "aliceBalance pre-claim wrong");
-        vm.prank(alice);
-        stakingPool.claim();
-        aliceBalance = address(alice).balance;
-        //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
-        assertApproxEqAbs(aliceBalance, aliceBalanceExpected, 2, "aliceBalance post-claim wrong");
-      
-        uint bobBalanceExpected = bobBalance + bobShare;
-        //no claim for bob yet
-        assertEq(bobBalance, address(bob).balance, "bobBalance pre-claim wrong");
-        vm.prank(bob);
-        frensClaim.claim();
-        bobBalance = address(bob).balance;
-        //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
-        assertApproxEqAbs(bobBalance, bobBalanceExpected, 2, "bobBalance post-claim wrong");
-
-      } else if(x == 0) {
-        vm.expectRevert("must deposit ether");
-        startHoax(alice);
-        stakingPool.depositToPool{value: x}();
-      } else {
-        hoax(alice);
-        stakingPool.depositToPool{value: aliceDeposit}();
-        hoax(bob);
-        stakingPool.depositToPool{value: bobDeposit}();
-        startHoax(contOwner);
-        stakingPool.stake(pubkey, withdrawal_credentials, signature, deposit_data_root);
-        payable(stakingPool).transfer(y);
-        vm.expectRevert("minimum of 100 wei to distribute");
-        stakingPool.distribute();
-      }
-
-    }
-
-    function testDistributeAndClaim(uint32 x, uint32 y) public {
-      uint maxUint32 = 4294967295;
-      uint aliceDeposit = uint(x) * 31999999999999999999 / maxUint32;
-      uint bobDeposit = 32000000000000000000 - aliceDeposit;
-      if(x != 0 && y > 100){
-        hoax(alice);
-        stakingPool.depositToPool{value: aliceDeposit}();
-        hoax(bob);
-        stakingPool.depositToPool{value: bobDeposit}();
-        payable(stakingPool).transfer(y);
-        vm.expectRevert("use withdraw when not staked");
-        stakingPool.distributeAndClaim();
-        hoax(contOwner);
-        stakingPool.stake(pubkey, withdrawal_credentials, signature, deposit_data_root);
-        uint aliceBalance = address(alice).balance;
-        uint bobBalance = address(bob).balance;
-        uint aliceShare = (address(stakingPool).balance) * aliceDeposit / 32000000000000000000;
-        uint bobShare = (address(stakingPool).balance) - aliceShare;
-        vm.prank(alice);
-        stakingPool.distributeAndClaim();
-
-        uint frensClaimBalance = address(frensClaim).balance;
-        //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
-        assertApproxEqAbs(frensClaimBalance, bobShare, 2, "frensClaim balance pre-claim wrong");
-        if(aliceShare == 1) aliceShare = 0;
-        if(bobShare == 1) bobShare =0;
-        
-        uint aliceBalanceExpected = aliceBalance + aliceShare;
-        aliceBalance = address(alice).balance;
-        //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
-        assertApproxEqAbs(aliceBalance, aliceBalanceExpected, 2, "aliceBalance post-claim wrong");
-      
-        uint bobBalanceExpected = bobBalance + bobShare;
-        //no claim for bob yet
-        assertEq(bobBalance, address(bob).balance, "bobBalance pre-claim wrong");
-        stakingPool.claim(address(bob));
-        bobBalance = address(bob).balance;
-        //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
-        assertApproxEqAbs(bobBalance, bobBalanceExpected, 2, "bobBalance post-claim wrong");
-
-      } else if(x == 0) {
-        vm.expectRevert("must deposit ether");
-        startHoax(alice);
-        stakingPool.depositToPool{value: x}();
-      } else {
-        hoax(alice);
-        stakingPool.depositToPool{value: aliceDeposit}();
-        hoax(bob);
-        stakingPool.depositToPool{value: bobDeposit}();
-        startHoax(contOwner);
-        stakingPool.stake(pubkey, withdrawal_credentials, signature, deposit_data_root);
-        payable(stakingPool).transfer(y);
-        vm.expectRevert("minimum of 100 wei to distribute");
-        stakingPool.distributeAndClaim();
-      }
-
-    }
-
-
-    function testDistributeandClaimAll(uint32 x, uint32 y) public {
-      uint maxUint32 = 4294967295;
-      uint aliceDeposit = uint(x) * 31999999999999999999 / maxUint32;
-      uint bobDeposit = 32000000000000000000 - aliceDeposit;
-      if(x != 0 && y > 100){
-        hoax(alice);
-        stakingPool.depositToPool{value: aliceDeposit}();
-        hoax(bob);
-        stakingPool.depositToPool{value: bobDeposit}();
-        payable(stakingPool).transfer(y);
-        vm.expectRevert("use withdraw when not staked");
-        stakingPool.distributeAndClaimAll();
-        startHoax(contOwner);
-        stakingPool.stake(pubkey, withdrawal_credentials, signature, deposit_data_root);
-        uint aliceBalance = address(alice).balance;
-        uint bobBalance = address(bob).balance;
-        uint aliceShare = (address(stakingPool).balance) * aliceDeposit / 32000000000000000000;
-        uint bobShare = (address(stakingPool).balance) - aliceShare;
-        stakingPool.distributeAndClaimAll();
-        if(aliceShare == 1) aliceShare = 0;
-        if(bobShare == 1) bobShare =0;
-        uint aliceBalanceExpected = aliceBalance + aliceShare;
-        aliceBalance = address(alice).balance;
-        //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
-        assertApproxEqAbs(aliceBalance, aliceBalanceExpected, 2);
-        uint bobBalanceExpected = bobBalance + bobShare;
-        bobBalance = address(bob).balance;
-        //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
-        assertApproxEqAbs(bobBalance, bobBalanceExpected, 2);
-
-      } else if(x == 0) {
-        vm.expectRevert("must deposit ether");
-        startHoax(alice);
-        stakingPool.depositToPool{value: x}();
-      } else {
-        hoax(alice);
-        stakingPool.depositToPool{value: aliceDeposit}();
-        hoax(bob);
-        stakingPool.depositToPool{value: bobDeposit}();
-        startHoax(contOwner);
-        stakingPool.stake(pubkey, withdrawal_credentials, signature, deposit_data_root);
-        payable(stakingPool).transfer(y);
-        vm.expectRevert("minimum of 100 wei to distribute");
-        stakingPool.distributeAndClaimAll();
-      }
-
-    }
-*/
 
   function testClaim(uint32 x, uint32 y) public {
       uint maxUint32 = 4294967295;
@@ -455,7 +289,7 @@ contract StakingPoolTest is Test {
         if(aliceShare == 1) aliceShare = 0;
         if(bobShare == 1) bobShare =0;
         
-        stakingPool.claim(1);
+        stakingPool.claim(0);
         uint aliceBalanceExpected = aliceBalance + aliceShare;
         aliceBalance = address(alice).balance;
         //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
@@ -466,9 +300,9 @@ contract StakingPoolTest is Test {
         assertEq(bobBalance, address(bob).balance, "bobBalance pre-claim wrong");
        if(address(stakingPool).balance <= 100) {
           vm.expectRevert("must be greater than 100 wei to claim");
-          stakingPool.claim(2);
+          stakingPool.claim(1);
         } else {
-          stakingPool.claim(2);
+          stakingPool.claim(1);
           bobBalance = address(bob).balance;
           //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
           assertApproxEqAbs(bobBalance, bobBalanceExpected, 2, "bobBalance post-claim wrong");
@@ -581,7 +415,7 @@ function testFees(uint32 x, uint32 y) public {
         assertEq(aliceBalance, address(alice).balance, "aliceBalance pre-claim wrong");
         vm.prank(alice);
         console.log("staking Pool balance", address(stakingPool).balance);
-        stakingPool.claim(1);
+        stakingPool.claim(0);
         aliceBalance = address(alice).balance;
         //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
         assertApproxEqAbs(aliceBalance, aliceBalanceExpected, 2, "aliceBalance post-claim wrong");
@@ -592,9 +426,9 @@ function testFees(uint32 x, uint32 y) public {
         vm.prank(bob);
         if(address(stakingPool).balance <= 100) {
           vm.expectRevert("must be greater than 100 wei to claim");
-          stakingPool.claim(2);
+          stakingPool.claim(1);
         } else {
-          stakingPool.claim(2);
+          stakingPool.claim(1);
           bobBalance = address(bob).balance;
           //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
           assertApproxEqAbs(bobBalance, bobBalanceExpected, 2, "bobBalance post-claim wrong"); 
