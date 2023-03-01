@@ -5,6 +5,7 @@ import "./interfaces/IPmFont.sol";
 import "./interfaces/IFrensLogo.sol";
 import "./interfaces/IWaves.sol";
 import "./interfaces/IFrensStorage.sol";
+import "hardhat/console.sol";
 
 contract FrensArt {
 
@@ -16,8 +17,8 @@ contract FrensArt {
         frensStorage = frensStorage_;
     }
 
-    function renderTokenById(uint256 id) public view returns (string memory) {
-        IFrensMetaHelper frensMetaHelper = IFrensMetaHelper(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "frensMetaHelper"))));
+    function renderTokenById(uint256 id) public view returns (string memory) {console.log("0");
+        IFrensMetaHelper frensMetaHelper = IFrensMetaHelper(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensMetaHelper"))));
         IPmFont pmFont = IPmFont(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "PmFont"))));
         IWaves waves = IWaves(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "Waves"))));
         IFrensLogo frensLogo = IFrensLogo(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensLogo"))));

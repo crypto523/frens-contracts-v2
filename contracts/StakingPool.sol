@@ -79,8 +79,8 @@ contract StakingPool is IStakingPool, Ownable{
         frensStorage = frensStorage_;
         artForPool = IFrensArt(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensArt"))));
         frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
-        validatorLocked = validatorLocked;
-        if (validatorLocked_) {
+        validatorLocked = validatorLocked_;
+        if (validatorLocked) {
             currentState = PoolState.awaitingValidatorInfo;
         } else {
             currentState = PoolState.acceptingDeposits;

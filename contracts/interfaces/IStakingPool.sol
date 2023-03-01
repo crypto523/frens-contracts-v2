@@ -11,6 +11,8 @@ interface IStakingPool {
 
     function totalDeposits() external view returns(uint);
 
+    function transferLocked() external view returns(bool);
+
     function artForPool() external view returns (IFrensArt);
 
     function owner() external view returns (address);

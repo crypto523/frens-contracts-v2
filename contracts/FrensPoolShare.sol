@@ -60,17 +60,17 @@ contract FrensPoolShare is
         return frensArt.renderTokenById(id);
     }
 
-    // function _beforeTokenTransfer(
-    //     address from,
-    //     address to,
-    //     uint tokenId
-    // ) internal override {
-    //     super._beforeTokenTransfer(from, to, tokenId);
-    //     IStakingPool pool = IStakingPool(poolByIds(id));
-    //     if (from != address(0) && to != address(0)) {
-    //         require(pool.transferLocked() == false, "not transferable");
-    //     }
-    // }
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint tokenId
+    ) internal override {
+        super._beforeTokenTransfer(from, to, tokenId);
+        IStakingPool pool = IStakingPool(poolByIds[tokenId]);
+        if (from != address(0) && to != address(0)) {
+            require(pool.transferLocked() == false, "not transferable");
+        }
+    }
 
     function burn(uint tokenId) public {
         require(

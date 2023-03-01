@@ -84,7 +84,13 @@ contract FrensStorage is IFrensStorage{
     function setAddress(bytes32 _key, address _value) onlyGuardian override external {
         addressStorage[_key] = _value;
     }
-
+/*
+    /// @param _key The key for the record
+    function setAddress(string memory _key, address _value) external {
+        bytes32 key = keccak256(abi.encodePacked(_key, msg.sender));
+        addressStorage[key] = _value;
+    }
+*/
     /// @param _key The key for the record
     function setUint(bytes32 _key, uint _value) onlyGuardian override external {
         uintStorage[_key] = _value;
