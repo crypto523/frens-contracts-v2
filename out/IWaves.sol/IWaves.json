@@ -1,0 +1,203 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "name": "getWaves",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "getWaves()": "a9d42f7e"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"getWaves\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/interfaces/IWaves.sol\":\"IWaves\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/=node_modules/@openzeppelin/\",\":base64-sol/=node_modules/base64-sol/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":eth-gas-reporter/=node_modules/eth-gas-reporter/\",\":forge-std/=lib/forge-std/src/\",\":hardhat/=node_modules/hardhat/\"],\"viaIR\":true},\"sources\":{\"contracts/interfaces/IWaves.sol\":{\"keccak256\":\"0xe728208d23a5bc81fde1cadb770ee72d5a37565c736536770418eb0ab0d8cdeb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c6b093ef06a083c68c0ed2d04deb000ac26b565e00f26a9cca521ccc7cc034b2\",\"dweb:/ipfs/QmcXdbezAsuh1KqiXWKH8Vs6aVL8V6Ag2b4nwDX7qXUEAN\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.17+commit.8df45f5f"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "getWaves",
+          "outputs": [
+            {
+              "internalType": "bytes",
+              "name": "",
+              "type": "bytes"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":@openzeppelin/=node_modules/@openzeppelin/",
+        ":base64-sol/=node_modules/base64-sol/",
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":eth-gas-reporter/=node_modules/eth-gas-reporter/",
+        ":forge-std/=lib/forge-std/src/",
+        ":hardhat/=node_modules/hardhat/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "contracts/interfaces/IWaves.sol": "IWaves"
+      },
+      "libraries": {},
+      "viaIR": true
+    },
+    "sources": {
+      "contracts/interfaces/IWaves.sol": {
+        "keccak256": "0xe728208d23a5bc81fde1cadb770ee72d5a37565c736536770418eb0ab0d8cdeb",
+        "urls": [
+          "bzz-raw://c6b093ef06a083c68c0ed2d04deb000ac26b565e00f26a9cca521ccc7cc034b2",
+          "dweb:/ipfs/QmcXdbezAsuh1KqiXWKH8Vs6aVL8V6Ag2b4nwDX7qXUEAN"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "contracts/interfaces/IWaves.sol",
+    "id": 3084,
+    "exportedSymbols": {
+      "IWaves": [
+        3083
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "0:145:24",
+    "nodes": [
+      {
+        "id": 3077,
+        "nodeType": "PragmaDirective",
+        "src": "0:31:24",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          ">=",
+          "0.8",
+          ".0",
+          "<",
+          "0.9",
+          ".0"
+        ]
+      },
+      {
+        "id": 3083,
+        "nodeType": "ContractDefinition",
+        "src": "64:80:24",
+        "nodes": [
+          {
+            "id": 3082,
+            "nodeType": "FunctionDefinition",
+            "src": "85:57:24",
+            "nodes": [],
+            "functionSelector": "a9d42f7e",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getWaves",
+            "nameLocation": "94:8:24",
+            "parameters": {
+              "id": 3078,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "102:2:24"
+            },
+            "returnParameters": {
+              "id": 3081,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3080,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3082,
+                  "src": "128:12:24",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_memory_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 3079,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "128:5:24",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "127:14:24"
+            },
+            "scope": 3083,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IWaves",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          3083
+        ],
+        "name": "IWaves",
+        "nameLocation": "74:6:24",
+        "scope": 3084,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 24
+}

@@ -64,8 +64,8 @@ contract FrensPoolShare is
         address from,
         address to,
         uint tokenId
-    ) internal override {
-        super._beforeTokenTransfer(from, to, tokenId);
+    ) internal {
+        _beforeTokenTransfer(from, to, tokenId, 1);
         IStakingPool pool = IStakingPool(poolByIds[tokenId]);
         if (from != address(0) && to != address(0)) {
             require(pool.transferLocked() == false, "not transferable");
