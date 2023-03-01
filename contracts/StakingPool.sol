@@ -333,15 +333,6 @@ contract StakingPool is IStakingPool, Ownable{
         return "state failure"; //should never happen
     }
 
-    //   function getDepositAmount(uint _id) public view returns(uint){
-    //     require(getAddress(keccak256(abi.encodePacked("pool.for.id", _id))) == address(this), "wrong staking pool");
-    //     return getUint(keccak256(abi.encodePacked("deposit.amount", address(this), _id)));
-    //   }
-
-    //   function getTotalDeposits() public view returns(uint){
-    //     return getUint(keccak256(abi.encodePacked("total.deposits", address(this))));
-    //   }
-
     function owner()
         public
         view
