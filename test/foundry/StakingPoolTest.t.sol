@@ -402,7 +402,13 @@ function testFees(uint32 x, uint32 y) public {
         uint bobBalance = address(bob).balance;
         uint aliceShare = poolBalanceMinusFees * aliceDeposit / 32000000000000000000;
         uint bobShare = poolBalanceMinusFees - aliceShare;
-        console.log("feeRecipient.balance", address(feeRecipient). balance);
+        console.log("pool balance", address(stakingPool).balance);
+        console.log("alice share", aliceShare);
+        uint aliceDistShare = stakingPool.getDistributableShare(0);
+        uint bobDistShare = stakingPool.getDistributableShare(1);
+        assertApproxEqAbs(aliceShare, aliceDistShare, 3, "alice share does not match distibutable share");
+        assertApproxEqAbs(bobShare, bobDistShare, 3, "bob share does not match bob distributable share");
+        console.log("feeRecipient.balance", address(feeRecipient).balance);
  /*       stakingPool.distribute();
         uint frensClaimBalance = address(frensClaim).balance;
         assertEq(frensClaimBalance, aliceShare + bobShare, "frensClaim balance pre-claim wrong"); */

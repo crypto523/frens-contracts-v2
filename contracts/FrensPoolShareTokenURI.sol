@@ -68,7 +68,7 @@ contract FrensPoolShareTokenURI is IFrensPoolShareTokenURI {
             bytes(generateSVGofTokenById(id, stakingPool))
         );
 
-        return
+        /*return
             string(
                 abi.encodePacked(
                     "data:application/json;base64,",
@@ -111,7 +111,7 @@ contract FrensPoolShareTokenURI is IFrensPoolShareTokenURI {
                         )
                     )
                 )
-            );
+            );*/return "12345678";
     }
 
     function generateSVGofTokenById(

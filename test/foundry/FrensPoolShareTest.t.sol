@@ -263,7 +263,15 @@ contract MiscTest is Test {
       
     }
 
-
+  function testUnauthorizedAccess() public {
+    startHoax(alice);
+    vm.expectRevert("you are not allowed to mint");
+    frensPoolShare.mint(alice);
+    vm.expectRevert("AccessControl: account 0x00000000000000000000000000000000000a11ce is missing role 0x0000000000000000000000000000000000000000000000000000000000000000");
+    frensPoolShare.grantRole(keccak256("MINTER_ROLE"), alice);
+    vm.expectRevert("AccessControl: account 0x00000000000000000000000000000000000a11ce is missing role 0x0000000000000000000000000000000000000000000000000000000000000000");
+    frensPoolShare.grantRole(bytes32(0x00), alice);
+  }
 
 
 }

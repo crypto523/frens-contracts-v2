@@ -106,7 +106,7 @@ contract StakingPool is IStakingPool, Ownable{
         emit DepositToPool(msg.value, msg.sender, id);
     }
 
-    function addToDeposit(uint _id) external payable mustBeAccepting maxTotDep mustBeAccepting correctPoolOnly(_id){
+    function addToDeposit(uint _id) external payable mustBeAccepting maxTotDep correctPoolOnly(_id){
         require(frensPoolShare.exists(_id), "id does not exist"); //id must exist
         
         depositForId[_id] += msg.value;
@@ -300,8 +300,7 @@ contract StakingPool is IStakingPool, Ownable{
         if (address(this).balance == 0) return 0;
         uint frenDep = depositForId[_id];
         uint frenPastClaims = frenPastClaim[_id];
-        uint totFrenRewards = ((frenDep *
-            (address(this).balance + totalClaims)) / totalDeposits);
+        uint totFrenRewards = ((frenDep * (address(this).balance + totalClaims)) / totalDeposits);
         if (totFrenRewards == 0) return 0;
         uint amount = totFrenRewards - frenPastClaims;
         return amount;
@@ -314,7 +313,7 @@ contract StakingPool is IStakingPool, Ownable{
             uint share = _getShare(_id);
             uint feePercent = frensStorage.getUint(keccak256(abi.encodePacked("protocol.fee.percent")));
             if (feePercent > 0 && currentState != PoolState.exited) {
-                uint feeAmount = (feePercent * address(this).balance) / 100;
+                uint feeAmount = (feePercent * share) / 100;
                 share = share - feeAmount;
             }
             return share;
