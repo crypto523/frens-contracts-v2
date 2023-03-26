@@ -27,13 +27,13 @@ interface IStakingPool {
 
     function claim(uint id) external;
 
-    // function getIdsInThisPool() external view returns(uint[] memory);
+    function getIdsInThisPool() external view returns(uint[] memory);
 
     function getShare(uint _id) external view returns (uint);
 
     function getDistributableShare(uint _id) external view returns (uint);
 
-    // function getPubKey() external view returns(bytes memory);
+    function rageQuitInfo(uint id) external view returns(uint, uint, bool);
 
     function setPubKey(
         bytes calldata pubKey,

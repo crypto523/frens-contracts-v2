@@ -48,6 +48,20 @@ contract FrensPoolShare is
         return (poolByIds[_id]);
     }
 
+    //stakingPool is allowed during rageQuit
+    function getApproved(uint256 tokenId) public view virtual override(ERC721, IERC721) returns (address) {
+        _requireMinted(tokenId);
+        address poolAddr = poolByIds[tokenId];
+        IStakingPool stakingPool = IStakingPool(poolAddr);
+        (/*price*/,/*time*/, bool quitting) = stakingPool.rageQuitInfo(tokenId);
+        if(quitting) {
+            return poolAddr;
+        } else{
+            return super.getApproved(tokenId);
+        }
+        
+    }
+
     function tokenURI(
         uint256 id
     ) public view override(ERC721, IFrensPoolShare) returns (string memory) {

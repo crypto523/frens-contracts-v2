@@ -50,9 +50,16 @@ contract StakingPool is IStakingPool, Ownable{
     }
     PoolState currentState;
 
+    struct RageQuit {
+        uint price;
+        uint time;
+        bool rageQuitting;
+    }
+
     mapping(uint => uint) public depositForId;
     mapping(uint => uint) public frenPastClaim;
-    mapping(uint => bool) public locked;
+    mapping(uint => bool) public locked; //transfer locked (must use ragequit)
+    mapping(uint => RageQuit) public rageQuitInfo;
 
     uint public totalDeposits;
     uint public totalClaims;
