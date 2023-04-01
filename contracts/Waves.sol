@@ -1,6 +1,10 @@
 pragma solidity >=0.8.0 <0.9.0;
 //SPDX-License-Identifier: MIT
 
+///@title Waves
+///@author 0xWildhare and Frens Team
+///@dev returns the wavey lines in the artwork svg data as bytes
+
 contract Waves {
   function getWaves() external pure returns (bytes memory){
     return(

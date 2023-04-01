@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
+///@title Frens Meta Helper
+///@author 0xWildhare and Frens Team
+///@dev supprot functions for FrensArt and FrensPoolShareTokenURI
+
 import "./interfaces/IFrensMetaHelper.sol";
 import "./interfaces/IFrensPoolShare.sol";
 import "./interfaces/IENS.sol";
@@ -19,6 +23,7 @@ contract FrensMetaHelper is IFrensMetaHelper {
         frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
     }
 
+    ///@return the deposit for an NFT ID in string format
     function getDepositStringForId(
         uint id
     ) external view returns (string memory) {
@@ -26,6 +31,7 @@ contract FrensMetaHelper is IFrensMetaHelper {
         return getEthDecimalString(stakingPool.depositForId(id));
     }
 
+    ///@return an amount in wei formated as Eth with 3 decimal places, as a string
     function getEthDecimalString(
         uint amountInWei
     ) public pure returns (string memory) {
@@ -38,23 +44,11 @@ contract FrensMetaHelper is IFrensMetaHelper {
         return string.concat(leftOfDecimal, ".", rod);
     }
 
+    ///@return string version of pool address for an NFT ID
     function getPoolString(uint id) external view returns (string memory) {
         IStakingPool stakingPool = IStakingPool(frensPoolShare.getPoolById(id));
         return Strings.toHexString(uint160(address(stakingPool)), 20);
     }
-
-    // SSV specific
-    // function getOperatorsForPool(
-    //     address poolAddress
-    // ) external view returns (uint32[] memory, string memory) {
-    //     bytes memory poolPubKey = getBytes(
-    //         keccak256(abi.encodePacked("pubKey", poolAddress))
-    //     );
-    //     string memory pubKeyString = _iToHex(poolPubKey);
-    //     //ISSVRegistry ssvRegistry = ISSVRegistry(getAddress(keccak256(abi.encodePacked("external.contract.address", "SSVRegistry"))));
-    //     uint32[] memory poolOperators; // = ssvRegistry.getOperatorsByValidator(poolPubKey);
-    //     return (poolOperators, pubKeyString);
-    // }
 
     function _iToHex(
         bytes memory buffer
@@ -69,6 +63,8 @@ contract FrensMetaHelper is IFrensMetaHelper {
         return string(abi.encodePacked("0x", converted));
     }
 
+    ///@return does the address have an ENS set?
+    ///@return string of the ENS for the address
     function getEns(address addr) external view returns (bool, string memory) {
         IENS ens = IENS(address(frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "ENS")))));
         bytes32 node = _node(addr);

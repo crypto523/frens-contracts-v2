@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
 
+///@title Frens Pool Share Token URI
+///@author 0xWildhare and Frens team h/t scaffoldETH and budilGuidl
+///@dev returns the image and metadata for the NFT bytes64 encoded
+
 //import "hardhat/console.sol";
 import "./interfaces/IStakingPool.sol";
 import "./interfaces/IFrensPoolShare.sol";
@@ -24,7 +28,7 @@ contract FrensPoolShareTokenURI is IFrensPoolShareTokenURI {
         frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
     }
 
-    function tokenURI(uint256 id) public view returns (string memory) {
+    function tokenURI(uint256 id) public view returns(string memory) {
         require(frensPoolShare.exists(id), "id does not exist");
         IFrensMetaHelper frensMetaHelper = IFrensMetaHelper(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensMetaHelper"))));
         IStakingPool stakingPool = IStakingPool(frensPoolShare.getPoolById(id));
@@ -52,12 +56,6 @@ contract FrensPoolShareTokenURI is IFrensPoolShareTokenURI {
                 " Eth"
             )
         );
-        //    (bool ensExists, string memory ownerEns) = frensMetaHelper.getEns(
-        //        stakingPool.owner()
-        //    );
-        //    string memory creator = ensExists
-        //        ? ownerEns
-        //        : Strings.toHexString(uint160(stakingPool.owner()), 20);
 
         string memory creator = Strings.toHexString(
             uint160(stakingPool.owner()),
@@ -68,7 +66,7 @@ contract FrensPoolShareTokenURI is IFrensPoolShareTokenURI {
             bytes(generateSVGofTokenById(id, stakingPool))
         );
 
-        /*return
+        return
             string(
                 abi.encodePacked(
                     "data:application/json;base64,",
@@ -95,14 +93,6 @@ contract FrensPoolShareTokenURI is IFrensPoolShareTokenURI {
                                 poolState,
                                 '"},{"trait_type": "pool creator", "value": "',
                                 creator,
-                                // '"},{"trait_type": "operator1", "value": "',
-                                // poolOperators.length == 0 ? "Not Set" : uint(poolOperators[0]).toString(),
-                                // '"},{"trait_type": "operator2", "value": "',
-                                // poolOperators.length == 0 ? "Not Set" : uint(poolOperators[1]).toString(),
-                                // '"},{"trait_type": "operator3", "value": "',
-                                // poolOperators.length == 0 ? "Not Set" : uint(poolOperators[2]).toString(),
-                                // '"},{"trait_type": "operator4", "value": "',
-                                // poolOperators.length == 0 ? "Not Set" : uint(poolOperators[3]).toString(),
                                 '"}], "image": "',
                                 "data:image/svg+xml;base64,",
                                 image,
@@ -111,7 +101,7 @@ contract FrensPoolShareTokenURI is IFrensPoolShareTokenURI {
                         )
                     )
                 )
-            );*/return "12345678";
+            );
     }
 
     function generateSVGofTokenById(

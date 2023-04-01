@@ -4,7 +4,7 @@ pragma solidity >=0.8.0 <0.9.0;
 
 /// @title The primary persistent storage for Frens Staking Pools
 /// @author modified 04-Dec-2022 by 0xWildhare originally by David Rugendyke (h/t David and Rocket Pool!)
-/// this code is modified from the Rocket Pool RocketStorage contract all "Rocket" replaced with "Frens" - everything not used by frens has beed removed.
+/// @dev this code is modified from the Rocket Pool RocketStorage contract all "Rocket" replaced with "Frens" - everything not used by frens has beed removed.
 
 import "./interfaces/IFrensStorage.sol";
 

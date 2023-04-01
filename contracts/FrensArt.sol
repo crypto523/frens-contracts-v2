@@ -1,5 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0 <0.9.0;
+
+///@title Frens Art
+///@author 0xWildhare and Frens Team
+///@dev generates the svg artwork for the NFT by compiling strings from various contracts
+
 import "./interfaces/IFrensMetaHelper.sol";
 import "./interfaces/IPmFont.sol";
 import "./interfaces/IFrensLogo.sol";

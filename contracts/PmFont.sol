@@ -1,6 +1,10 @@
 pragma solidity >=0.8.0 <0.9.0;
 //SPDX-License-Identifier: MIT
 
+///@title Permanent Marker Font
+///@author 0xWildhare and Frens Team
+///@dev returns the styling for the permanent marker font in the svg Art as bytes
+
 contract PmFont {
   function getPmFont() external pure returns (bytes memory){
     return(

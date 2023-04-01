@@ -1,6 +1,10 @@
 pragma solidity >=0.8.0 <0.9.0;
 //SPDX-License-Identifier: MIT
 
+///@title Frens Logo
+///@author 0xWildhare and Frens Team
+///@dev returns the frens logo svg data as bytes
+
 contract FrensLogo {
   function getLogo() external pure returns (bytes memory){
     return(
