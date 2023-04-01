@@ -1,368 +1,300 @@
 pragma solidity >=0.8.0 <0.9.0;
 //SPDX-License-Identifier: MIT
 
-///@title Frens Staking Pool Contract
-///@author 0xWildhare and the FRENS team
-///@dev A new instance of this contract is created everytime a user makes a new pool
-
+//import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/interfaces/IERC721Enumerable.sol";
 import "./interfaces/IDepositContract.sol";
 import "./interfaces/IFrensPoolShare.sol";
 import "./interfaces/IStakingPool.sol";
+import "./interfaces/IFrensClaim.sol";
 import "./interfaces/IFrensArt.sol";
-import "./interfaces/IFrensOracle.sol";
-import "./interfaces/IFrensStorage.sol";
+import "./interfaces/IFrensPoolSetter.sol";
+import "./FrensBase.sol";
 
-contract StakingPool is IStakingPool, Ownable{
-    event Stake(address depositContractAddress, address caller);
-    event DepositToPool(uint amount, address depositer, uint id);
 
-    modifier noZeroValueTxn() {
-        require(msg.value > 0, "must deposit ether");
-        _;
-    }
+//should ownable be replaces with an equivalent in storage/base?
+contract StakingPool is IStakingPool, Ownable, FrensBase {
 
-    modifier maxTotDep() {
-        require(
-            msg.value + totalDeposits <= 32 ether,
-            "total deposits cannot be more than 32 Eth"
+  event Stake(address depositContractAddress, address caller);
+  event DepositToPool(uint amount, address depositer);
+  event ExecuteTransaction(
+            address sender,
+            address to,
+            uint value,
+            bytes data,
+            bytes result
         );
-        _;
+
+  enum State { awaitingValidatorInfo, acceptingDeposits, staked, exited }
+  State currentState;
+
+  IFrensPoolShare frensPoolShare;
+
+  constructor(address owner_, bool validatorLocked_, IFrensStorage frensStorage_) FrensBase(frensStorage_){
+    address frensPoolShareAddress = getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare")));
+    frensPoolShare = IFrensPoolShare(frensPoolShareAddress); //this hardcodes the nft contract to the pool
+    if(validatorLocked_){
+      currentState = State.awaitingValidatorInfo;
+    } else {
+      currentState = State.acceptingDeposits;
+    }
+    _transferOwnership(owner_);
+    version = 2;
+  }
+
+  function depositToPool() external payable {
+    require(currentState == State.acceptingDeposits, "not accepting deposits"); //state must be "aceptingDeposits"
+    require(msg.value != 0, "must deposit ether"); //cannot generate 0 value nft
+    require(getUint(keccak256(abi.encodePacked("total.deposits", address(this)))) + msg.value <= 32 ether, "total deposits cannot be more than 32 Eth"); //limit deposits to 32 eth
+    IFrensPoolSetter frensPoolSetter = IFrensPoolSetter(getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolSetter"))));
+    bool success = frensPoolSetter.depositToPool(msg.value);
+    assert(success);
+    frensPoolShare.mint(msg.sender); //mint nft
+    emit DepositToPool(msg.value,  msg.sender); 
+  }
+
+  function addToDeposit(uint _id) external payable {
+    require(frensPoolShare.exists(_id), "id does not exist"); //id must exist
+    require(getAddress(keccak256(abi.encodePacked("pool.for.id", _id))) == address(this), "wrong staking pool"); //id must be associated with this pool
+    require(currentState == State.acceptingDeposits, "not accepting deposits"); //pool must be "acceptingDeposits"
+    require(getUint(keccak256(abi.encodePacked("total.deposits", address(this)))) + msg.value <= 32 ether, "total deposits cannot be more than 32 Eth"); //limit deposits to 32 eth
+    IFrensPoolSetter frensPoolSetter = IFrensPoolSetter(getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolSetter"))));
+    bool success = frensPoolSetter.addToDeposit(_id, msg.value);
+    assert(success);
+  }
+
+  function stake(
+    bytes calldata pubKey,
+    bytes calldata withdrawal_credentials,
+    bytes calldata signature,
+    bytes32 deposit_data_root
+  ) external onlyOwner{
+    //if validator info has previously been entered, check that it is the same, then stake
+    if(getBool(keccak256(abi.encodePacked("validator.set", address(this))))){
+      bytes memory pubKeyFromStorage = getBytes(keccak256(abi.encodePacked("pubKey", address(this)))); 
+      require(keccak256(pubKeyFromStorage) == keccak256(pubKey), "pubKey mismatch");
+    }else { //if validator info has not previously been enteren, enter it, then stake
+      setPubKey(
+        pubKey,
+        withdrawal_credentials,
+        signature,
+        deposit_data_root
+      );
+    }
+    stake();
+  }
+
+  function stake() public {
+    require(address(this).balance >= 32 ether, "not enough eth"); 
+    require(currentState == State.acceptingDeposits, "wrong state");
+    require(getBool(keccak256(abi.encodePacked("validator.set", address(this)))), "validator not set");
+    uint value = 32 ether;
+    bytes memory pubKey = getBytes(keccak256(abi.encodePacked("pubKey", address(this))));
+    bytes memory withdrawal_credentials = getBytes(keccak256(abi.encodePacked("withdrawal_credentials", address(this))));
+    bytes memory signature = getBytes(keccak256(abi.encodePacked("signature", address(this))));
+    bytes32 deposit_data_root = getBytes32(keccak256(abi.encodePacked("deposit_data_root", address(this))));
+    address depositContractAddress = getAddress(keccak256(abi.encodePacked("external.contract.address", "DepositContract")));
+    currentState = State.staked;
+    IDepositContract(depositContractAddress).deposit{value: value}(pubKey, withdrawal_credentials, signature, deposit_data_root);
+    emit Stake(depositContractAddress, msg.sender);
+  }
+
+  function setPubKey(
+    bytes calldata pubKey,
+    bytes calldata withdrawal_credentials,
+    bytes calldata signature,
+    bytes32 deposit_data_root
+  ) public{
+    //get expected withdrawal_credentials based on contract address
+    bytes memory withdrawalCredFromAddr = _toWithdrawalCred(address(this));
+    //compare expected withdrawal_credentials to provided
+    require(keccak256(withdrawal_credentials) == keccak256(withdrawalCredFromAddr), "withdrawal credential mismatch");
+    if(getBool(keccak256(abi.encodePacked("validator.locked", address(this))))){
+      require(currentState == State.awaitingValidatorInfo, "wrong state");
+      assert(!getBool(keccak256(abi.encodePacked("validator.set", address(this))))); //this should never fail
+      currentState = State.acceptingDeposits;
+    }
+    require(currentState == State.acceptingDeposits, "wrong state");
+    IFrensPoolSetter frensPoolSetter = IFrensPoolSetter(getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolSetter"))));
+    bool success = frensPoolSetter.setPubKey(pubKey, withdrawal_credentials, signature, deposit_data_root);
+    assert(success);
+  }
+
+  function arbitraryContractCall(
+        address payable to,
+        uint256 value,
+        bytes calldata data
+    ) external onlyOwner returns (bytes memory) {
+      require(getBool(keccak256(abi.encodePacked("allowed.contract", to))), "contract not allowed");
+      require(!getBool(keccak256(abi.encodePacked("contract.exists", to))), "cannot call FRENS contracts"); //as an extra insurance incase a contract with write privledges somehow gets whitelisted.
+      (bool success, bytes memory result) = to.call{value: value}(data);
+      require(success, "txn failed");
+      emit ExecuteTransaction(
+          msg.sender,
+          to,
+          value,
+          data,
+          result
+      );
+      return result;
     }
 
-    modifier mustBeAccepting() {
-        require(
-            currentState == PoolState.acceptingDeposits,
-            "not accepting deposits"
-        );
-        _;
-    }
+  function withdraw(uint _id, uint _amount) external {
+    require(currentState == State.acceptingDeposits, "cannot withdraw once staked");//TODO: this may need to be more restrictive
+    require(msg.sender == frensPoolShare.ownerOf(_id), "not the owner");
+    require(getUint(keccak256(abi.encodePacked("deposit.amount", _id))) >= _amount, "not enough deposited");
+    IFrensPoolSetter frensPoolSetter = IFrensPoolSetter(getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolSetter"))));
+    bool success = frensPoolSetter.withdraw(_id, _amount);
+    assert(success);
+    payable(msg.sender).transfer(_amount);
+  }
 
-    modifier correctPoolOnly(uint _id) {
-        require(
-            frensPoolShare.poolByIds(_id) == address(this),
-            "wrong staking pool for id"
-        );
-        _;
-    }
+  //TODO: think about other options for distribution
+  //TODO: should this include an option to swap for SSV and pay operators?
+  //TODO: is this where we extract fes?
+  function distribute() public {
+    require(currentState != State.acceptingDeposits, "use withdraw when not staked");
+    _distribute();
+      }
 
-    enum PoolState {
-        awaitingValidatorInfo,
-        acceptingDeposits,
-        staked,
-        exited
+  function _distribute() internal {
+    uint contractBalance = address(this).balance;
+    require(contractBalance > 100, "minimum of 100 wei to distribute");
+    IFrensClaim frensClaim = IFrensClaim(getAddress(keccak256(abi.encodePacked("contract.address", "FrensClaim"))));
+    uint[] memory idsInPool = getIdsInThisPool();
+    for(uint i=0; i<idsInPool.length; i++) {
+      uint id = idsInPool[i];
+      address tokenOwner = frensPoolShare.ownerOf(id);
+      uint share = _getShare(id, contractBalance);
+      IFrensPoolSetter frensPoolSetter = IFrensPoolSetter(getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolSetter"))));
+      bool success = frensPoolSetter.distribute(tokenOwner, share);
+      assert(success);
     }
-    PoolState currentState;
+    payable(address(frensClaim)).transfer(contractBalance); //dust -> claim contract instead of pools - the gas to calculate and leave dust in pool >> lifetime expected dust/pool
+
+  }
+
+  function claim() external {
+    claim(msg.sender);
+  }
+
+  function claim(address claimant) public {
+    IFrensClaim frensClaim = IFrensClaim(getAddress(keccak256(abi.encodePacked("contract.address", "FrensClaim"))));
+    frensClaim.claim(claimant);
+  }
+
+  function distributeAndClaim() external {
+    distribute();
+    claim(msg.sender);
+  }
+
+  function distributeAndClaimAll() external {
+    distribute();
+    uint[] memory idsInPool = getIdsInThisPool();
+    for(uint i=0; i<idsInPool.length; i++) { //this is expensive for large pools
+      uint id = idsInPool[i];
+      address tokenOwner = frensPoolShare.ownerOf(id);
+      claim(tokenOwner);
+    }
+  }
+
+  function exitPool() external onlyOwner{
+    if(address(this).balance > 100){
+      _distribute(); 
+    }
+    currentState = State.exited;
+
+    //TODO: what else needs to be in here (probably a limiting modifier and/or some requires) maybe add an arbitrary call to an external contract is enabled?
+    //TODO: is this where we extract fees?
     
-    //this is unused in this version of the system
-    //it must be included to avoid requiring an update to FrensPoolShare when rageQuit is added
-    struct RageQuit {
-        uint price;
-        uint time;
-        bool rageQuitting;
-    }
+  }
 
-    //maps the ID for each FrensPoolShare NFT in the pool to the deposit for that share
-    mapping(uint => uint) public depositForId;
-    //maps each ID to the rewards it has already claimed (used in calculating the claimable rewards)
-    mapping(uint => uint) public frenPastClaim;
-    //this is unused in this version of the system
-    //it must be included to avoid requiring an update to FrensPoolShare when rageQuit is added
-    mapping(uint => bool) public locked; //transfer locked (must use ragequit)
-    //this is unused in this version of the system
-    //it must be included to avoid requiring an update to FrensPoolShare when rageQuit is added
-    mapping(uint => RageQuit) public rageQuitInfo;
-
-    //total eth deposited to pool by users (does not include attestation or block rewards)
-    uint public totalDeposits;
-    //total amount of rewards claimed from pool (used in calculating the claimable rewards)
-    uint public totalClaims;
-    //these are the ids which have deposits in this pool
-    uint[] public idsInPool;
-
-    //this is set in the constructor and requires the validator public key and other validator info be set before deposits can be made
-    //also, if the validator is locked, once set, the pool owner cnnot change the validator pubkey and other info
-    bool public validatorLocked;
-    //this is unused in this version of the system
-    //it must be included to avoid requiring an update to FrensPoolShare when rageQuit is added
-    bool public transferLocked;
-    //set as true once the validator info has been set for the pool
-    bool public validatorSet;
-
-    //validator public key for pool
-    bytes public pubKey;
-    //validator withdrawal credentials - must be set to pool address
-    bytes public withdrawal_credentials;
-    //bls signature for validator
-    bytes public signature;
-    //deposit data root for validator
-    bytes32 public deposit_data_root;
-
-    IFrensPoolShare public frensPoolShare;
-    IFrensArt public artForPool;
-    IFrensStorage public frensStorage;
-
-    /**@dev when the pool is deploied by the factory, the owner, art contract, 
-    *storage contract, and if the validator is locked are all set. 
-    *The pool state is set according to whether or not the validator is locked.
+  function rageQuit(uint id) public {
+    require(msg.sender == frensPoolShare.ownerOf(id), "not the owner");
+    /*this needs logic to set a price, 
+      *allow this contract to transfer the NFT, 
+      *allow a purchase (will require a method), 
+      *and start a timer,
+      *once the timer has expired, the owner can call a method that has the following code to unlock it
     */
-    constructor(
-        address owner_,
-        bool validatorLocked_,
-        IFrensStorage frensStorage_
-    ) {
-        frensStorage = frensStorage_;
-        artForPool = IFrensArt(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensArt"))));
-        frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
-        validatorLocked = validatorLocked_;
-        if (validatorLocked) {
-            currentState = PoolState.awaitingValidatorInfo;
-        } else {
-            currentState = PoolState.acceptingDeposits;
-        }
-        _transferOwnership(owner_);
+    IFrensPoolSetter frensPoolSetter = IFrensPoolSetter(getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolSetter"))));
+    bool success = frensPoolSetter.unlockTransfer(id);
+    assert(success);
+  }
+
+  //getters
+
+  function _getShare(uint _id, uint _contractBalance) internal view returns(uint) {
+    uint depAmt = getUint(keccak256(abi.encodePacked("deposit.amount", _id)));
+    uint totDeps = getUint(keccak256(abi.encodePacked("total.deposits", address(this))));
+    if(depAmt == 0) return 0;
+    uint calcedShare =  _contractBalance * depAmt / totDeps;
+    if(calcedShare > 1){
+      return(calcedShare - 1); //steal 1 wei to avoid rounding errors drawing balance negative
+    }else return 0;
+  }
+
+  function getIdsInThisPool() public view returns(uint[] memory) {
+    return getArray(keccak256(abi.encodePacked("ids.in.pool", address(this))));
+  }
+
+  function getShare(uint _id) public view returns(uint) {
+    uint contractBalance = address(this).balance;
+    return _getShare(_id, contractBalance);
+  }
+
+  function getDistributableShare(uint _id) public view returns(uint) {
+    if(currentState == State.acceptingDeposits) {
+      return 0;
+    } else {
+      return(getShare(_id));
     }
+  }
 
-    ///@notice This allows a user to deposit funds to the pool, and recieve an NFT representing their share
-    ///@dev recieves funds and returns FrenspoolShare NFT
-    function depositToPool()
-        external
-        payable
-        noZeroValueTxn
-        mustBeAccepting
-        maxTotDep
-    {
-        uint id = frensPoolShare.totalSupply();
-        depositForId[id] = msg.value;
-        totalDeposits += msg.value;
-        idsInPool.push(id);
-        frenPastClaim[id] = 1; //this avoids future rounding errors in rewardclaims
-        locked[id] = transferLocked;
-        frensPoolShare.mint(msg.sender); //mint nft
-        emit DepositToPool(msg.value, msg.sender, id);
-    }
+  function getPubKey() public view returns(bytes memory){
+    return getBytes(keccak256(abi.encodePacked("validator.public.key", address(this))));
+  }
 
-    ///@notice allows a user to add funds to an existing NFT ID
-    ///@dev recieves funds and increases deposit for a FrensPoolShare ID
-    function addToDeposit(uint _id) external payable mustBeAccepting maxTotDep correctPoolOnly(_id){
-        require(frensPoolShare.exists(_id), "id does not exist"); //id must exist
-        
-        depositForId[_id] += msg.value;
-        totalDeposits += msg.value;
-    }
+  function getState() public view returns(string memory){
+    if(currentState == State.awaitingValidatorInfo) return "awaiting validator info";
+    if(currentState == State.staked) return "staked";
+    if(currentState == State.acceptingDeposits) return "accepting deposits";
+    if(currentState == State.exited) return "exited";
+    return "state failure"; //should never happen
+  }
 
-    ///@dev stakes 32 ETH from this pool to the deposit contract, accepts validator info
-    function stake(
-        bytes calldata _pubKey,
-        bytes calldata _withdrawal_credentials,
-        bytes calldata _signature,
-        bytes32 _deposit_data_root
-    ) external onlyOwner {
-        //if validator info has previously been entered, check that it is the same, then stake
-        if (validatorSet) {
-            require(keccak256(_pubKey) == keccak256(pubKey), "pubKey mismatch");
-        } else {
-            //if validator info has not previously been entered, enter it, then stake
-            _setPubKey(
-                _pubKey,
-                _withdrawal_credentials,
-                _signature,
-                _deposit_data_root
-            );
-        }
-        _stake();
-    }
+  function getDepositAmount(uint _id) public view returns(uint){
+    return getUint(keccak256(abi.encodePacked("deposit.amount", _id)));
+  }
 
-    ///@dev stakes 32 ETH from this pool to the deposit contract. validator info must already be entered
-    function stake() external onlyOwner {
-        _stake();
-    }
+  function getTotalDeposits() public view returns(uint){
+    return getUint(keccak256(abi.encodePacked("total.deposits", address(this))));
+  }
 
-    function _stake() internal {
-        require(address(this).balance >= 32 ether, "not enough eth");
-        require(totalDeposits == 32 ether, "not enough deposits");
-        require(currentState == PoolState.acceptingDeposits, "wrong state");
-        require(validatorSet, "validator not set");
-        
-        address depositContractAddress = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "DepositContract")));
-        currentState = PoolState.staked;
-        IDepositContract(depositContractAddress).deposit{value: 32 ether}(
-            pubKey,
-            withdrawal_credentials,
-            signature,
-            deposit_data_root
-        );
-        emit Stake(depositContractAddress, msg.sender);
-    }
+  function owner() public view override(IStakingPool, Ownable) returns (address){
+    return super.owner();
+  }
 
-    ///@dev sets the validator info required when depositing to the deposit contract
-    function setPubKey(
-        bytes calldata _pubKey,
-        bytes calldata _withdrawal_credentials,
-        bytes calldata _signature,
-        bytes32 _deposit_data_root
-    ) external onlyOwner {
-        _setPubKey(
-            _pubKey,
-            _withdrawal_credentials,
-            _signature,
-            _deposit_data_root
-        );
-    }
+  function _toWithdrawalCred(address a) private pure returns (bytes memory) {
+    uint uintFromAddress = uint256(uint160(a));
+    bytes memory withdralDesired = abi.encodePacked(uintFromAddress + 0x0100000000000000000000000000000000000000000000000000000000000000);
+    return withdralDesired;
+  }
 
-    function _setPubKey(
-        bytes calldata _pubKey,
-        bytes calldata _withdrawal_credentials,
-        bytes calldata _signature,
-        bytes32 _deposit_data_root
-    ) internal {
-        //get expected withdrawal_credentials based on contract address
-        bytes memory withdrawalCredFromAddr = _toWithdrawalCred(address(this));
-        //compare expected withdrawal_credentials to provided
-        require(
-            keccak256(_withdrawal_credentials) ==
-                keccak256(withdrawalCredFromAddr),
-            "withdrawal credential mismatch"
-        );
-        if (validatorLocked) {
-            require(currentState == PoolState.awaitingValidatorInfo, "wrong state");
-            assert(!validatorSet); //this should never fail
-            currentState = PoolState.acceptingDeposits;
-        }
-        require(currentState == PoolState.acceptingDeposits, "wrong state");
-        pubKey = _pubKey;
-        withdrawal_credentials = _withdrawal_credentials;
-        signature = _signature;
-        deposit_data_root = _deposit_data_root;
-        validatorSet = true;
-    }
+  //setters
 
-    ///@notice To withdraw funds previously deposited - ONLY works before the funds are staked. Use Claim to get rewards.
-    ///@dev allows user to withdraw funds if they have not yet been deposited to the deposit contract with the Stake method
-    function withdraw(uint _id, uint _amount) external mustBeAccepting {
-        require(msg.sender == frensPoolShare.ownerOf(_id), "not the owner");
-        require(depositForId[_id] >= _amount, "not enough deposited");
-        depositForId[_id] -= _amount;
-        totalDeposits -= _amount;
-        payable(msg.sender).transfer(_amount);
-    }
+  function setArt(address newArtContract) external onlyOwner { //do we want the owner to be able to change the art on a whim?
+    IFrensArt newFrensArt = IFrensArt(newArtContract);
+    string memory newArt = newFrensArt.renderTokenById(1);
+    require(bytes(newArt).length != 0, "invalid art contract");
+    IFrensPoolSetter frensPoolSetter = IFrensPoolSetter(getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolSetter"))));
+    bool success = frensPoolSetter.setArt(newArtContract);
+    assert(success);
+  }
 
-    ///@notice allows user to claim their portion of the rewards
-    ///@dev calculates the rewards due to `_id` and sends them to the owner of `_id`
-    function claim(uint _id) external correctPoolOnly(_id){
-        require(
-            currentState != PoolState.acceptingDeposits,
-            "use withdraw when not staked"
-        );
-        require(
-            address(this).balance > 100,
-            "must be greater than 100 wei to claim"
-        );
-        //has the validator exited?
-        bool exited;
-        if (currentState != PoolState.exited) {
-            IFrensOracle frensOracle = IFrensOracle(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensOracle"))));
-            exited = frensOracle.checkValidatorState(address(this));
-        } else exited = true;
-        //get share for id
-        uint amount = _getShare(_id);
-        //claim
-        frenPastClaim[_id] += amount;
-        totalClaims += amount;
-        //fee? not applied to exited
-        uint feePercent = frensStorage.getUint(keccak256(abi.encodePacked("protocol.fee.percent")));
-        if (feePercent > 0 && !exited) {
-            address feeRecipient = frensStorage.getAddress(keccak256(abi.encodePacked("protocol.fee.recipient")));
-            uint feeAmount = (feePercent * amount) / 100;
-            if (feeAmount > 1) payable(feeRecipient).transfer(feeAmount - 1); //-1 wei to avoid rounding error issues
-            amount = amount - feeAmount;
-        }
-        bool success = payable(frensPoolShare.ownerOf(_id)).send(amount);
-        assert(success);
-    }
+  // to support receiving ETH by default
+  receive() external payable {}
 
-    ///@dev this marks the pool as exited, but does not affect the functionality of amy methods, except that an exited pool no longer extracts fees
-    function exitPool() external {
-        require(msg.sender == address(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensOracle")))), "must be called by oracle");
-        currentState = PoolState.exited;
-    }
-
-    //getters
-
-    function getIdsInThisPool() public view returns(uint[] memory) {
-      return idsInPool;
-    }
-
-    ///@return the share of the validator rewards climable by `_id`
-    function getShare(uint _id) public view correctPoolOnly(_id) returns (uint) {
-        return _getShare(_id);
-    }
-
-    function _getShare(uint _id) internal view returns (uint) {
-        if (address(this).balance == 0) return 0;
-        uint frenDep = depositForId[_id];
-        uint frenPastClaims = frenPastClaim[_id];
-        uint totFrenRewards = ((frenDep * (address(this).balance + totalClaims)) / totalDeposits);
-        if (totFrenRewards == 0) return 0;
-        uint amount = totFrenRewards - frenPastClaims;
-        return amount;
-    }
-
-    ///@return the share of the validator rewards climable by `_id` minus fees. Returns 0 if pool is still accepting deposits
-    ///@dev this is used for the traits in the NFT
-    function getDistributableShare(uint _id) public view returns (uint) {
-        if (currentState == PoolState.acceptingDeposits) {
-            return 0;
-        } else {
-            uint share = _getShare(_id);
-            uint feePercent = frensStorage.getUint(keccak256(abi.encodePacked("protocol.fee.percent")));
-            if (feePercent > 0 && currentState != PoolState.exited) {
-                uint feeAmount = (feePercent * share) / 100;
-                share = share - feeAmount;
-            }
-            return share;
-        }
-    }
-
-    ///@return pool state
-    function getState() public view returns (string memory) {
-        if (currentState == PoolState.awaitingValidatorInfo)
-            return "awaiting validator info";
-        if (currentState == PoolState.staked) return "staked";
-        if (currentState == PoolState.acceptingDeposits)
-            return "accepting deposits";
-        if (currentState == PoolState.exited) return "exited";
-        return "state failure"; //should never happen
-    }
-
-    function owner()
-        public
-        view
-        override(IStakingPool, Ownable)
-        returns (address)
-    {
-        return super.owner();
-    }
-
-    function _toWithdrawalCred(address a) private pure returns (bytes memory) {
-        uint uintFromAddress = uint256(uint160(a));
-        bytes memory withdralDesired = abi.encodePacked(
-            uintFromAddress +
-                0x0100000000000000000000000000000000000000000000000000000000000000
-        );
-        return withdralDesired;
-    }
-
-    ///@dev allows pool owner to change the art for the NFTs in the pool
-    function setArt(IFrensArt newArtContract) external onlyOwner {
-        IFrensArt newFrensArt = newArtContract;
-        string memory newArt = newFrensArt.renderTokenById(1);
-        require(bytes(newArt).length != 0, "invalid art contract");
-        artForPool = newArtContract;
-    }
-
-    // to support receiving ETH by default
-    receive() external payable {}
-
-    fallback() external payable {}
+  fallback() external payable {}
 }
