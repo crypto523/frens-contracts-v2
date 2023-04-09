@@ -142,11 +142,16 @@ contract StakingPool is IStakingPool, Ownable{
         emit DepositToPool(msg.value, msg.sender, id);
     }
 
-    ///@notice allows a user to add funds to an existing NFT ID
+    ///@notice allows user to add funds to an existing NFT ID
     ///@dev recieves funds and increases deposit for a FrensPoolShare ID
-    function addToDeposit(uint _id) external payable mustBeAccepting maxTotDep correctPoolOnly(_id){
+    function addToDeposit(uint _id) 
+        external 
+        payable 
+        mustBeAccepting 
+        maxTotDep 
+        correctPoolOnly(_id)
+    {
         require(frensPoolShare.exists(_id), "id does not exist"); //id must exist
-        
         depositForId[_id] += msg.value;
         totalDeposits += msg.value;
     }

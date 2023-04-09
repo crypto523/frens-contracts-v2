@@ -3,7 +3,7 @@ pragma solidity >=0.8.0 <0.9.0;
 
 ///@title Frens Meta Helper
 ///@author 0xWildhare and Frens Team
-///@dev supprot functions for FrensArt and FrensPoolShareTokenURI
+///@dev support functions for FrensArt and FrensPoolShareTokenURI
 
 import "./interfaces/IFrensMetaHelper.sol";
 import "./interfaces/IFrensPoolShare.sol";
