@@ -63,6 +63,18 @@ contract FrensStorage is IFrensStorage{
         emit GuardianChanged(oldGuardian, guardian);
     }
 
+        // Confirms burning guardianship
+    function burnKeys() external override onlyGuardian{
+        // Check that new guardian has been set to zero address (are you sure?)
+        require(address(0) == newGuardian, "must set guardian to 0x00 first");
+        // Store old guardian for event
+        address oldGuardian = guardian;
+        // delete guardian 
+        delete guardian;
+        // Emit event
+        emit GuardianChanged(oldGuardian, guardian);
+    }
+
 
     /// @param _key The key for the record
     function getAddress(bytes32 _key) override external view returns (address r) {

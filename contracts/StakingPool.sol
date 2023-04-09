@@ -142,16 +142,11 @@ contract StakingPool is IStakingPool, Ownable{
         emit DepositToPool(msg.value, msg.sender, id);
     }
 
-    ///@notice allows user to add funds to an existing NFT ID
+    ///@notice allows a user to add funds to an existing NFT ID
     ///@dev recieves funds and increases deposit for a FrensPoolShare ID
-    function addToDeposit(uint _id) 
-        external 
-        payable 
-        mustBeAccepting 
-        maxTotDep 
-        correctPoolOnly(_id)
-    {
+    function addToDeposit(uint _id) external payable mustBeAccepting maxTotDep correctPoolOnly(_id){
         require(frensPoolShare.exists(_id), "id does not exist"); //id must exist
+        
         depositForId[_id] += msg.value;
         totalDeposits += msg.value;
     }
@@ -249,7 +244,7 @@ contract StakingPool is IStakingPool, Ownable{
         require(depositForId[_id] >= _amount, "not enough deposited");
         depositForId[_id] -= _amount;
         totalDeposits -= _amount;
-        bool success = payable(msg.sender).send(_amount);
+        (bool success, /*return data*/) = frensPoolShare.ownerOf(_id).call{value: _amount}("");
         assert(success);
     }
 
@@ -281,12 +276,12 @@ contract StakingPool is IStakingPool, Ownable{
             address feeRecipient = frensStorage.getAddress(keccak256(abi.encodePacked("protocol.fee.recipient")));
             uint feeAmount = (feePercent * amount) / 100;
             if (feeAmount > 1){ 
-                bool success1 = payable(feeRecipient).send(feeAmount - 1); //-1 wei to avoid rounding error issues
+                (bool success1, /*return data*/) = feeRecipient.call{value: feeAmount - 1}(""); //-1 wei to avoid rounding error issues
                 assert(success1);
             }
             amount = amount - feeAmount;
         }
-        bool success2 = payable(frensPoolShare.ownerOf(_id)).send(amount);
+        (bool success2, /*return data*/) = frensPoolShare.ownerOf(_id).call{value: amount}("");
         assert(success2);
     }
 

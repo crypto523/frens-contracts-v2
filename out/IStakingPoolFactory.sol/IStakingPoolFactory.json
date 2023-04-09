@@ -126,20 +126,20 @@
   },
   "ast": {
     "absolutePath": "contracts/interfaces/IStakingPoolFactory.sol",
-    "id": 3076,
+    "id": 3435,
     "exportedSymbols": {
       "IFrensArt": [
-        2734
+        3066
       ],
       "IStakingPoolFactory": [
-        3075
+        3434
       ]
     },
     "nodeType": "SourceUnit",
     "src": "0:289:23",
     "nodes": [
       {
-        "id": 3064,
+        "id": 3423,
         "nodeType": "PragmaDirective",
         "src": "0:31:23",
         "nodes": [],
@@ -154,25 +154,25 @@
         ]
       },
       {
-        "id": 3065,
+        "id": 3424,
         "nodeType": "ImportDirective",
         "src": "64:25:23",
         "nodes": [],
         "absolutePath": "contracts/interfaces/IFrensArt.sol",
         "file": "./IFrensArt.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 3076,
-        "sourceUnit": 2735,
+        "scope": 3435,
+        "sourceUnit": 3067,
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "id": 3075,
+        "id": 3434,
         "nodeType": "ContractDefinition",
         "src": "91:197:23",
         "nodes": [
           {
-            "id": 3074,
+            "id": 3433,
             "nodeType": "FunctionDefinition",
             "src": "126:159:23",
             "nodes": [],
@@ -183,17 +183,17 @@
             "name": "create",
             "nameLocation": "135:6:23",
             "parameters": {
-              "id": 3070,
+              "id": 3429,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3067,
+                  "id": 3426,
                   "mutability": "mutable",
                   "name": "_owner",
                   "nameLocation": "155:6:23",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3074,
+                  "scope": 3433,
                   "src": "147:14:23",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -202,7 +202,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 3066,
+                    "id": 3425,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "147:7:23",
@@ -216,12 +216,12 @@
                 },
                 {
                   "constant": false,
-                  "id": 3069,
+                  "id": 3428,
                   "mutability": "mutable",
                   "name": "_validatorLocked",
                   "nameLocation": "173:16:23",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3074,
+                  "scope": 3433,
                   "src": "168:21:23",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -230,7 +230,7 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 3068,
+                    "id": 3427,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
                     "src": "168:4:23",
@@ -245,17 +245,17 @@
               "src": "141:117:23"
             },
             "returnParameters": {
-              "id": 3073,
+              "id": 3432,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3072,
+                  "id": 3431,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3074,
+                  "scope": 3433,
                   "src": "276:7:23",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -264,7 +264,7 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 3071,
+                    "id": 3430,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
                     "src": "276:7:23",
@@ -279,7 +279,7 @@
               ],
               "src": "275:9:23"
             },
-            "scope": 3075,
+            "scope": 3434,
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -292,11 +292,11 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "linearizedBaseContracts": [
-          3075
+          3434
         ],
         "name": "IStakingPoolFactory",
         "nameLocation": "101:19:23",
-        "scope": 3076,
+        "scope": 3435,
         "usedErrors": []
       }
     ],
