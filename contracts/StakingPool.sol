@@ -264,6 +264,9 @@ contract StakingPool is IStakingPool, Ownable{
         if (currentState != PoolState.exited) {
             IFrensOracle frensOracle = IFrensOracle(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensOracle"))));
             exited = frensOracle.checkValidatorState(address(this));
+            if (exited && currentState == PoolState.staked ){
+                currentState = PoolState.exited;
+            }
         } else exited = true;
         //get share for id
         uint amount = _getShare(_id);
@@ -283,12 +286,6 @@ contract StakingPool is IStakingPool, Ownable{
         }
         (bool success2, /*return data*/) = frensPoolShare.ownerOf(_id).call{value: amount}("");
         assert(success2);
-    }
-
-    ///@dev this marks the pool as exited, but does not affect the functionality of amy methods, except that an exited pool no longer extracts fees
-    function exitPool() external {
-        require(msg.sender == address(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensOracle")))), "must be called by oracle");
-        currentState = PoolState.exited;
     }
 
     //getters

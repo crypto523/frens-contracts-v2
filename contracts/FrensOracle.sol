@@ -21,12 +21,9 @@ contract FrensOracle is IFrensOracle {
     }
 
     ///@dev called by the staking pool to check if the validator is exiting
-    function checkValidatorState(address poolAddress) external returns(bool) {
+    function checkValidatorState(address poolAddress) external view returns(bool) {
         IStakingPool pool = IStakingPool(poolAddress);
         bytes memory pubKey = pool.pubKey();
-        if(isExiting[pubKey]){
-            pool.exitPool();
-        }
         return isExiting[pubKey];
     }
 

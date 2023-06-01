@@ -55,5 +55,4 @@ interface IStakingPool {
 
     function stake() external;
 
-    function exitPool() external;
 }
