@@ -16,6 +16,16 @@ import "./interfaces/IFrensStorage.sol";
 contract StakingPool is IStakingPool, Ownable{
     event Stake(address depositContractAddress, address caller);
     event DepositToPool(uint amount, address depositer, uint id);
+    event AddToDeposit(uint id, uint ammount);
+    event SetPubKey(
+        bytes _pubKey,
+        bytes _withdrawal_credentials,
+        bytes _signature,
+        bytes32 _deposit_data_root
+    );
+    event Withdraw(uint id, uint amount, address recipient);
+    event Claim(uint id, uint amount, address recipient);
+
 
     modifier noZeroValueTxn() {
         require(msg.value > 0, "must deposit ether");
@@ -52,7 +62,7 @@ contract StakingPool is IStakingPool, Ownable{
         staked,
         exited
     }
-    PoolState currentState;
+    PoolState public currentState;
     
     //this is unused in this version of the system
     //it must be included to avoid requiring an update to FrensPoolShare when rageQuit is added
@@ -79,6 +89,8 @@ contract StakingPool is IStakingPool, Ownable{
     uint public totalClaims;
     //these are the ids which have deposits in this pool
     uint[] public idsInPool;
+    //fee % for protocol (extracted when claiming rewards from un-exited pool)
+    uint public feePercent;
 
     //this is set in the constructor and requires the validator public key and other validator info be set before deposits can be made
     //also, if the validator is locked, once set, the pool owner cnnot change the validator pubkey and other info
@@ -98,6 +110,9 @@ contract StakingPool is IStakingPool, Ownable{
     //deposit data root for validator
     bytes32 public deposit_data_root;
 
+    //feeRecipient address will be the FRENS multisig until there is a dao
+    address public feeRecipient;
+
     IFrensPoolShare public frensPoolShare;
     IFrensArt public artForPool;
     IFrensStorage public frensStorage;
@@ -112,11 +127,22 @@ contract StakingPool is IStakingPool, Ownable{
         bool validatorLocked_,
         IFrensStorage frensStorage_
     ) {
+        require(owner_ != address(0), "FRENS contract error no owner address set");
+        require(address(frensStorage_) != address(0), "FRENS contract error no storage address set");
         frensStorage = frensStorage_;
-        artForPool = IFrensArt(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensArt"))));
-        frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
+        address artAddress = frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensArt")));
+        require(artAddress != address(0), "FRENS contract error no art address set");
+        artForPool = IFrensArt(artAddress);
+        address frensPoolShareAddress = frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare")));
+        require(artAddress != address(0), "FRENS contract error no pool share address set");
+        frensPoolShare = IFrensPoolShare(frensPoolShareAddress);
         address depositContractAddress = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "DepositContract")));
+        require(depositContractAddress != address(0), "FRENS contract error no Deposit contract set");
         depositContract = IDepositContract(depositContractAddress);
+        feePercent = frensStorage.getUint(keccak256(abi.encodePacked("protocol.fee.percent")));
+        require(feePercent <= 10, "FRENS contract error fee too high");
+        feeRecipient = frensStorage.getAddress(keccak256(abi.encodePacked("protocol.fee.recipient")));
+        require(feeRecipient != address(0), "FRENS contract error no fee recipient set");
         validatorLocked = validatorLocked_;
         if (validatorLocked) {
             currentState = PoolState.awaitingValidatorInfo;
@@ -149,9 +175,9 @@ contract StakingPool is IStakingPool, Ownable{
     ///@dev recieves funds and increases deposit for a FrensPoolShare ID
     function addToDeposit(uint _id) external payable mustBeAccepting maxTotDep correctPoolOnly(_id){
         require(frensPoolShare.exists(_id), "id does not exist"); //id must exist
-         
         depositForId[_id] += msg.value;
         totalDeposits += msg.value;
+        emit AddToDeposit(_id, msg.value);
     }
 
     ///@dev stakes 32 ETH from this pool to the deposit contract, accepts validator info
@@ -236,6 +262,7 @@ contract StakingPool is IStakingPool, Ownable{
         signature = _signature;
         deposit_data_root = _deposit_data_root;
         validatorSet = true;
+        emit SetPubKey(_pubKey, _withdrawal_credentials, _signature, _deposit_data_root);
     }
 
     ///@notice To withdraw funds previously deposited - ONLY works before the funds are staked. Use Claim to get rewards.
@@ -247,6 +274,7 @@ contract StakingPool is IStakingPool, Ownable{
         totalDeposits -= _amount;
         (bool success, /*return data*/) = frensPoolShare.ownerOf(_id).call{value: _amount}("");
         assert(success);
+        emit Withdraw(_id, _amount, msg.sender);
     }
 
     ///@notice allows user to claim their portion of the rewards
@@ -275,9 +303,7 @@ contract StakingPool is IStakingPool, Ownable{
         frenPastClaim[_id] += amount;
         totalClaims += amount;
         //fee? not applied to exited
-        uint feePercent = frensStorage.getUint(keccak256(abi.encodePacked("protocol.fee.percent")));
         if (feePercent > 0 && !exited) {
-            address feeRecipient = frensStorage.getAddress(keccak256(abi.encodePacked("protocol.fee.recipient")));
             uint feeAmount = (feePercent * amount) / 100;
             if (feeAmount > 1){ 
                 (bool success1, /*return data*/) = feeRecipient.call{value: feeAmount - 1}(""); //-1 wei to avoid rounding error issues
@@ -285,18 +311,20 @@ contract StakingPool is IStakingPool, Ownable{
             }
             amount = amount - feeAmount;
         }
-        (bool success2, /*return data*/) = frensPoolShare.ownerOf(_id).call{value: amount}("");
+        address recipient = frensPoolShare.ownerOf(_id);
+        (bool success2, /*return data*/) = payable(recipient).call{value: amount}("");
         assert(success2);
+        emit Claim(_id, amount, recipient);
     }
 
     //getters
 
-    function getIdsInThisPool() public view returns(uint[] memory) {
+    function getIdsInThisPool() external view returns(uint[] memory) {
       return idsInPool;
     }
 
     ///@return the share of the validator rewards climable by `_id`
-    function getShare(uint _id) public view correctPoolOnly(_id) returns (uint) {
+    function getShare(uint _id) external view correctPoolOnly(_id) returns (uint) {
         return _getShare(_id);
     }
 
@@ -312,12 +340,11 @@ contract StakingPool is IStakingPool, Ownable{
 
     ///@return the share of the validator rewards climable by `_id` minus fees. Returns 0 if pool is still accepting deposits
     ///@dev this is used for the traits in the NFT
-    function getDistributableShare(uint _id) public view returns (uint) {
+    function getDistributableShare(uint _id) external view returns (uint) {
         if (currentState == PoolState.acceptingDeposits) {
             return 0;
         } else {
             uint share = _getShare(_id);
-            uint feePercent = frensStorage.getUint(keccak256(abi.encodePacked("protocol.fee.percent")));
             if (feePercent > 0 && currentState != PoolState.exited) {
                 uint feeAmount = (feePercent * share) / 100;
                 share = share - feeAmount;
@@ -327,7 +354,7 @@ contract StakingPool is IStakingPool, Ownable{
     }
 
     ///@return pool state
-    function getState() public view returns (string memory) {
+    function getState() external view returns (string memory) {
         if (currentState == PoolState.awaitingValidatorInfo)
             return "awaiting validator info";
         if (currentState == PoolState.staked) return "staked";
@@ -347,11 +374,7 @@ contract StakingPool is IStakingPool, Ownable{
     }
 
     function _toWithdrawalCred(address a) private pure returns (bytes memory) {
-        uint uintFromAddress = uint256(uint160(a));
-        bytes memory withdralDesired = abi.encodePacked(
-            uintFromAddress +
-                0x0100000000000000000000000000000000000000000000000000000000000000
-        );
+        bytes memory withdralDesired = abi.encodePacked(bytes1(0x01), bytes11(0x0), address(a));
         return withdralDesired;
     }
 

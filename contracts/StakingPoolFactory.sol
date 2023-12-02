@@ -5,7 +5,6 @@ pragma solidity 0.8.20;
 ///@author 0xWildhare and Frens team
 ///@dev allows user to create a new staking pool
 
-//import "hardhat/console.sol";
 import "./StakingPool.sol";
 import "./interfaces/IStakingPoolFactory.sol";
 import "./interfaces/IFrensPoolShare.sol";
@@ -34,7 +33,7 @@ contract StakingPoolFactory is IStakingPoolFactory{
         address _owner,
         bool _validatorLocked
     )
-        public
+        external
         returns (
             address
         )

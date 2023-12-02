@@ -45,6 +45,7 @@ contract MiscTest is Test {
     address public contOwner = 0x0000000000000000000000000000000001111738;
     address payable public alice = payable(0x00000000000000000000000000000000000A11cE);
     address payable public bob = payable(0x0000000000000000000000000000000000000B0b);
+    address payable public feeRecipient = payable(0x0000000000000000000000000694200000001337);
 
     bytes pubkey = hex"ac542dcb86a85a8deeef9150dbf8ad24860a066deb43b20294ed7fb65257f49899b7103c35b26289035de4227e1cc575";
     bytes withdrawal_credentials = hex"0100000000000000000000004f81992fce2e1846dd528ec0102e6ee1f61ed3e2";
@@ -61,6 +62,8 @@ contract MiscTest is Test {
       frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "DepositContract")), depCont);
       //initialise ENS 
       frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "ENS")), ENSAddress);
+      //feeReceipient
+      frensStorage.setAddress(keccak256(abi.encodePacked("protocol.fee.recipient")), feeRecipient);
       //deploy NFT contract
       frensPoolShare = new FrensPoolShare(frensStorage);
       //initialise NFT contract
@@ -85,7 +88,7 @@ contract MiscTest is Test {
       //deployArt
       frensArt = new FrensArt(frensStorage);
       //initialise art
-      frensStorage.setAddress(keccak256(abi.encodePacked("contract.address", "FrensOracle")), address(frensOracle));
+      frensStorage.setAddress(keccak256(abi.encodePacked("contract.address", "FrensArt")), address(frensArt));
       //set contracts as deployed
      
       //create staking pool through proxy contract

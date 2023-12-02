@@ -21,13 +21,14 @@ contract FrensPoolShare is
 {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     
-    IFrensStorage frensStorage;
+    IFrensStorage public frensStorage;
 
     //maps each ID to the pool that minted it
     mapping(uint => address) public poolByIds;
 
     ///@dev sets the storage contract and the token name/symbol
     constructor(IFrensStorage frensStorage_) ERC721("FRENS Share", "FRENS") {
+        require(address(frensStorage_) != address(0), "FRENS contract error no storage address set");
         frensStorage = frensStorage_;
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
