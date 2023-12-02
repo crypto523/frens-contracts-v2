@@ -374,11 +374,7 @@ contract StakingPool is IStakingPool, Ownable{
     }
 
     function _toWithdrawalCred(address a) private pure returns (bytes memory) {
-        uint uintFromAddress = uint256(uint160(a));
-        bytes memory withdralDesired = abi.encodePacked(
-            uintFromAddress +
-                0x0100000000000000000000000000000000000000000000000000000000000000
-        );
+        bytes memory withdralDesired = abi.encodePacked(bytes1(0x01), bytes11(0x0), address(a));
         return withdralDesired;
     }
 
