@@ -101,6 +101,7 @@ contract StakingPool is IStakingPool, Ownable{
     IFrensPoolShare public frensPoolShare;
     IFrensArt public artForPool;
     IFrensStorage public frensStorage;
+    IDepositContract public depositContract;
 
     /**@dev when the pool is deploied by the factory, the owner, art contract, 
     *storage contract, and if the validator is locked are all set. 
@@ -114,6 +115,8 @@ contract StakingPool is IStakingPool, Ownable{
         frensStorage = frensStorage_;
         artForPool = IFrensArt(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensArt"))));
         frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
+        address depositContractAddress = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "DepositContract")));
+        depositContract = IDepositContract(depositContractAddress);
         validatorLocked = validatorLocked_;
         if (validatorLocked) {
             currentState = PoolState.awaitingValidatorInfo;
@@ -146,7 +149,7 @@ contract StakingPool is IStakingPool, Ownable{
     ///@dev recieves funds and increases deposit for a FrensPoolShare ID
     function addToDeposit(uint _id) external payable mustBeAccepting maxTotDep correctPoolOnly(_id){
         require(frensPoolShare.exists(_id), "id does not exist"); //id must exist
-        
+         
         depositForId[_id] += msg.value;
         totalDeposits += msg.value;
     }
@@ -183,16 +186,14 @@ contract StakingPool is IStakingPool, Ownable{
         require(totalDeposits == 32 ether, "not enough deposits");
         require(currentState == PoolState.acceptingDeposits, "wrong state");
         require(validatorSet, "validator not set");
-        
-        address depositContractAddress = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "DepositContract")));
         currentState = PoolState.staked;
-        IDepositContract(depositContractAddress).deposit{value: 32 ether}(
+        depositContract.deposit{value: 32 ether}(
             pubKey,
             withdrawal_credentials,
             signature,
             deposit_data_root
         );
-        emit Stake(depositContractAddress, msg.sender);
+        emit Stake(address(depositContract), msg.sender);
     }
 
     ///@dev sets the validator info required when depositing to the deposit contract
