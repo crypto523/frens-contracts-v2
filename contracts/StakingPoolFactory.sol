@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0 <0.9.0;
+pragma solidity 0.8.20;
 
 ///@title Frens Staking Pool Factory
 ///@author 0xWildhare and Frens team

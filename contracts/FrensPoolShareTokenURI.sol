@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0 <0.9.0;
+pragma solidity 0.8.20;
 
 ///@title Frens Pool Share Token URI
 ///@author 0xWildhare and Frens team h/t scaffoldETH and budilGuidl

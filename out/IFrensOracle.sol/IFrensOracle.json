@@ -52,10 +52,10 @@
     "checkValidatorState(address)": "809bef62",
     "setExiting(bytes,bool)": "d3b150e6"
   },
-  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"}],\"name\":\"checkValidatorState\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"bool\",\"name\":\"isExiting\",\"type\":\"bool\"}],\"name\":\"setExiting\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/interfaces/IFrensOracle.sol\":\"IFrensOracle\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/=node_modules/@openzeppelin/\",\":base64-sol/=node_modules/base64-sol/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":eth-gas-reporter/=node_modules/eth-gas-reporter/\",\":forge-std/=lib/forge-std/src/\",\":hardhat/=node_modules/hardhat/\"],\"viaIR\":true},\"sources\":{\"contracts/interfaces/IFrensOracle.sol\":{\"keccak256\":\"0xdf2291434faca3e9976a42d2328a4347ced5978b29477e40eb75642185afdf67\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f84266eaa6df4162f6a2be8dac55a8fd6ba4865a1dda48f4c1dd27c07c8c4316\",\"dweb:/ipfs/QmWbkZtvjrmJ61ZvnFn81UsLEoqzzah7oDkb66eEoSqJ1y\"]}},\"version\":1}",
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"pool\",\"type\":\"address\"}],\"name\":\"checkValidatorState\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"bool\",\"name\":\"isExiting\",\"type\":\"bool\"}],\"name\":\"setExiting\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/interfaces/IFrensOracle.sol\":\"IFrensOracle\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/=node_modules/@openzeppelin/\",\":base64-sol/=node_modules/base64-sol/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":eth-gas-reporter/=node_modules/eth-gas-reporter/\",\":forge-std/=lib/forge-std/src/\",\":hardhat/=node_modules/hardhat/\"],\"viaIR\":true},\"sources\":{\"contracts/interfaces/IFrensOracle.sol\":{\"keccak256\":\"0xb8fb907cadbdd9dd146bd3179d385be91b039955df1eb85731afbbed01894e57\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://af779ef4e0f538f2ca4a397f0b8f757d33c7f3d2b64baf29d39045ae7b41bdce\",\"dweb:/ipfs/QmQytMCQNJCF5PoSB3EMSYNWaZqbHYjfSppHAZ3sUCCRYS\"]}},\"version\":1}",
   "metadata": {
     "compiler": {
-      "version": "0.8.17+commit.8df45f5f"
+      "version": "0.8.20+commit.a1b79de6"
     },
     "language": "Solidity",
     "output": {
@@ -110,12 +110,12 @@
     },
     "settings": {
       "remappings": [
-        ":@openzeppelin/=node_modules/@openzeppelin/",
-        ":base64-sol/=node_modules/base64-sol/",
-        ":ds-test/=lib/forge-std/lib/ds-test/src/",
-        ":eth-gas-reporter/=node_modules/eth-gas-reporter/",
-        ":forge-std/=lib/forge-std/src/",
-        ":hardhat/=node_modules/hardhat/"
+        "@openzeppelin/=node_modules/@openzeppelin/",
+        "base64-sol/=node_modules/base64-sol/",
+        "ds-test/=lib/forge-std/lib/ds-test/src/",
+        "eth-gas-reporter/=node_modules/eth-gas-reporter/",
+        "forge-std/=lib/forge-std/src/",
+        "hardhat/=node_modules/hardhat/"
       ],
       "optimizer": {
         "enabled": true,
@@ -132,10 +132,10 @@
     },
     "sources": {
       "contracts/interfaces/IFrensOracle.sol": {
-        "keccak256": "0xdf2291434faca3e9976a42d2328a4347ced5978b29477e40eb75642185afdf67",
+        "keccak256": "0xb8fb907cadbdd9dd146bd3179d385be91b039955df1eb85731afbbed01894e57",
         "urls": [
-          "bzz-raw://f84266eaa6df4162f6a2be8dac55a8fd6ba4865a1dda48f4c1dd27c07c8c4316",
-          "dweb:/ipfs/QmWbkZtvjrmJ61ZvnFn81UsLEoqzzah7oDkb66eEoSqJ1y"
+          "bzz-raw://af779ef4e0f538f2ca4a397f0b8f757d33c7f3d2b64baf29d39045ae7b41bdce",
+          "dweb:/ipfs/QmQytMCQNJCF5PoSB3EMSYNWaZqbHYjfSppHAZ3sUCCRYS"
         ],
         "license": "MIT"
       }
@@ -144,59 +144,55 @@
   },
   "ast": {
     "absolutePath": "contracts/interfaces/IFrensOracle.sol",
-    "id": 2793,
+    "id": 3098,
     "exportedSymbols": {
       "IFrensOracle": [
-        2792
+        3097
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "0:234:16",
+    "src": "0:226:16",
     "nodes": [
       {
-        "id": 2777,
+        "id": 3082,
         "nodeType": "PragmaDirective",
-        "src": "0:31:16",
+        "src": "0:23:16",
         "nodes": [],
         "literals": [
           "solidity",
-          ">=",
           "0.8",
-          ".0",
-          "<",
-          "0.9",
-          ".0"
+          ".20"
         ]
       },
       {
-        "id": 2792,
+        "id": 3097,
         "nodeType": "ContractDefinition",
-        "src": "65:169:16",
+        "src": "57:169:16",
         "nodes": [
           {
-            "id": 2784,
+            "id": 3089,
             "nodeType": "FunctionDefinition",
-            "src": "94:66:16",
+            "src": "86:66:16",
             "nodes": [],
             "functionSelector": "809bef62",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "checkValidatorState",
-            "nameLocation": "103:19:16",
+            "nameLocation": "95:19:16",
             "parameters": {
-              "id": 2780,
+              "id": 3085,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2779,
+                  "id": 3084,
                   "mutability": "mutable",
                   "name": "pool",
-                  "nameLocation": "131:4:16",
+                  "nameLocation": "123:4:16",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2784,
-                  "src": "123:12:16",
+                  "scope": 3089,
+                  "src": "115:12:16",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -204,10 +200,10 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 2778,
+                    "id": 3083,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "123:7:16",
+                    "src": "115:7:16",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
@@ -217,21 +213,21 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "122:14:16"
+              "src": "114:14:16"
             },
             "returnParameters": {
-              "id": 2783,
+              "id": 3088,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2782,
+                  "id": 3087,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2784,
-                  "src": "154:4:16",
+                  "scope": 3089,
+                  "src": "146:4:16",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -239,10 +235,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 2781,
+                    "id": 3086,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "154:4:16",
+                    "src": "146:4:16",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -251,37 +247,37 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "153:6:16"
+              "src": "145:6:16"
             },
-            "scope": 2792,
+            "scope": 3097,
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
-            "id": 2791,
+            "id": 3096,
             "nodeType": "FunctionDefinition",
-            "src": "165:66:16",
+            "src": "157:66:16",
             "nodes": [],
             "functionSelector": "d3b150e6",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "setExiting",
-            "nameLocation": "174:10:16",
+            "nameLocation": "166:10:16",
             "parameters": {
-              "id": 2789,
+              "id": 3094,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2786,
+                  "id": 3091,
                   "mutability": "mutable",
                   "name": "pubKey",
-                  "nameLocation": "198:6:16",
+                  "nameLocation": "190:6:16",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2791,
-                  "src": "185:19:16",
+                  "scope": 3096,
+                  "src": "177:19:16",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -289,10 +285,10 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 2785,
+                    "id": 3090,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
-                    "src": "185:5:16",
+                    "src": "177:5:16",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_storage_ptr",
                       "typeString": "bytes"
@@ -302,13 +298,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 2788,
+                  "id": 3093,
                   "mutability": "mutable",
                   "name": "isExiting",
-                  "nameLocation": "211:9:16",
+                  "nameLocation": "203:9:16",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2791,
-                  "src": "206:14:16",
+                  "scope": 3096,
+                  "src": "198:14:16",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -316,10 +312,10 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 2787,
+                    "id": 3092,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "206:4:16",
+                    "src": "198:4:16",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
@@ -328,15 +324,15 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "184:37:16"
+              "src": "176:37:16"
             },
             "returnParameters": {
-              "id": 2790,
+              "id": 3095,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "230:0:16"
+              "src": "222:0:16"
             },
-            "scope": 2792,
+            "scope": 3097,
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -349,12 +345,13 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "linearizedBaseContracts": [
-          2792
+          3097
         ],
         "name": "IFrensOracle",
-        "nameLocation": "75:12:16",
-        "scope": 2793,
-        "usedErrors": []
+        "nameLocation": "67:12:16",
+        "scope": 3098,
+        "usedErrors": [],
+        "usedEvents": []
       }
     ],
     "license": "MIT"
