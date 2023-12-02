@@ -16,6 +16,16 @@ import "./interfaces/IFrensStorage.sol";
 contract StakingPool is IStakingPool, Ownable{
     event Stake(address depositContractAddress, address caller);
     event DepositToPool(uint amount, address depositer, uint id);
+    event AddToDeposit(uint id, uint ammount);
+    event SetPubKey(
+        bytes _pubKey,
+        bytes _withdrawal_credentials,
+        bytes _signature,
+        bytes32 _deposit_data_root
+    );
+    event Withdraw(uint id, uint amount, address recipient);
+    event Claim(uint id, uint amount, address recipient);
+
 
     modifier noZeroValueTxn() {
         require(msg.value > 0, "must deposit ether");
@@ -167,6 +177,7 @@ contract StakingPool is IStakingPool, Ownable{
         require(frensPoolShare.exists(_id), "id does not exist"); //id must exist
         depositForId[_id] += msg.value;
         totalDeposits += msg.value;
+        emit AddToDeposit(_id, msg.value);
     }
 
     ///@dev stakes 32 ETH from this pool to the deposit contract, accepts validator info
@@ -251,6 +262,7 @@ contract StakingPool is IStakingPool, Ownable{
         signature = _signature;
         deposit_data_root = _deposit_data_root;
         validatorSet = true;
+        emit SetPubKey(_pubKey, _withdrawal_credentials, _signature, _deposit_data_root);
     }
 
     ///@notice To withdraw funds previously deposited - ONLY works before the funds are staked. Use Claim to get rewards.
@@ -262,6 +274,7 @@ contract StakingPool is IStakingPool, Ownable{
         totalDeposits -= _amount;
         (bool success, /*return data*/) = frensPoolShare.ownerOf(_id).call{value: _amount}("");
         assert(success);
+        emit Withdraw(_id, _amount, msg.sender);
     }
 
     ///@notice allows user to claim their portion of the rewards
@@ -298,8 +311,10 @@ contract StakingPool is IStakingPool, Ownable{
             }
             amount = amount - feeAmount;
         }
-        (bool success2, /*return data*/) = frensPoolShare.ownerOf(_id).call{value: amount}("");
+        address recipient = frensPoolShare.ownerOf(_id);
+        (bool success2, /*return data*/) = payable(recipient).call{value: amount}("");
         assert(success2);
+        emit Claim(_id, amount, recipient);
     }
 
     //getters
