@@ -87,8 +87,11 @@ contract StakingPoolTest is Test {
       //deployArt
       frensArt = new FrensArt(frensStorage);
       //initialise art
-      frensStorage.setAddress(keccak256(abi.encodePacked("contract.address", "FrensOracle")), address(frensOracle));
+      frensStorage.setAddress(keccak256(abi.encodePacked("contract.address", "FrensArt")), address(frensArt));
       //set contracts as deployed
+
+
+      frensStorage.setUint(keccak256(abi.encodePacked("protocol.fee.percent")), 5);
      
       //create staking pool through proxy contract
       (address pool) = stakingPoolFactory.create(contOwner, false/*, false, 0, 32000000000000000000*/);
@@ -278,8 +281,8 @@ contract StakingPoolTest is Test {
         stakingPool.stake(pubkey, withdrawal_credentials, signature, deposit_data_root);
         uint aliceBalance = address(alice).balance;
         uint bobBalance = address(bob).balance;
-        uint aliceShare = (address(stakingPool).balance) * aliceDeposit / 32000000000000000000;
-        uint bobShare = (address(stakingPool).balance) - aliceShare;
+        uint aliceShare = (address(stakingPool).balance) * 95 * aliceDeposit / 3200000000000000000000; //95 bc 5% fee
+        uint bobShare = (address(stakingPool).balance)* 95 / 100 - aliceShare; //95 bc 5% fee
         //vm.prank(alice);
         /*
         uint frensClaimBalance = address(frensClaim).balance;
@@ -384,8 +387,6 @@ function testFees(uint32 x, uint32 y) public {
       uint aliceDeposit = uint(x) * 31999999999999999999 / maxUint32;
       uint bobDeposit = 32000000000000000000 - aliceDeposit;
       if(x != 0 && y > 100){
-        vm.prank(address(this));
-        frensStorage.setUint(keccak256(abi.encodePacked("protocol.fee.percent")), 5);
         hoax(alice);
         stakingPool.depositToPool{value: aliceDeposit}();
         hoax(bob);

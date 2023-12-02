@@ -52,7 +52,7 @@ contract StakingPool is IStakingPool, Ownable{
         staked,
         exited
     }
-    PoolState currentState;
+    PoolState public currentState;
     
     //this is unused in this version of the system
     //it must be included to avoid requiring an update to FrensPoolShare when rageQuit is added
@@ -79,6 +79,8 @@ contract StakingPool is IStakingPool, Ownable{
     uint public totalClaims;
     //these are the ids which have deposits in this pool
     uint[] public idsInPool;
+    //fee % for protocol (extracted when claiming rewards from un-exited pool)
+    uint public feePercent;
 
     //this is set in the constructor and requires the validator public key and other validator info be set before deposits can be made
     //also, if the validator is locked, once set, the pool owner cnnot change the validator pubkey and other info
@@ -98,6 +100,9 @@ contract StakingPool is IStakingPool, Ownable{
     //deposit data root for validator
     bytes32 public deposit_data_root;
 
+    //feeRecipient address will be the FRENS multisig until there is a dao
+    address public feeRecipient;
+
     IFrensPoolShare public frensPoolShare;
     IFrensArt public artForPool;
     IFrensStorage public frensStorage;
@@ -112,11 +117,22 @@ contract StakingPool is IStakingPool, Ownable{
         bool validatorLocked_,
         IFrensStorage frensStorage_
     ) {
+        require(owner_ != address(0), "FRENS contract error no owner address set");
+        require(address(frensStorage_) != address(0), "FRENS contract error no storage address set");
         frensStorage = frensStorage_;
-        artForPool = IFrensArt(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensArt"))));
-        frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
+        address artAddress = frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensArt")));
+        require(artAddress != address(0), "FRENS contract error no art address set");
+        artForPool = IFrensArt(artAddress);
+        address frensPoolShareAddress = frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare")));
+        require(artAddress != address(0), "FRENS contract error no pool share address set");
+        frensPoolShare = IFrensPoolShare(frensPoolShareAddress);
         address depositContractAddress = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "DepositContract")));
+        require(depositContractAddress != address(0), "FRENS contract error no Deposit contract set");
         depositContract = IDepositContract(depositContractAddress);
+        feePercent = frensStorage.getUint(keccak256(abi.encodePacked("protocol.fee.percent")));
+        require(feePercent <= 10, "FRENS contract error fee too high");
+        feeRecipient = frensStorage.getAddress(keccak256(abi.encodePacked("protocol.fee.recipient")));
+        require(feeRecipient != address(0), "FRENS contract error no fee recipient set");
         validatorLocked = validatorLocked_;
         if (validatorLocked) {
             currentState = PoolState.awaitingValidatorInfo;
@@ -149,7 +165,6 @@ contract StakingPool is IStakingPool, Ownable{
     ///@dev recieves funds and increases deposit for a FrensPoolShare ID
     function addToDeposit(uint _id) external payable mustBeAccepting maxTotDep correctPoolOnly(_id){
         require(frensPoolShare.exists(_id), "id does not exist"); //id must exist
-         
         depositForId[_id] += msg.value;
         totalDeposits += msg.value;
     }
@@ -275,9 +290,7 @@ contract StakingPool is IStakingPool, Ownable{
         frenPastClaim[_id] += amount;
         totalClaims += amount;
         //fee? not applied to exited
-        uint feePercent = frensStorage.getUint(keccak256(abi.encodePacked("protocol.fee.percent")));
         if (feePercent > 0 && !exited) {
-            address feeRecipient = frensStorage.getAddress(keccak256(abi.encodePacked("protocol.fee.recipient")));
             uint feeAmount = (feePercent * amount) / 100;
             if (feeAmount > 1){ 
                 (bool success1, /*return data*/) = feeRecipient.call{value: feeAmount - 1}(""); //-1 wei to avoid rounding error issues
@@ -317,7 +330,6 @@ contract StakingPool is IStakingPool, Ownable{
             return 0;
         } else {
             uint share = _getShare(_id);
-            uint feePercent = frensStorage.getUint(keccak256(abi.encodePacked("protocol.fee.percent")));
             if (feePercent > 0 && currentState != PoolState.exited) {
                 uint feeAmount = (feePercent * share) / 100;
                 share = share - feeAmount;
