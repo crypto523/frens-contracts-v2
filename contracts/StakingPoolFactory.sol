@@ -33,7 +33,7 @@ contract StakingPoolFactory is IStakingPoolFactory{
         address _owner,
         bool _validatorLocked
     )
-        public
+        external
         returns (
             address
         )

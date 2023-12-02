@@ -27,7 +27,7 @@ contract FrensPoolShareTokenURI is IFrensPoolShareTokenURI {
         frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
     }
 
-    function tokenURI(uint256 id) public view returns(string memory) {
+    function tokenURI(uint256 id) external view returns(string memory) {
         require(frensPoolShare.exists(id), "id does not exist");
         IFrensMetaHelper frensMetaHelper = IFrensMetaHelper(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensMetaHelper"))));
         IStakingPool stakingPool = IStakingPool(frensPoolShare.getPoolById(id));

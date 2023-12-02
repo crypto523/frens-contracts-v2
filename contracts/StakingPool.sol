@@ -319,12 +319,12 @@ contract StakingPool is IStakingPool, Ownable{
 
     //getters
 
-    function getIdsInThisPool() public view returns(uint[] memory) {
+    function getIdsInThisPool() external view returns(uint[] memory) {
       return idsInPool;
     }
 
     ///@return the share of the validator rewards climable by `_id`
-    function getShare(uint _id) public view correctPoolOnly(_id) returns (uint) {
+    function getShare(uint _id) external view correctPoolOnly(_id) returns (uint) {
         return _getShare(_id);
     }
 
@@ -340,7 +340,7 @@ contract StakingPool is IStakingPool, Ownable{
 
     ///@return the share of the validator rewards climable by `_id` minus fees. Returns 0 if pool is still accepting deposits
     ///@dev this is used for the traits in the NFT
-    function getDistributableShare(uint _id) public view returns (uint) {
+    function getDistributableShare(uint _id) external view returns (uint) {
         if (currentState == PoolState.acceptingDeposits) {
             return 0;
         } else {
@@ -354,7 +354,7 @@ contract StakingPool is IStakingPool, Ownable{
     }
 
     ///@return pool state
-    function getState() public view returns (string memory) {
+    function getState() external view returns (string memory) {
         if (currentState == PoolState.awaitingValidatorInfo)
             return "awaiting validator info";
         if (currentState == PoolState.staked) return "staked";

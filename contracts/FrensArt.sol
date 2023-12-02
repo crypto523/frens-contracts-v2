@@ -21,7 +21,7 @@ contract FrensArt {
         frensStorage = frensStorage_;
     }
 
-    function renderTokenById(uint256 id) public view returns (string memory) {
+    function renderTokenById(uint256 id) external view returns (string memory) {
         IFrensMetaHelper frensMetaHelper = IFrensMetaHelper(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensMetaHelper"))));
         IPmFont pmFont = IPmFont(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "PmFont"))));
         IWaves waves = IWaves(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "Waves"))));
