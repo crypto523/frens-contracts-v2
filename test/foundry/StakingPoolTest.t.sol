@@ -464,14 +464,17 @@ function testFees(uint32 x, uint32 y) public {
       stakingPool.depositToPool{value: 32 ether}();
       vm.prank(contOwner);
       stakingPool.stake(pubkey, withdrawal_credentials, signature, deposit_data_root);
-      vm.expectRevert("must be called by oracle");
-      stakingPool.exitPool();
+      // vm.expectRevert("must be called by oracle");
+      // stakingPool.exitPool();
       vm.expectRevert("must be guardian");
       vm.prank(alice);
       frensOracle.setExiting(pubkey, true);
       vm.prank(address(this), address(this));
       frensOracle.setExiting(pubkey, true);
-      frensOracle.checkValidatorState(address(stakingPool));
+      // frensOracle.checkValidatorState(address(stakingPool));
+
+      payable(stakingPool).transfer(1000000000000); //arbitrary number transfer so that claim works (and therfore sets to exiting)
+      stakingPool.claim(0);
       string memory state = stakingPool.getState();
       assertEq(keccak256(abi.encodePacked("exited")), keccak256(abi.encodePacked(state)),"not exited");
     }

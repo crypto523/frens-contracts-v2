@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.8.0 <0.9.0;
+pragma solidity 0.8.20;
 ///@title Frens Pool Share NFT
 ///@author 0xWildhare and FRENS team
 ///@dev see ERC721
@@ -12,7 +12,6 @@ import "./interfaces/IFrensStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-//import "hardhat/console.sol";
 
 contract FrensPoolShare is
     IFrensPoolShare,

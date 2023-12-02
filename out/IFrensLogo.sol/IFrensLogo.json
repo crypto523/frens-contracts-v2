@@ -27,10 +27,10 @@
   "methodIdentifiers": {
     "getLogo()": "0b6700d6"
   },
-  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"getLogo\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/interfaces/IFrensLogo.sol\":\"IFrensLogo\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/=node_modules/@openzeppelin/\",\":base64-sol/=node_modules/base64-sol/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":eth-gas-reporter/=node_modules/eth-gas-reporter/\",\":forge-std/=lib/forge-std/src/\",\":hardhat/=node_modules/hardhat/\"],\"viaIR\":true},\"sources\":{\"contracts/interfaces/IFrensLogo.sol\":{\"keccak256\":\"0x212d3d6ce97efad3d5b2a2d245e86fe081bb2ac93c4578e4971d317ac06cb0c1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c428e9c94d83b1484eded18c5d908f04c1fcc1937da8984313a79290858e1d84\",\"dweb:/ipfs/QmQ5CE2JXrfFx3U6pYxN7GfyBB3CaAyCXgcmke31MS4q6i\"]}},\"version\":1}",
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"getLogo\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/interfaces/IFrensLogo.sol\":\"IFrensLogo\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/=node_modules/@openzeppelin/\",\":base64-sol/=node_modules/base64-sol/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":eth-gas-reporter/=node_modules/eth-gas-reporter/\",\":forge-std/=lib/forge-std/src/\",\":hardhat/=node_modules/hardhat/\"],\"viaIR\":true},\"sources\":{\"contracts/interfaces/IFrensLogo.sol\":{\"keccak256\":\"0x71b64fda21ce2b1daa8f795394c34335837044734eaeaf1e73bd7d3a836365bf\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://7dd1adc76ac6ccbf64393fc480bedba681b01b1b33e68459149b879caa0fcc1a\",\"dweb:/ipfs/QmaLbTp7sztsYHKQ1D4vyGzvdRWwNGF3KqExWzCSiCdinM\"]}},\"version\":1}",
   "metadata": {
     "compiler": {
-      "version": "0.8.17+commit.8df45f5f"
+      "version": "0.8.20+commit.a1b79de6"
     },
     "language": "Solidity",
     "output": {
@@ -62,12 +62,12 @@
     },
     "settings": {
       "remappings": [
-        ":@openzeppelin/=node_modules/@openzeppelin/",
-        ":base64-sol/=node_modules/base64-sol/",
-        ":ds-test/=lib/forge-std/lib/ds-test/src/",
-        ":eth-gas-reporter/=node_modules/eth-gas-reporter/",
-        ":forge-std/=lib/forge-std/src/",
-        ":hardhat/=node_modules/hardhat/"
+        "@openzeppelin/=node_modules/@openzeppelin/",
+        "base64-sol/=node_modules/base64-sol/",
+        "ds-test/=lib/forge-std/lib/ds-test/src/",
+        "eth-gas-reporter/=node_modules/eth-gas-reporter/",
+        "forge-std/=lib/forge-std/src/",
+        "hardhat/=node_modules/hardhat/"
       ],
       "optimizer": {
         "enabled": true,
@@ -84,10 +84,10 @@
     },
     "sources": {
       "contracts/interfaces/IFrensLogo.sol": {
-        "keccak256": "0x212d3d6ce97efad3d5b2a2d245e86fe081bb2ac93c4578e4971d317ac06cb0c1",
+        "keccak256": "0x71b64fda21ce2b1daa8f795394c34335837044734eaeaf1e73bd7d3a836365bf",
         "urls": [
-          "bzz-raw://c428e9c94d83b1484eded18c5d908f04c1fcc1937da8984313a79290858e1d84",
-          "dweb:/ipfs/QmQ5CE2JXrfFx3U6pYxN7GfyBB3CaAyCXgcmke31MS4q6i"
+          "bzz-raw://7dd1adc76ac6ccbf64393fc480bedba681b01b1b33e68459149b879caa0fcc1a",
+          "dweb:/ipfs/QmaLbTp7sztsYHKQ1D4vyGzvdRWwNGF3KqExWzCSiCdinM"
         ],
         "license": "MIT"
       }
@@ -96,65 +96,61 @@
   },
   "ast": {
     "absolutePath": "contracts/interfaces/IFrensLogo.sol",
-    "id": 2743,
+    "id": 3048,
     "exportedSymbols": {
       "IFrensLogo": [
-        2742
+        3047
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "0:148:14",
+    "src": "0:140:14",
     "nodes": [
       {
-        "id": 2736,
+        "id": 3041,
         "nodeType": "PragmaDirective",
-        "src": "0:31:14",
+        "src": "0:23:14",
         "nodes": [],
         "literals": [
           "solidity",
-          ">=",
           "0.8",
-          ".0",
-          "<",
-          "0.9",
-          ".0"
+          ".20"
         ]
       },
       {
-        "id": 2742,
+        "id": 3047,
         "nodeType": "ContractDefinition",
-        "src": "64:83:14",
+        "src": "56:83:14",
         "nodes": [
           {
-            "id": 2741,
+            "id": 3046,
             "nodeType": "FunctionDefinition",
-            "src": "89:56:14",
+            "src": "81:56:14",
             "nodes": [],
             "functionSelector": "0b6700d6",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getLogo",
-            "nameLocation": "98:7:14",
+            "nameLocation": "90:7:14",
             "parameters": {
-              "id": 2737,
+              "id": 3042,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "105:2:14"
+              "src": "97:2:14"
             },
             "returnParameters": {
-              "id": 2740,
+              "id": 3045,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2739,
+                  "id": 3044,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2741,
-                  "src": "131:12:14",
+                  "scope": 3046,
+                  "src": "123:12:14",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -162,10 +158,10 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 2738,
+                    "id": 3043,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
-                    "src": "131:5:14",
+                    "src": "123:5:14",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_storage_ptr",
                       "typeString": "bytes"
@@ -174,9 +170,9 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "130:14:14"
+              "src": "122:14:14"
             },
-            "scope": 2742,
+            "scope": 3047,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -189,12 +185,13 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "linearizedBaseContracts": [
-          2742
+          3047
         ],
         "name": "IFrensLogo",
-        "nameLocation": "74:10:14",
-        "scope": 2743,
-        "usedErrors": []
+        "nameLocation": "66:10:14",
+        "scope": 3048,
+        "usedErrors": [],
+        "usedEvents": []
       }
     ],
     "license": "MIT"

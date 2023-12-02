@@ -27,10 +27,10 @@
   "methodIdentifiers": {
     "getWaves()": "a9d42f7e"
   },
-  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"getWaves\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/interfaces/IWaves.sol\":\"IWaves\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/=node_modules/@openzeppelin/\",\":base64-sol/=node_modules/base64-sol/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":eth-gas-reporter/=node_modules/eth-gas-reporter/\",\":forge-std/=lib/forge-std/src/\",\":hardhat/=node_modules/hardhat/\"],\"viaIR\":true},\"sources\":{\"contracts/interfaces/IWaves.sol\":{\"keccak256\":\"0xe728208d23a5bc81fde1cadb770ee72d5a37565c736536770418eb0ab0d8cdeb\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://c6b093ef06a083c68c0ed2d04deb000ac26b565e00f26a9cca521ccc7cc034b2\",\"dweb:/ipfs/QmcXdbezAsuh1KqiXWKH8Vs6aVL8V6Ag2b4nwDX7qXUEAN\"]}},\"version\":1}",
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"getWaves\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/interfaces/IWaves.sol\":\"IWaves\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/=node_modules/@openzeppelin/\",\":base64-sol/=node_modules/base64-sol/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":eth-gas-reporter/=node_modules/eth-gas-reporter/\",\":forge-std/=lib/forge-std/src/\",\":hardhat/=node_modules/hardhat/\"],\"viaIR\":true},\"sources\":{\"contracts/interfaces/IWaves.sol\":{\"keccak256\":\"0x5a318f5ff6701f3371425a37f40db5dfc5a960a197602bb561ca084b305d12b5\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://f23abde1abc61d913d90bef65a3c421f2c037151304f61ac27585ad02d310c34\",\"dweb:/ipfs/QmeK8VZ9LR2JhXSNBotFjoEsXdjBfgrt6QfdMDuPnTL1rq\"]}},\"version\":1}",
   "metadata": {
     "compiler": {
-      "version": "0.8.17+commit.8df45f5f"
+      "version": "0.8.20+commit.a1b79de6"
     },
     "language": "Solidity",
     "output": {
@@ -62,12 +62,12 @@
     },
     "settings": {
       "remappings": [
-        ":@openzeppelin/=node_modules/@openzeppelin/",
-        ":base64-sol/=node_modules/base64-sol/",
-        ":ds-test/=lib/forge-std/lib/ds-test/src/",
-        ":eth-gas-reporter/=node_modules/eth-gas-reporter/",
-        ":forge-std/=lib/forge-std/src/",
-        ":hardhat/=node_modules/hardhat/"
+        "@openzeppelin/=node_modules/@openzeppelin/",
+        "base64-sol/=node_modules/base64-sol/",
+        "ds-test/=lib/forge-std/lib/ds-test/src/",
+        "eth-gas-reporter/=node_modules/eth-gas-reporter/",
+        "forge-std/=lib/forge-std/src/",
+        "hardhat/=node_modules/hardhat/"
       ],
       "optimizer": {
         "enabled": true,
@@ -84,10 +84,10 @@
     },
     "sources": {
       "contracts/interfaces/IWaves.sol": {
-        "keccak256": "0xe728208d23a5bc81fde1cadb770ee72d5a37565c736536770418eb0ab0d8cdeb",
+        "keccak256": "0x5a318f5ff6701f3371425a37f40db5dfc5a960a197602bb561ca084b305d12b5",
         "urls": [
-          "bzz-raw://c6b093ef06a083c68c0ed2d04deb000ac26b565e00f26a9cca521ccc7cc034b2",
-          "dweb:/ipfs/QmcXdbezAsuh1KqiXWKH8Vs6aVL8V6Ag2b4nwDX7qXUEAN"
+          "bzz-raw://f23abde1abc61d913d90bef65a3c421f2c037151304f61ac27585ad02d310c34",
+          "dweb:/ipfs/QmeK8VZ9LR2JhXSNBotFjoEsXdjBfgrt6QfdMDuPnTL1rq"
         ],
         "license": "MIT"
       }
@@ -96,65 +96,61 @@
   },
   "ast": {
     "absolutePath": "contracts/interfaces/IWaves.sol",
-    "id": 3084,
+    "id": 3413,
     "exportedSymbols": {
       "IWaves": [
-        3083
+        3412
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "0:145:24",
+    "src": "0:137:24",
     "nodes": [
       {
-        "id": 3077,
+        "id": 3406,
         "nodeType": "PragmaDirective",
-        "src": "0:31:24",
+        "src": "0:23:24",
         "nodes": [],
         "literals": [
           "solidity",
-          ">=",
           "0.8",
-          ".0",
-          "<",
-          "0.9",
-          ".0"
+          ".20"
         ]
       },
       {
-        "id": 3083,
+        "id": 3412,
         "nodeType": "ContractDefinition",
-        "src": "64:80:24",
+        "src": "56:80:24",
         "nodes": [
           {
-            "id": 3082,
+            "id": 3411,
             "nodeType": "FunctionDefinition",
-            "src": "85:57:24",
+            "src": "77:57:24",
             "nodes": [],
             "functionSelector": "a9d42f7e",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "getWaves",
-            "nameLocation": "94:8:24",
+            "nameLocation": "86:8:24",
             "parameters": {
-              "id": 3078,
+              "id": 3407,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "102:2:24"
+              "src": "94:2:24"
             },
             "returnParameters": {
-              "id": 3081,
+              "id": 3410,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 3080,
+                  "id": 3409,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 3082,
-                  "src": "128:12:24",
+                  "scope": 3411,
+                  "src": "120:12:24",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -162,10 +158,10 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 3079,
+                    "id": 3408,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
-                    "src": "128:5:24",
+                    "src": "120:5:24",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_storage_ptr",
                       "typeString": "bytes"
@@ -174,9 +170,9 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "127:14:24"
+              "src": "119:14:24"
             },
-            "scope": 3083,
+            "scope": 3412,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -189,12 +185,13 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "linearizedBaseContracts": [
-          3083
+          3412
         ],
         "name": "IWaves",
-        "nameLocation": "74:6:24",
-        "scope": 3084,
-        "usedErrors": []
+        "nameLocation": "66:6:24",
+        "scope": 3413,
+        "usedErrors": [],
+        "usedEvents": []
       }
     ],
     "license": "MIT"

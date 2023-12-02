@@ -56,10 +56,10 @@
     "deposit(bytes,bytes,bytes,bytes32)": "22895118",
     "get_deposit_count()": "621fd130"
   },
-  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"pubkey\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"withdrawal_credentials\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"},{\"internalType\":\"bytes32\",\"name\":\"deposit_data_root\",\"type\":\"bytes32\"}],\"name\":\"deposit\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"get_deposit_count\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/interfaces/IDepositContract.sol\":\"IDepositContract\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/=node_modules/@openzeppelin/\",\":base64-sol/=node_modules/base64-sol/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":eth-gas-reporter/=node_modules/eth-gas-reporter/\",\":forge-std/=lib/forge-std/src/\",\":hardhat/=node_modules/hardhat/\"],\"viaIR\":true},\"sources\":{\"contracts/interfaces/IDepositContract.sol\":{\"keccak256\":\"0x7590a7c7c977852560b0f2373e71ad175d1aa15d320d1238b2fe64e4cd1902f7\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://481024426ee16f5d1253236e8e273884a3ead5eb3f78386785b635862d7b0168\",\"dweb:/ipfs/QmTEacNQKUsCGvLQ5rpAJVTUqejM8jRxg83fD17xmsaJQu\"]}},\"version\":1}",
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"pubkey\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"withdrawal_credentials\",\"type\":\"bytes\"},{\"internalType\":\"bytes\",\"name\":\"signature\",\"type\":\"bytes\"},{\"internalType\":\"bytes32\",\"name\":\"deposit_data_root\",\"type\":\"bytes32\"}],\"name\":\"deposit\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"get_deposit_count\",\"outputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/interfaces/IDepositContract.sol\":\"IDepositContract\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@openzeppelin/=node_modules/@openzeppelin/\",\":base64-sol/=node_modules/base64-sol/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":eth-gas-reporter/=node_modules/eth-gas-reporter/\",\":forge-std/=lib/forge-std/src/\",\":hardhat/=node_modules/hardhat/\"],\"viaIR\":true},\"sources\":{\"contracts/interfaces/IDepositContract.sol\":{\"keccak256\":\"0x839f7e3c08d72fc538e0889fb75065435242ae3b9d81c839176a8309326775db\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://869748145485481385c88e27b24e2952017bb11a150739dcdb1d50915830d4b9\",\"dweb:/ipfs/QmTQ9jy87d8qxpPLg3g3tqE63GJenfD1cz16x5iZnkuJao\"]}},\"version\":1}",
   "metadata": {
     "compiler": {
-      "version": "0.8.17+commit.8df45f5f"
+      "version": "0.8.20+commit.a1b79de6"
     },
     "language": "Solidity",
     "output": {
@@ -118,12 +118,12 @@
     },
     "settings": {
       "remappings": [
-        ":@openzeppelin/=node_modules/@openzeppelin/",
-        ":base64-sol/=node_modules/base64-sol/",
-        ":ds-test/=lib/forge-std/lib/ds-test/src/",
-        ":eth-gas-reporter/=node_modules/eth-gas-reporter/",
-        ":forge-std/=lib/forge-std/src/",
-        ":hardhat/=node_modules/hardhat/"
+        "@openzeppelin/=node_modules/@openzeppelin/",
+        "base64-sol/=node_modules/base64-sol/",
+        "ds-test/=lib/forge-std/lib/ds-test/src/",
+        "eth-gas-reporter/=node_modules/eth-gas-reporter/",
+        "forge-std/=lib/forge-std/src/",
+        "hardhat/=node_modules/hardhat/"
       ],
       "optimizer": {
         "enabled": true,
@@ -140,10 +140,10 @@
     },
     "sources": {
       "contracts/interfaces/IDepositContract.sol": {
-        "keccak256": "0x7590a7c7c977852560b0f2373e71ad175d1aa15d320d1238b2fe64e4cd1902f7",
+        "keccak256": "0x839f7e3c08d72fc538e0889fb75065435242ae3b9d81c839176a8309326775db",
         "urls": [
-          "bzz-raw://481024426ee16f5d1253236e8e273884a3ead5eb3f78386785b635862d7b0168",
-          "dweb:/ipfs/QmTEacNQKUsCGvLQ5rpAJVTUqejM8jRxg83fD17xmsaJQu"
+          "bzz-raw://869748145485481385c88e27b24e2952017bb11a150739dcdb1d50915830d4b9",
+          "dweb:/ipfs/QmTQ9jy87d8qxpPLg3g3tqE63GJenfD1cz16x5iZnkuJao"
         ],
         "license": "MIT"
       }
@@ -152,59 +152,55 @@
   },
   "ast": {
     "absolutePath": "contracts/interfaces/IDepositContract.sol",
-    "id": 2588,
+    "id": 2893,
     "exportedSymbols": {
       "IDepositContract": [
-        2587
+        2892
       ]
     },
     "nodeType": "SourceUnit",
-    "src": "1:362:11",
+    "src": "1:354:11",
     "nodes": [
       {
-        "id": 2570,
+        "id": 2875,
         "nodeType": "PragmaDirective",
-        "src": "1:31:11",
+        "src": "1:23:11",
         "nodes": [],
         "literals": [
           "solidity",
-          ">=",
           "0.8",
-          ".0",
-          "<",
-          "0.9",
-          ".0"
+          ".20"
         ]
       },
       {
-        "id": 2587,
+        "id": 2892,
         "nodeType": "ContractDefinition",
-        "src": "66:296:11",
+        "src": "58:296:11",
         "nodes": [
           {
-            "id": 2581,
+            "id": 2886,
             "nodeType": "FunctionDefinition",
-            "src": "100:187:11",
+            "src": "92:187:11",
             "nodes": [],
             "functionSelector": "22895118",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "deposit",
-            "nameLocation": "109:7:11",
+            "nameLocation": "101:7:11",
             "parameters": {
-              "id": 2579,
+              "id": 2884,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2572,
+                  "id": 2877,
                   "mutability": "mutable",
                   "name": "pubkey",
-                  "nameLocation": "141:6:11",
+                  "nameLocation": "133:6:11",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2581,
-                  "src": "126:21:11",
+                  "scope": 2886,
+                  "src": "118:21:11",
                   "stateVariable": false,
                   "storageLocation": "calldata",
                   "typeDescriptions": {
@@ -212,10 +208,10 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 2571,
+                    "id": 2876,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
-                    "src": "126:5:11",
+                    "src": "118:5:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_storage_ptr",
                       "typeString": "bytes"
@@ -225,13 +221,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 2574,
+                  "id": 2879,
                   "mutability": "mutable",
                   "name": "withdrawal_credentials",
-                  "nameLocation": "172:22:11",
+                  "nameLocation": "164:22:11",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2581,
-                  "src": "157:37:11",
+                  "scope": 2886,
+                  "src": "149:37:11",
                   "stateVariable": false,
                   "storageLocation": "calldata",
                   "typeDescriptions": {
@@ -239,10 +235,10 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 2573,
+                    "id": 2878,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
-                    "src": "157:5:11",
+                    "src": "149:5:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_storage_ptr",
                       "typeString": "bytes"
@@ -252,13 +248,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 2576,
+                  "id": 2881,
                   "mutability": "mutable",
                   "name": "signature",
-                  "nameLocation": "219:9:11",
+                  "nameLocation": "211:9:11",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2581,
-                  "src": "204:24:11",
+                  "scope": 2886,
+                  "src": "196:24:11",
                   "stateVariable": false,
                   "storageLocation": "calldata",
                   "typeDescriptions": {
@@ -266,10 +262,10 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 2575,
+                    "id": 2880,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
-                    "src": "204:5:11",
+                    "src": "196:5:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_storage_ptr",
                       "typeString": "bytes"
@@ -279,13 +275,13 @@
                 },
                 {
                   "constant": false,
-                  "id": 2578,
+                  "id": 2883,
                   "mutability": "mutable",
                   "name": "deposit_data_root",
-                  "nameLocation": "246:17:11",
+                  "nameLocation": "238:17:11",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2581,
-                  "src": "238:25:11",
+                  "scope": 2886,
+                  "src": "230:25:11",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -293,10 +289,10 @@
                     "typeString": "bytes32"
                   },
                   "typeName": {
-                    "id": 2577,
+                    "id": 2882,
                     "name": "bytes32",
                     "nodeType": "ElementaryTypeName",
-                    "src": "238:7:11",
+                    "src": "230:7:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes32",
                       "typeString": "bytes32"
@@ -305,49 +301,49 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "116:153:11"
+              "src": "108:153:11"
             },
             "returnParameters": {
-              "id": 2580,
+              "id": 2885,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "286:0:11"
+              "src": "278:0:11"
             },
-            "scope": 2587,
+            "scope": 2892,
             "stateMutability": "payable",
             "virtual": false,
             "visibility": "external"
           },
           {
-            "id": 2586,
+            "id": 2891,
             "nodeType": "FunctionDefinition",
-            "src": "293:66:11",
+            "src": "285:66:11",
             "nodes": [],
             "functionSelector": "621fd130",
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "get_deposit_count",
-            "nameLocation": "302:17:11",
+            "nameLocation": "294:17:11",
             "parameters": {
-              "id": 2582,
+              "id": 2887,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "319:2:11"
+              "src": "311:2:11"
             },
             "returnParameters": {
-              "id": 2585,
+              "id": 2890,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 2584,
+                  "id": 2889,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 2586,
-                  "src": "345:12:11",
+                  "scope": 2891,
+                  "src": "337:12:11",
                   "stateVariable": false,
                   "storageLocation": "memory",
                   "typeDescriptions": {
@@ -355,10 +351,10 @@
                     "typeString": "bytes"
                   },
                   "typeName": {
-                    "id": 2583,
+                    "id": 2888,
                     "name": "bytes",
                     "nodeType": "ElementaryTypeName",
-                    "src": "345:5:11",
+                    "src": "337:5:11",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bytes_storage_ptr",
                       "typeString": "bytes"
@@ -367,9 +363,9 @@
                   "visibility": "internal"
                 }
               ],
-              "src": "344:14:11"
+              "src": "336:14:11"
             },
-            "scope": 2587,
+            "scope": 2892,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
@@ -382,12 +378,13 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "linearizedBaseContracts": [
-          2587
+          2892
         ],
         "name": "IDepositContract",
-        "nameLocation": "76:16:11",
-        "scope": 2588,
-        "usedErrors": []
+        "nameLocation": "68:16:11",
+        "scope": 2893,
+        "usedErrors": [],
+        "usedEvents": []
       }
     ],
     "license": "MIT"
