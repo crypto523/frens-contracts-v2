@@ -5,7 +5,6 @@ pragma solidity 0.8.20;
 ///@author 0xWildhare and Frens team h/t scaffoldETH and budilGuidl
 ///@dev returns the image and metadata for the NFT bytes64 encoded
 
-//import "hardhat/console.sol";
 import "./interfaces/IStakingPool.sol";
 import "./interfaces/IFrensPoolShare.sol";
 import "./interfaces/IFrensMetaHelper.sol";

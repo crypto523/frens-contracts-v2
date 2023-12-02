@@ -10,7 +10,6 @@ import "./interfaces/IPmFont.sol";
 import "./interfaces/IFrensLogo.sol";
 import "./interfaces/IWaves.sol";
 import "./interfaces/IFrensStorage.sol";
-//import "hardhat/console.sol";
 
 contract FrensArt {
 
