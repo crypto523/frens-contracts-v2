@@ -19,6 +19,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
   console.log("chainId", chainId);
   const ENS = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e";
+  const feeRecipient = "0x6B5F5497Dd1FaFfC62faf6dCFC0e7f616058De0b";
 
   var SSVRegistry = 0;
   var DepositContract = 0;
@@ -134,18 +135,24 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 */
   if(reinitialiseEverything) {
     //ssv
-    const ssvHash = ethers.utils.solidityKeccak256(["string", "string"], ["external.contract.address", "SSVRegistry"]);
-    const ssvInit = await FrensStorage.setAddress(ssvHash, SSVRegistry);
-    await ssvInit.wait();
+    // const ssvHash = ethers.utils.solidityKeccak256(["string", "string"], ["external.contract.address", "SSVRegistry"]);
+    // const ssvInit = await FrensStorage.setAddress(ssvHash, SSVRegistry);
+    // await ssvInit.wait();
     //deposit contract
+    console.log("working...");
     const depContHash = ethers.utils.solidityKeccak256(["string", "string"], ["external.contract.address", "DepositContract"]);
     const depContInit = await FrensStorage.setAddress(depContHash, DepositContract);
+    console.log("waiting...");
     await depContInit.wait();
     //ENS
     const ENSHash =  ethers.utils.solidityKeccak256(["string", "string"], ["external.contract.address", "ENS"]);
     const ENSInit = await FrensStorage.setAddress(ENSHash, ENS);
     await ENSInit.wait();
-    console.log('\x1b[36m%s\x1b[0m', "external contracts initialised", SSVRegistry, DepositContract, ENS);
+    //feeRecipient
+    const frHash =  ethers.utils.solidityKeccak256(["string"], ["protocol.fee.recipient"]);
+    const frInit = await FrensStorage.setAddress(frHash, feeRecipient);
+    await frInit.wait();
+    console.log('\x1b[36m%s\x1b[0m', "external contracts initialised", DepositContract, ENS, feeRecipient);
   } 
 
   
@@ -165,6 +172,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const FrensPoolShare = await ethers.getContract("FrensPoolShare", deployer);
 
   if(FrensPoolShareOld == 0){
+    // console.log("frenspoolshare", FrensPoolShare.address);
     const poolShareXfer = await FrensPoolShare.transferOwnership("0xa53A6fE2d8Ad977aD926C485343Ba39f32D3A3F6");
     await poolShareXfer.wait();
     const poolShareHash = ethers.utils.solidityKeccak256(["string", "string"], ["contract.address", "FrensPoolShare"]);
@@ -230,6 +238,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   if(FrensOracleOld == 0 || reinitialiseEverything){
     const oracleHash = ethers.utils.solidityKeccak256(["string", "string"], ["contract.address", "FrensOracle"]);
     const oracleInit = await FrensStorage.setAddress(oracleHash, FrensOracle.address);
+    console.log("waiting");
     await oracleInit.wait();
     console.log('\x1b[33m%s\x1b[0m', "FrensOracle initialised", FrensOracle.address);
   } else if(FrensOracleOld.address != FrensOracle.address){
@@ -383,30 +392,124 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     console.log('\x1b[36m%s\x1b[0m', "Waves updated", Waves.address);
   }
 
-  if(chainId == 31337){
+  //if(chainId == 5){
     await deploy("StakingPool", {//need abi
       // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
       from: deployer,
       args: [
         "0x42f58dd8528c302eeC4dCbC71159bA737908D6Fa",
-        false,
+        true,
         FrensStorage.address
       ],
       log: true,
       waitConfirmations: 5,
     });
-  }
+ // }
 
-  const newPool = await StakingPoolFactory.create("0xa53A6fE2d8Ad977aD926C485343Ba39f32D3A3F6", true/*, false, 0, 32000000000000000000n*/);
+  const StakingPool = await ethers.getContract("StakingPool", deployer);
+
+  // const newPool = await StakingPoolFactory.create("0xa53A6fE2d8Ad977aD926C485343Ba39f32D3A3F6"/*, false, 0, 32000000000000000000n*/);
   
-  newPoolResult = await newPool.wait();
-  console.log('\x1b[36m%s\x1b[0m',"New StakingPool", newPoolResult.logs[0].address);
+  // newPoolResult = await newPool.wait();
+  // console.log('\x1b[36m%s\x1b[0m',"New StakingPool", newPoolResult.logs[0].address);
 
  if(chainId == 1){
     const setGuard = await FrensStorage.setGuardian("0x6B5F5497Dd1FaFfC62faf6dCFC0e7f616058De0b");
     await setGuard.wait();
     console.log('\x1b[36m%s\x1b[0m', "New guardian set", "0x6B5F5497Dd1FaFfC62faf6dCFC0e7f616058De0b");
+    FrensPoolShare.grantRole(ethers.constants.HashZero, "0x6B5F5497Dd1FaFfC62faf6dCFC0e7f616058De0b");
+    console.log('\x1b[31m%s\x1b[0m', "mainnet deployment: multisig must accept guardianship, and revoke 0x00 role from deployer");
   }
+
+  if (chainId !== localChainId) {
+   try{ await run("verify:verify", {
+      address: FrensArt.address,
+      contract: "contracts/FrensArt.sol:FrensArt",
+      constructorArguments: [
+        FrensStorage.address
+      ],
+    });}catch(e){console.log(e)}
+
+    try{await run("verify:verify", {
+      address: FrensLogo.address,
+      contract: "contracts/FrensLogo.sol:FrensLogo",
+      constructorArguments: [
+      ],
+    });}catch(e){console.log(e)}
+ 
+    try{await run("verify:verify", {
+      address: FrensMetaHelper.address,
+      contract: "contracts/FrensMetaHelper.sol:FrensMetaHelper",
+      constructorArguments: [
+        FrensStorage.address
+      ],
+    });}catch(e){console.log(e)}
+
+    try{await run("verify:verify", {
+      address: FrensOracle.address,
+      contract: "contracts/FrensOracle.sol:FrensOracle",
+      constructorArguments: [
+        FrensStorage.address
+      ],
+    });}catch(e){console.log(e)}
+
+    try{await run("verify:verify", {
+      address: FrensPoolShare.address,
+      contract: "contracts/FrensPoolShare.sol:FrensPoolShare",
+      constructorArguments: [
+        FrensStorage.address
+      ],
+    });}catch(e){console.log(e)}
+
+    try{await run("verify:verify", {
+      address: FrensPoolShareTokenURI.address,
+      contract: "contracts/FrensPoolShareTokenURI.sol:FrensPoolShareTokenURI",
+      constructorArguments: [
+        FrensStorage.address
+      ],
+    });}catch(e){console.log(e)}
+
+    try{await run("verify:verify", {
+      address: FrensStorage.address,
+      contract: "contracts/FrensStorage.sol:FrensStorage",
+      constructorArguments: [
+      ],
+    });}catch(e){console.log(e)}
+
+    try{await run("verify:verify", {
+      address: PmFont.address,
+      contract: "contracts/PmFont.sol:PmFont",
+      constructorArguments: [
+      ],
+    });}catch(e){console.log(e)}
+  
+    try{await run("verify:verify", {
+      address: StakingPool.address,
+      contract: "contracts/StakingPool.sol:StakingPool",
+      constructorArguments: [
+        "0x42f58dd8528c302eeC4dCbC71159bA737908D6Fa",
+        true,
+        FrensStorage.address
+      ],
+    });}catch(e){console.log(e)}
+ 
+    try{await run("verify:verify", {
+      address: StakingPoolFactory.address,
+      contract: "contracts/StakingPoolFactory.sol:StakingPoolFactory",
+      constructorArguments: [
+        FrensStorage.address
+      ],
+    });}catch(e){console.log(e)}
+
+    try{await run("verify:verify", {
+      address: Waves.address,
+      contract: "contracts/Waves.sol:Waves",
+      constructorArguments: [
+      ],
+    });}catch(e){console.log(e)}
+  }
+
+
 /*
   await deploy("FrensArtTest", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
