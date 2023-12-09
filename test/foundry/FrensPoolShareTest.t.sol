@@ -11,7 +11,7 @@ import "forge-std/Test.sol";
 //Frens Contracts
 import "../../contracts/FrensArt.sol";
 import "../../contracts/FrensLogo.sol";
-import "../../contracts/PmFont";
+import "../../contracts/PmFont.sol";
 import "../../contracts/Waves.sol";
 import "../../contracts/FrensMetaHelper.sol";
 import "../../contracts/FrensPoolShareTokenURI.sol";
@@ -35,6 +35,9 @@ contract MiscTest is Test {
     StakingPool public stakingPool2;
     FrensPoolShare public frensPoolShare;
     FrensOracle public frensOracle;
+    FrensLogo public frensLogo;
+    PmFont public pmFont;
+    Waves public waves;
 
     //mainnet
     address payable public depCont = payable(0x00000000219ab540356cBB839Cbe05303d7705Fa);
@@ -92,6 +95,18 @@ contract MiscTest is Test {
       frensArt = new FrensArt(frensStorage);
       //initialise art
       frensStorage.setAddress(keccak256(abi.encodePacked("contract.address", "FrensArt")), address(frensArt));
+      //deployFrensLogo
+      frensLogo = new FrensLogo();
+      //initialise Logo
+      frensStorage.setAddress(keccak256(abi.encodePacked("contract.address", "FrensLogo")), address(frensLogo));
+      //deploy Font
+      pmFont = new PmFont();
+      //initialise Font
+      frensStorage.setAddress(keccak256(abi.encodePacked("contract.address", "PmFont")), address(pmFont));
+      //deploy Waves
+      waves = new Waves();
+      //initialise Font
+      frensStorage.setAddress(keccak256(abi.encodePacked("contract.address", "Waves")), address(waves));
       //set contracts as deployed
      
       //create staking pool through proxy contract
@@ -285,6 +300,18 @@ contract MiscTest is Test {
     uint id = frensPoolShare.tokenOfOwnerByIndex(alice, 0);
     string memory art = frensPoolShare.tokenURI(id);
     require(keccak256(abi.encodePacked(art)) != keccak256(abi.encodePacked()));
+  }
+
+  function testRenderTokenById()public {
+    hoax(alice);
+    stakingPool.depositToPool{value: 1}();
+    uint id = frensPoolShare.tokenOfOwnerByIndex(alice, 0);
+    string memory art = frensPoolShare.renderTokenById(id);
+    require(keccak256(abi.encodePacked(art)) != keccak256(abi.encodePacked()));
+  }
+
+  function testSupportsInterface() public {
+    bool supInt = frensPoolShare.supportsInterface(bytes4(0x0));
   }
 
 
