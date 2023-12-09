@@ -10,6 +10,9 @@ import "forge-std/Test.sol";
 
 //Frens Contracts
 import "../../contracts/FrensArt.sol";
+import "../../contracts/FrensLogo.sol";
+import "../../contracts/PmFont";
+import "../../contracts/Waves.sol";
 import "../../contracts/FrensMetaHelper.sol";
 import "../../contracts/FrensPoolShareTokenURI.sol";
 import "../../contracts/FrensStorage.sol";
@@ -274,6 +277,14 @@ contract MiscTest is Test {
     frensPoolShare.grantRole(keccak256("MINTER_ROLE"), alice);
     vm.expectRevert("AccessControl: account 0x00000000000000000000000000000000000a11ce is missing role 0x0000000000000000000000000000000000000000000000000000000000000000");
     frensPoolShare.grantRole(bytes32(0x00), alice);
+  }
+
+  function testTokenURI()public {
+    hoax(alice);
+    stakingPool.depositToPool{value: 1}();
+    uint id = frensPoolShare.tokenOfOwnerByIndex(alice, 0);
+    string memory art = frensPoolShare.tokenURI(id);
+    require(keccak256(abi.encodePacked(art)) != keccak256(abi.encodePacked()));
   }
 
 
