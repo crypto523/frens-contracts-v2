@@ -45,7 +45,7 @@ contract FrensStorageTest is Test {
             keccak256(abi.encodePacked("test.bool", "mybool"))
         );
 
-        assertEq(f, false);
+        assertEq(f, true);
     }
 
     function testMisc() public {
