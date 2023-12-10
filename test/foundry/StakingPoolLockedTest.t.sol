@@ -101,6 +101,7 @@ contract StakingPoolLockedTest is Test {
       vm.expectRevert("not accepting deposits");
       hoax(alice);
       stakingPool.depositToPool{value: 1}();
+      string memory state = stakingPool.getState();
       //set pubKey
       hoax(contOwner);
       stakingPool.setPubKey(pubkey, withdrawal_credentials, signature, deposit_data_root);
