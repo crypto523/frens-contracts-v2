@@ -225,6 +225,18 @@ contract StakingPoolTest is Test {
       }
     }
 
+    function testEmptyStakeModifier() public { 
+      hoax(alice);
+      vm.expectRevert("must deposit ether");
+      stakingPool.depositToPool{value: 0}();
+    }
+
+    function testTooMuchDeposit() public {
+      hoax(alice);
+      vm.expectRevert("total deposits cannot be more than 32 Eth");
+      stakingPool.depositToPool{value: 33000000000000000000}();
+    }
+
     function testStake() public { 
       //stakingPool.sendToOwner();
       uint initialBalance = address(stakingPool).balance; //bc someone sent eth to this address on mainnet.
@@ -479,4 +491,12 @@ function testFees(uint32 x, uint32 y) public {
       string memory state = stakingPool.getState();
       assertEq(keccak256(abi.encodePacked("exited")), keccak256(abi.encodePacked(state)),"not exited");
     }
+
+
+    function testGetIds() public {
+      uint[] memory s = stakingPool.getIdsInThisPool();
+      uint[] memory q = stakingPool.getIdsInThisPool();
+      assertEq(s.length,q.length);
+    }
+
 }
