@@ -331,7 +331,9 @@ contract StakingPoolTest is Test {
         uint frensClaimBalance = address(frensClaim).balance;
         //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
         assertApproxEqAbs(frensClaimBalance, bobShare, 2, "frensClaim balance pre-claim wrong");
-*/
+        
+        */
+        string memory state = stakingPool.getState();
         if(aliceShare == 1) aliceShare = 0;
         if(bobShare == 1) bobShare =0;
         
@@ -521,6 +523,9 @@ function testFees(uint32 x, uint32 y) public {
       stakingPool.claim(0);
       string memory state = stakingPool.getState();
       assertEq(keccak256(abi.encodePacked("exited")), keccak256(abi.encodePacked(state)),"not exited");
+
+      payable(stakingPool).transfer(1000000000000); //arbitrary number transfer so that claim works (and therfore sets to exiting)
+      stakingPool.claim(0);
     }
 
 
