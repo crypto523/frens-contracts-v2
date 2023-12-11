@@ -1,15 +1,24 @@
-... spin up hardhat / foundry here
+# FRENS smart contracts
 
-npx hardhat node --fork https://mainnet.infura.io/v3/ee9cdb4773b84b42bc893ed870a2c148
+## Instalation
 
-npx hardhat node --fork https://goerli.infura.io/v3/ee9cdb4773b84b42bc893ed870a2c148
+Instal forge: https://book.getfoundry.sh/getting-started/installation
+
+## running unit tests
 
 forge test --via-ir --fork-url https://mainnet.infura.io/v3/ee9cdb4773b84b42bc893ed870a2c148
 
+## test coverage reports
+
+`forge coverage --report lcov --fork-url https://mainnet.infura.io/v3/ee9cdb4773b84b42bc893ed870a2c148`
+
+`forge coverage --fork-url https://mainnet.infura.io/v3/ee9cdb4773b84b42bc893ed870a2c148`
+
+# Other commands
 ./deposit new-mnemonic --chain mainnet --eth1_withdrawal_address 0xd119D184628e094322007cEa4F2535Ec3A06E6b1
 
 
-TODO: research/determine functionality for collateralizing the NFT
+##TODO: research/determine functionality for collateralizing the NFT
   -can each pool decide if it can be used for this?
   -what are the requirements for this (only certain operators approved?)
   -liquidation mech (it needs to be able to unstake the whole pool if the collateralization ratio is low)
@@ -24,13 +33,3 @@ TODO: research/determine functionality for collateralizing the NFT
 
 `npx hardhat gen-interface <ContractName>`
 
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.js
-```

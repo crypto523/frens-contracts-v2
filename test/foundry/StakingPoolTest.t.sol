@@ -10,6 +10,9 @@ import "forge-std/Test.sol";
 
 //Frens Contracts
 import "../../contracts/FrensArt.sol";
+import "../../contracts/FrensLogo.sol";
+import "../../contracts/PmFont.sol";
+import "../../contracts/Waves.sol";
 import "../../contracts/FrensMetaHelper.sol";
 import "../../contracts/FrensPoolShareTokenURI.sol";
 import "../../contracts/FrensStorage.sol";
@@ -19,6 +22,7 @@ import "../../contracts/FrensPoolShare.sol";
 import "../../contracts/FrensOracle.sol";
 import "../../contracts/interfaces/IStakingPoolFactory.sol";
 import "../../contracts/interfaces/IDepositContract.sol";
+import "../../contracts/interfaces/IFrensArt.sol";
 import "./TestHelper.sol";
 
 
@@ -32,6 +36,9 @@ contract StakingPoolTest is Test {
     StakingPool public stakingPool2;
     FrensPoolShare public frensPoolShare;
     FrensOracle public frensOracle;
+    FrensLogo public frensLogo;
+    PmFont public pmFont;
+    Waves public waves;
 
     //mainnet
     address payable public depCont = payable(0x00000000219ab540356cBB839Cbe05303d7705Fa);
@@ -88,6 +95,28 @@ contract StakingPoolTest is Test {
       frensArt = new FrensArt(frensStorage);
       //initialise art
       frensStorage.setAddress(keccak256(abi.encodePacked("contract.address", "FrensArt")), address(frensArt));
+      //deployFrensLogo
+      frensLogo = new FrensLogo();
+      //initialise Logo
+      frensStorage.setAddress(
+          keccak256(abi.encodePacked("contract.address", "FrensLogo")),
+          address(frensLogo)
+      );
+      //deploy Font
+      pmFont = new PmFont();
+      //initialise Font
+      frensStorage.setAddress(
+          keccak256(abi.encodePacked("contract.address", "PmFont")),
+          address(pmFont)
+      );
+      //deploy Waves
+      waves = new Waves();
+      //initialise Font
+      frensStorage.setAddress(
+          keccak256(abi.encodePacked("contract.address", "Waves")),
+          address(waves)
+      );
+
       //set contracts as deployed
 
 
@@ -225,6 +254,18 @@ contract StakingPoolTest is Test {
       }
     }
 
+    function testEmptyStakeModifier() public { 
+      hoax(alice);
+      vm.expectRevert("must deposit ether");
+      stakingPool.depositToPool{value: 0}();
+    }
+
+    function testTooMuchDeposit() public {
+      hoax(alice);
+      vm.expectRevert("total deposits cannot be more than 32 Eth");
+      stakingPool.depositToPool{value: 33000000000000000000}();
+    }
+
     function testStake() public { 
       //stakingPool.sendToOwner();
       uint initialBalance = address(stakingPool).balance; //bc someone sent eth to this address on mainnet.
@@ -277,6 +318,8 @@ contract StakingPoolTest is Test {
         payable(stakingPool).transfer(y);
         vm.expectRevert("use withdraw when not staked");
         stakingPool.claim(1);
+        uint aliceGetShare = stakingPool.getShare(0);
+        assertGt(aliceGetShare, 0, "aliceGetShare=0");
         hoax(contOwner);
         stakingPool.stake(pubkey, withdrawal_credentials, signature, deposit_data_root);
         uint aliceBalance = address(alice).balance;
@@ -288,7 +331,9 @@ contract StakingPoolTest is Test {
         uint frensClaimBalance = address(frensClaim).balance;
         //to account for rounding errors max 2 wei (bc we subtract 1 wei in contract to avoid drawing negative)
         assertApproxEqAbs(frensClaimBalance, bobShare, 2, "frensClaim balance pre-claim wrong");
-*/
+        
+        */
+        string memory state = stakingPool.getState();
         if(aliceShare == 1) aliceShare = 0;
         if(bobShare == 1) bobShare =0;
         
@@ -478,5 +523,24 @@ function testFees(uint32 x, uint32 y) public {
       stakingPool.claim(0);
       string memory state = stakingPool.getState();
       assertEq(keccak256(abi.encodePacked("exited")), keccak256(abi.encodePacked(state)),"not exited");
+
+      payable(stakingPool).transfer(1000000000000); //arbitrary number transfer so that claim works (and therfore sets to exiting)
+      stakingPool.claim(0);
     }
+
+
+    function testGetIds() public {
+      uint[] memory s = stakingPool.getIdsInThisPool();
+      uint[] memory q = stakingPool.getIdsInThisPool();
+      assertEq(s.length,q.length);
+    }
+
+    function testSetArt() public {
+      hoax(alice);
+      stakingPool.depositToPool{value: 10000000000000}();
+      IFrensArt newFrensArt = IFrensArt(address(frensArt));
+      hoax(contOwner);
+      stakingPool.setArt(IFrensArt(newFrensArt));
+    }
+
 }
