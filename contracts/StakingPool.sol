@@ -381,7 +381,7 @@ contract StakingPool is IStakingPool, Ownable{
     ///@dev allows pool owner to change the art for the NFTs in the pool
     function setArt(IFrensArt newArtContract) external onlyOwner {
         IFrensArt newFrensArt = newArtContract;
-        string memory newArt = newFrensArt.renderTokenById(1);
+        string memory newArt = newFrensArt.renderTokenById(0);
         require(bytes(newArt).length != 0, "invalid art contract");
         artForPool = newArtContract;
     }
