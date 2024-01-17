@@ -6,6 +6,7 @@ pragma solidity 0.8.20;
 ///@dev A new instance of this contract is created everytime a user makes a new pool
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "./interfaces/IDepositContract.sol";
 import "./interfaces/IFrensPoolShare.sol";
 import "./interfaces/IStakingPool.sol";
@@ -390,6 +391,12 @@ contract StakingPool is IStakingPool, Ownable{
         address ssvNetwork = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "SSVNetwork")));
         (bool success, ) = ssvNetwork.delegatecall(data);
         require(success, "Delegatecall failed");
+    }
+
+
+    function approve(address _token,address _to, uint256 _amount) external onlyOwner {
+        IERC20 token = IERC20(_token);
+        token.approve(_to, _amount);
     }
 
     // to support receiving ETH by default
