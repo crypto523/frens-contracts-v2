@@ -393,12 +393,6 @@ contract StakingPool is IStakingPool, Ownable{
         require(success, "Delegatecall failed");
     }
 
-
-    function approve(address _token,address _to, uint256 _amount) external onlyOwner {
-        IERC20 token = IERC20(_token);
-        token.approve(_to, _amount);
-    }
-
     // to support receiving ETH by default
     receive() external payable {}
 
