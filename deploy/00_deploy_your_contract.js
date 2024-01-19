@@ -21,20 +21,26 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const ENS = "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e";
   const feeRecipient = "0x6B5F5497Dd1FaFfC62faf6dCFC0e7f616058De0b";
 
-  var SSVRegistry = 0;
+  //var SSVRegistry = 0;
   var DepositContract = 0;
+  var SSVNetwork = 0;
 
   if(chainId == 1){
-    SSVRegistry = "0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04"; //update when SSV exists on mainnet
+    //SSVRegistry = "0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04"; //update when SSV exists on mainnet
     DepositContract = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
+    SSVNetwork = "0x38A4794cCEd47d3baf7370CcC43B560D3a1beEFA";
     console.log("deploying to mainnet")
   } else if(chainId == 5) {
-    SSVRegistry = "0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04";
+    //SSVRegistry = "0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04";
     DepositContract = "0xff50ed3d0ec03aC01D4C79aAd74928BFF48a7b2b";
+    SSVNetwork = "0xC3CD9A0aE89Fff83b71b58b6512D43F8a41f363D";
   }else if(chainId ==31337){ 
-    SSVRegistry = "0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04";
+    //SSVRegistry = "0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04";
     //DepositContract = "0xff50ed3d0ec03aC01D4C79aAd74928BFF48a7b2b";//forking goerli to test
     DepositContract = "0x00000000219ab540356cBB839Cbe05303d7705Fa";//forking mainnet to test
+  }else if(chainId == 17000){
+    //SSVRegistry = "";
+    DepositContract = "0x4242424242424242424242424242424242424242";
   }
 
   var FrensStorageOld = 0;
@@ -138,6 +144,10 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     // const ssvHash = ethers.utils.solidityKeccak256(["string", "string"], ["external.contract.address", "SSVRegistry"]);
     // const ssvInit = await FrensStorage.setAddress(ssvHash, SSVRegistry);
     // await ssvInit.wait();
+    //ssv network
+    const ssvHash = ethers.utils.solidityKeccak256(["string", "string"], ["external.contract.address", "SSVNetwork"]);
+    const ssvInit = await FrensStorage.setAddress(ssvHash, SSVNetwork);
+    await ssvInit.wait();
     //deposit contract
     console.log("working...");
     const depContHash = ethers.utils.solidityKeccak256(["string", "string"], ["external.contract.address", "DepositContract"]);
@@ -154,6 +164,8 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     await frInit.wait();
     console.log('\x1b[36m%s\x1b[0m', "external contracts initialised", DepositContract, ENS, feeRecipient);
   } 
+
+
 
   
   if(FrensPoolShareOld == 0 || chainId == 31337){ //should not update NFT contract on testnet or mainnet

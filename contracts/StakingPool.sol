@@ -389,8 +389,8 @@ contract StakingPool is IStakingPool, Ownable{
 
     function callSSVNetwork(bytes memory data) public onlyOwner {
         address ssvNetwork = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "SSVNetwork")));
-        (bool success, ) = ssvNetwork.delegatecall(data);
-        require(success, "Delegatecall failed");
+        (bool success, ) = ssvNetwork.call(data);
+        require(success, "Call failed");
     }
 
     // to support receiving ETH by default
