@@ -150,6 +150,13 @@ contract StakingPool is IStakingPool, Ownable{
         } else {
             currentState = PoolState.acceptingDeposits;
         }
+        
+        address ssvTokenAddress = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "SSVToken")));
+        require(ssvTokenAddress != address(0), "FRENS contract error no SSV token contract set");        
+        address ssvNetwork = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "SSVNetwork")));
+        require(ssvNetwork != address(0), "FRENS contract error no SSV network contract address set");        
+        IERC20(ssvTokenAddress).approve(ssvNetwork,type(uint256).max);
+
         _transferOwnership(owner_);
     }
 
