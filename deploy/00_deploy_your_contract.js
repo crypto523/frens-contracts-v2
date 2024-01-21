@@ -24,6 +24,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   //var SSVRegistry = 0;
   var DepositContract = 0;
   var SSVNetwork = 0;
+  var SSVToken = 0;
 
   if(chainId == 1){
     //SSVRegistry = "0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04"; //update when SSV exists on mainnet
@@ -34,6 +35,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     //SSVRegistry = "0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04";
     DepositContract = "0xff50ed3d0ec03aC01D4C79aAd74928BFF48a7b2b";
     SSVNetwork = "0xC3CD9A0aE89Fff83b71b58b6512D43F8a41f363D";
+    SSVToken = "0x3a9f01091C446bdE031E39ea8354647AFef091E7";
   }else if(chainId ==31337){ 
     //SSVRegistry = "0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04";
     //DepositContract = "0xff50ed3d0ec03aC01D4C79aAd74928BFF48a7b2b";//forking goerli to test
@@ -140,10 +142,10 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   }
 */
   if(reinitialiseEverything) {
-    //ssv
-    // const ssvHash = ethers.utils.solidityKeccak256(["string", "string"], ["external.contract.address", "SSVRegistry"]);
-    // const ssvInit = await FrensStorage.setAddress(ssvHash, SSVRegistry);
-    // await ssvInit.wait();
+    //ssvtoken
+    const ssvTokeHash = ethers.utils.solidityKeccak256(["string", "string"], ["external.contract.address", "SSVToken"]);
+    const ssvTokeInit = await FrensStorage.setAddress(ssvTokeHash, SSVToken);
+    await ssvTokeInit.wait();
     //ssv network
     const ssvHash = ethers.utils.solidityKeccak256(["string", "string"], ["external.contract.address", "SSVNetwork"]);
     const ssvInit = await FrensStorage.setAddress(ssvHash, SSVNetwork);
@@ -164,6 +166,12 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     await frInit.wait();
     console.log('\x1b[36m%s\x1b[0m', "external contracts initialised", DepositContract, ENS, feeRecipient);
   } 
+
+  // console.log("adding token address");
+  //   const ssvTokeHash = ethers.utils.solidityKeccak256(["string", "string"], ["external.contract.address", "SSVToken"]);
+  //   const ssvTokeInit = await FrensStorage.setAddress(ssvTokeHash, SSVToken);
+  //   await ssvTokeInit.wait();
+  // console.log("Token addy added");
 
 
 
