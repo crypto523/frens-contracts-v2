@@ -1,0 +1,156 @@
+{
+  "address": "0x33944F95979D857E8F6FE58B93D90E22348dC066",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract IFrensStorage",
+          "name": "frensStorage_",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "poolAddress",
+          "type": "address"
+        }
+      ],
+      "name": "checkValidatorState",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "name": "isExiting",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "pubKey",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bool",
+          "name": "_isExiting",
+          "type": "bool"
+        }
+      ],
+      "name": "setExiting",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x8a0ca058096bd9eb76912be58a87f7dd793281c6adc568e6dac633dae65cd246",
+  "receipt": {
+    "to": null,
+    "from": "0x6C55105954b7fd0c4Bf3df00dFD739fA71e2fD20",
+    "contractAddress": "0x33944F95979D857E8F6FE58B93D90E22348dC066",
+    "transactionIndex": 0,
+    "gasUsed": "284875",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x197ed9559216919a4d6ccfc7d98fd10a96d7c70ac89ef45baab22724c64c7ec7",
+    "transactionHash": "0x8a0ca058096bd9eb76912be58a87f7dd793281c6adc568e6dac633dae65cd246",
+    "logs": [],
+    "blockNumber": 581349,
+    "cumulativeGasUsed": "284875",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x5ABbB94D1305E1cD73A1f976b54b548fBAE6f401"
+  ],
+  "solcInputHash": "0094c53acd56707fe5afb6d6a907a1e6",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract IFrensStorage\",\"name\":\"frensStorage_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"poolAddress\",\"type\":\"address\"}],\"name\":\"checkValidatorState\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"name\":\"isExiting\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"pubKey\",\"type\":\"bytes\"},{\"internalType\":\"bool\",\"name\":\"_isExiting\",\"type\":\"bool\"}],\"name\":\"setExiting\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"checkValidatorState(address)\":{\"details\":\"called by the staking pool to check if the validator is exiting\"},\"setExiting(bytes,bool)\":{\"details\":\"allows multisig (guardian) to set a pool as exiting. \"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/FrensOracle.sol\":\"FrensOracle\"},\"evmVersion\":\"shanghai\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/FrensOracle.sol\":{\"content\":\"pragma solidity 0.8.20;\\n//SPDX-License-Identifier: MIT\\n\\n///@title Frens Merkle Prover\\n///@author 0xWildhare and the Frens team\\n///@dev this gives the Frens Multisig a way to mark a pool as exiting (and then no longer charge fees) This should be replaced by a decentralized alternative\\n\\nimport \\\"./interfaces/IStakingPool.sol\\\";\\nimport \\\"./interfaces/IFrensOracle.sol\\\";\\nimport \\\"./interfaces/IFrensStorage.sol\\\";\\n\\ncontract FrensOracle is IFrensOracle {\\n\\n    //sets a validator public key (which is associated with a pool) as exiting\\n    mapping(bytes => bool) public isExiting;\\n\\n    IFrensStorage frensStorage;\\n\\n    constructor(IFrensStorage frensStorage_) {\\n        frensStorage = frensStorage_;\\n    }\\n\\n    ///@dev called by the staking pool to check if the validator is exiting\\n    function checkValidatorState(address poolAddress) external view returns(bool) {\\n        IStakingPool pool = IStakingPool(poolAddress);\\n        bytes memory pubKey = pool.pubKey();\\n        return isExiting[pubKey];\\n    }\\n\\n    ///@dev allows multisig (guardian) to set a pool as exiting. \\n   function setExiting(bytes memory pubKey, bool _isExiting) external {\\n        require(msg.sender == frensStorage.getGuardian(), \\\"must be guardian\\\");\\n        isExiting[pubKey] = _isExiting;\\n   }\\n    \\n}\",\"keccak256\":\"0x47b53ff148dbc4cbde609fd92f77dd024d8bbea9100a86d251ba19007f86e7f9\",\"license\":\"MIT\"},\"contracts/interfaces/IFrensArt.sol\":{\"content\":\"pragma solidity 0.8.20;\\n//SPDX-License-Identifier: MIT\\n\\ninterface IFrensArt {\\n  function renderTokenById(uint256 id) external view returns (string memory);\\n}\\n\",\"keccak256\":\"0x9ca4f7eb7011a8f1ed7a6d9a0f88ab68b29d49b63aa8864a694b63d5551a0bad\",\"license\":\"MIT\"},\"contracts/interfaces/IFrensOracle.sol\":{\"content\":\"pragma solidity 0.8.20;\\n//SPDX-License-Identifier: MIT\\n\\n\\ninterface IFrensOracle {\\n\\n   function checkValidatorState(address pool) external returns(bool);\\n\\n   function setExiting(bytes memory pubKey, bool isExiting) external;\\n\\n}\",\"keccak256\":\"0xb8fb907cadbdd9dd146bd3179d385be91b039955df1eb85731afbbed01894e57\",\"license\":\"MIT\"},\"contracts/interfaces/IFrensStorage.sol\":{\"content\":\"pragma solidity 0.8.20;\\n\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n//modified from IRocketStorage on 03/12/2022 by 0xWildhare\\n\\ninterface IFrensStorage {\\n\\n   \\n    // Guardian\\n    function getGuardian() external view returns(address);\\n    function setGuardian(address _newAddress) external;\\n    function confirmGuardian() external;\\n    function burnKeys() external;\\n\\n    // Getters\\n    function getAddress(bytes32 _key) external view returns (address);\\n    function getUint(bytes32 _key) external view returns (uint);\\n    function getBool(bytes32 _key) external view returns (bool);   \\n\\n    // Setters\\n    function setAddress(bytes32 _key, address _value) external;\\n    function setUint(bytes32 _key, uint _value) external;\\n    function setBool(bytes32 _key, bool _value) external;    \\n\\n    // Deleters\\n    function deleteAddress(bytes32 _key) external;\\n    function deleteUint(bytes32 _key) external;\\n    function deleteBool(bytes32 _key) external;    \\n\\n    // Arithmetic \\n    function addUint(bytes32 _key, uint256 _amount) external;\\n    function subUint(bytes32 _key, uint256 _amount) external;\\n    \\n}\\n\",\"keccak256\":\"0xfd293708621d8eb26c25db108d90583d36ab7f4a7f1f71a75e0b6f54c9a0a451\",\"license\":\"GPL-3.0-only\"},\"contracts/interfaces/IStakingPool.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.20;\\n\\nimport \\\"./IFrensArt.sol\\\";\\n\\ninterface IStakingPool {\\n\\n    function pubKey() external view returns(bytes memory);\\n\\n    function depositForId(uint _id) external view returns (uint);\\n\\n    function totalDeposits() external view returns(uint);\\n\\n    function transferLocked() external view returns(bool);\\n\\n    function locked(uint id) external view returns(bool);\\n\\n    function artForPool() external view returns (IFrensArt);\\n\\n    function owner() external view returns (address);\\n\\n    function depositToPool() external payable;\\n\\n    function addToDeposit(uint _id) external payable;\\n\\n    function withdraw(uint _id, uint _amount) external;\\n\\n    function claim(uint id) external;\\n\\n    function getIdsInThisPool() external view returns(uint[] memory);\\n\\n    function getShare(uint _id) external view returns (uint);\\n\\n    function getDistributableShare(uint _id) external view returns (uint);\\n\\n    function rageQuitInfo(uint id) external view returns(uint, uint, bool);\\n\\n    function setPubKey(\\n        bytes calldata pubKey,\\n        bytes calldata withdrawal_credentials,\\n        bytes calldata signature,\\n        bytes32 deposit_data_root\\n    ) external;\\n\\n    function getState() external view returns (string memory);\\n\\n    // function getDepositAmount(uint _id) external view returns(uint);\\n\\n    function stake(\\n        bytes calldata pubkey,\\n        bytes calldata withdrawal_credentials,\\n        bytes calldata signature,\\n        bytes32 deposit_data_root\\n    ) external;\\n\\n    function stake() external;\\n\\n}\\n\",\"keccak256\":\"0xfcce7e4e1de632af6ab1d89918ff97980a3b0e282eab86875e86128c41260574\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60803461007457601f61044b38819003918201601f19168301916001600160401b038311848410176100785780849260209460405283398101031261007457516001600160a01b0381169081900361007457600180546001600160a01b0319169190911790556040516103be908161008d8239f35b5f80fd5b634e487b7160e01b5f52604160045260245ffdfe60806040818152600480361015610014575f80fd5b5f92833560e01c908163809bef62146101d157508063d3b150e6146100a85763d6e65cb914610041575f80fd5b346100a45760203660031901126100a457803567ffffffffffffffff81116100a0576020809461007960ff9461008c9436910161031d565b9082865194838680955193849201610367565b820190815203019020541690519015158152f35b8380fd5b8280fd5b50346100a457816003193601126100a457803567ffffffffffffffff81116100a0576100d7903690830161031d565b602435928315158094036101cd5760015481516353adc3e960e11b8152602094916001600160a01b039190869082908590829086165afa9081156101c3578891610189575b501633036101555750908261013c93925193828580945193849201610367565b8101858152030190209060ff8019835416911617905580f35b83606492519162461bcd60e51b8352820152601060248201526f36bab9ba1031329033bab0b93234b0b760811b6044820152fd5b90508581813d83116101bc575b6101a081836102cb565b810103126101b8575181811681036101b8575f61011c565b8780fd5b503d610196565b84513d8a823e3d90fd5b8480fd5b83858492346102c757602093846003193601126100a45780356001600160a01b038116908190036100a05763ac2a5dfd60e01b83528391839182905afa9081156102bd57908491839161023a575b509061008c9160ff9382865194838680955193849201610367565b9150503d8083833e61024c81836102cb565b81019084818303126100a45780519067ffffffffffffffff82116100a0570181601f820112156100a45780519061028282610301565b9261028f865194856102cb565b8284528683830101116100a05792826102b4879360ff96858061008c98019101610367565b9192509261021f565b83513d84823e3d90fd5b5080fd5b90601f8019910116810190811067ffffffffffffffff8211176102ed57604052565b634e487b7160e01b5f52604160045260245ffd5b67ffffffffffffffff81116102ed57601f01601f191660200190565b81601f820112156103635780359061033482610301565b9261034260405194856102cb565b8284526020838301011161036357815f926020809301838601378301015290565b5f80fd5b5f5b8381106103785750505f910152565b818101518382015260200161036956fea264697066735822122009e4e98487d4c58edc64a360da7c1e624e1b8f14de54947f3717ecafeed502ba64736f6c63430008140033",
+  "deployedBytecode": "0x60806040818152600480361015610014575f80fd5b5f92833560e01c908163809bef62146101d157508063d3b150e6146100a85763d6e65cb914610041575f80fd5b346100a45760203660031901126100a457803567ffffffffffffffff81116100a0576020809461007960ff9461008c9436910161031d565b9082865194838680955193849201610367565b820190815203019020541690519015158152f35b8380fd5b8280fd5b50346100a457816003193601126100a457803567ffffffffffffffff81116100a0576100d7903690830161031d565b602435928315158094036101cd5760015481516353adc3e960e11b8152602094916001600160a01b039190869082908590829086165afa9081156101c3578891610189575b501633036101555750908261013c93925193828580945193849201610367565b8101858152030190209060ff8019835416911617905580f35b83606492519162461bcd60e51b8352820152601060248201526f36bab9ba1031329033bab0b93234b0b760811b6044820152fd5b90508581813d83116101bc575b6101a081836102cb565b810103126101b8575181811681036101b8575f61011c565b8780fd5b503d610196565b84513d8a823e3d90fd5b8480fd5b83858492346102c757602093846003193601126100a45780356001600160a01b038116908190036100a05763ac2a5dfd60e01b83528391839182905afa9081156102bd57908491839161023a575b509061008c9160ff9382865194838680955193849201610367565b9150503d8083833e61024c81836102cb565b81019084818303126100a45780519067ffffffffffffffff82116100a0570181601f820112156100a45780519061028282610301565b9261028f865194856102cb565b8284528683830101116100a05792826102b4879360ff96858061008c98019101610367565b9192509261021f565b83513d84823e3d90fd5b5080fd5b90601f8019910116810190811067ffffffffffffffff8211176102ed57604052565b634e487b7160e01b5f52604160045260245ffd5b67ffffffffffffffff81116102ed57601f01601f191660200190565b81601f820112156103635780359061033482610301565b9261034260405194856102cb565b8284526020838301011161036357815f926020809301838601378301015290565b5f80fd5b5f5b8381106103785750505f910152565b818101518382015260200161036956fea264697066735822122009e4e98487d4c58edc64a360da7c1e624e1b8f14de54947f3717ecafeed502ba64736f6c63430008140033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "checkValidatorState(address)": {
+        "details": "called by the staking pool to check if the validator is exiting"
+      },
+      "setExiting(bytes,bool)": {
+        "details": "allows multisig (guardian) to set a pool as exiting. "
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 3988,
+        "contract": "contracts/FrensOracle.sol:FrensOracle",
+        "label": "isExiting",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_bytes_memory_ptr,t_bool)"
+      },
+      {
+        "astId": 3991,
+        "contract": "contracts/FrensOracle.sol:FrensOracle",
+        "label": "frensStorage",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_contract(IFrensStorage)6626"
+      }
+    ],
+    "types": {
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes_memory_ptr": {
+        "encoding": "bytes",
+        "label": "bytes",
+        "numberOfBytes": "32"
+      },
+      "t_contract(IFrensStorage)6626": {
+        "encoding": "inplace",
+        "label": "contract IFrensStorage",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_bytes_memory_ptr,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_bytes_memory_ptr",
+        "label": "mapping(bytes => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      }
+    }
+  }
+}

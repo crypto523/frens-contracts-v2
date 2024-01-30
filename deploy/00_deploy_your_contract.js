@@ -29,7 +29,8 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   if(chainId == 1){
     //SSVRegistry = "0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04"; //update when SSV exists on mainnet
     DepositContract = "0x00000000219ab540356cBB839Cbe05303d7705Fa";
-    SSVNetwork = "0x38A4794cCEd47d3baf7370CcC43B560D3a1beEFA";
+    SSVNetwork = "0xDD9BC35aE942eF0cFa76930954a156B3fF30a4E1";
+    SSVToken = "0x9D65fF81a3c488d585bBfb0Bfe3c7707c7917f54";
     console.log("deploying to mainnet")
   } else if(chainId == 5) {
     //SSVRegistry = "0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04";
@@ -43,6 +44,8 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   }else if(chainId == 17000){
     //SSVRegistry = "";
     DepositContract = "0x4242424242424242424242424242424242424242";
+    SSVNetwork = "0x38A4794cCEd47d3baf7370CcC43B560D3a1beEFA";
+    SSVToken = "0xad45A78180961079BFaeEe349704F411dfF947C6";
   }
 
   var FrensStorageOld = 0;
@@ -107,7 +110,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
       from: deployer,
       args: [
         //no args
-       ],
+      ],
       log: true,
       waitConfirmations: 5,
     });

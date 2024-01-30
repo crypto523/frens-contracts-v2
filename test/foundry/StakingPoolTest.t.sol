@@ -44,7 +44,10 @@ contract StakingPoolTest is Test {
     address payable public depCont = payable(0x00000000219ab540356cBB839Cbe05303d7705Fa);
     //goerli
     //address payable public depCont = payable(0xff50ed3d0ec03aC01D4C79aAd74928BFF48a7b2b);
-    address public ssvRegistryAddress = 0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04;
+    
+    
+    address public SSVNetwork = 0xDD9BC35aE942eF0cFa76930954a156B3fF30a4E1;
+    address public SSVToken = 0x9D65fF81a3c488d585bBfb0Bfe3c7707c7917f54;
     address public ssvNetwork = 0xC3CD9A0aE89Fff83b71b58b6512D43F8a41f363D; // goerli
     address public ENSAddress = 0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e;
 
@@ -63,8 +66,20 @@ contract StakingPoolTest is Test {
     function setUp() public {
       //deploy storage
       frensStorage = new FrensStorage();
-      //initialise SSVRegistry
-      frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "SSVRegistry")), ssvRegistryAddress);
+      //initialise SSVNetwork
+        frensStorage.setAddress(
+            keccak256(
+                abi.encodePacked("external.contract.address", "SSVNetwork")
+            ),
+            SSVNetwork
+        );
+        //initialize ssv token
+        frensStorage.setAddress(
+            keccak256(
+                abi.encodePacked("external.contract.address", "SSVToken")
+            ),
+            SSVToken
+        );
       //initialise SSVRegistry
       frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "SSVNetwork")), ssvNetwork);
       //initialise deposit Contract
@@ -336,7 +351,7 @@ contract StakingPoolTest is Test {
         assertApproxEqAbs(frensClaimBalance, bobShare, 2, "frensClaim balance pre-claim wrong");
         
         */
-        string memory state = stakingPool.getState();
+        //string memory state = stakingPool.getState();
         if(aliceShare == 1) aliceShare = 0;
         if(bobShare == 1) bobShare =0;
         
@@ -349,7 +364,7 @@ contract StakingPoolTest is Test {
         uint bobBalanceExpected = bobBalance + bobShare;
         //no claim for bob yet
         assertEq(bobBalance, address(bob).balance, "bobBalance pre-claim wrong");
-       if(address(stakingPool).balance <= 100) {
+        if(address(stakingPool).balance <= 100) {
           vm.expectRevert("must be greater than 100 wei to claim");
           stakingPool.claim(1);
         } else {

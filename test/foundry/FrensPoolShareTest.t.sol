@@ -43,9 +43,11 @@ contract MiscTest is Test {
         payable(0x00000000219ab540356cBB839Cbe05303d7705Fa);
     //goerli
     //address payable public depCont = payable(0xff50ed3d0ec03aC01D4C79aAd74928BFF48a7b2b);
-    address public ssvRegistryAddress =
-        0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04;
+    
     address public ENSAddress = 0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e;
+    
+    address public SSVNetwork = 0xDD9BC35aE942eF0cFa76930954a156B3fF30a4E1;
+    address public SSVToken = 0x9D65fF81a3c488d585bBfb0Bfe3c7707c7917f54;
 
     IDepositContract depositContract = IDepositContract(depCont);
 
@@ -69,12 +71,19 @@ contract MiscTest is Test {
     function setUp() public {
         //deploy storage
         frensStorage = new FrensStorage();
-        //initialise SSVRegistry
+        //initialise SSVNetwork
         frensStorage.setAddress(
             keccak256(
-                abi.encodePacked("external.contract.address", "SSVRegistry")
+                abi.encodePacked("external.contract.address", "SSVNetwork")
             ),
-            ssvRegistryAddress
+            SSVNetwork
+        );
+        //initialize ssv token
+        frensStorage.setAddress(
+            keccak256(
+                abi.encodePacked("external.contract.address", "SSVToken")
+            ),
+            SSVToken
         );
         //initialise deposit Contract
         frensStorage.setAddress(
