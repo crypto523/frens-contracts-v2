@@ -24,6 +24,8 @@ import "../../contracts/interfaces/IStakingPoolFactory.sol";
 import "../../contracts/interfaces/IDepositContract.sol";
 import "../../contracts/interfaces/IFrensArt.sol";
 import "./TestHelper.sol";
+import "./FakeSSVNetwork.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 
 contract StakingPoolTest is Test {
@@ -48,7 +50,7 @@ contract StakingPoolTest is Test {
     
     address public SSVNetwork = 0xDD9BC35aE942eF0cFa76930954a156B3fF30a4E1;
     address public SSVToken = 0x9D65fF81a3c488d585bBfb0Bfe3c7707c7917f54;
-    address public ssvNetwork = 0xC3CD9A0aE89Fff83b71b58b6512D43F8a41f363D; // goerli
+    //address public ssvNetwork = 0xC3CD9A0aE89Fff83b71b58b6512D43F8a41f363D; // goerli
     address public ENSAddress = 0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e;
 
     IDepositContract depositContract = IDepositContract(depCont);
@@ -81,7 +83,7 @@ contract StakingPoolTest is Test {
             SSVToken
         );
       //initialise SSVRegistry
-      frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "SSVNetwork")), ssvNetwork);
+      frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "SSVNetwork")), SSVNetwork);
       //initialise deposit Contract
       frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "DepositContract")), depCont);
       //initialise ENS 
@@ -559,6 +561,29 @@ function testFees(uint32 x, uint32 y) public {
       IFrensArt newFrensArt = IFrensArt(address(frensArt));
       hoax(contOwner);
       stakingPool.setArt(IFrensArt(newFrensArt));
+    }
+
+    function testSSVTokenAllowance() public {
+      ERC20 SSVTokie = ERC20(SSVToken);
+      uint allowance = SSVTokie.allowance(address(stakingPool), address(SSVNetwork));
+      assertEq(allowance, type(uint256).max, "not correct ssv token allowance");
+    }
+
+    function testSetFeeRecipient() public {
+      //check that it does not throw an error on the actual contract
+      vm.prank(contOwner);
+      stakingPool.callSSVNetwork(abi.encodeWithSelector(bytes4(keccak256("setFeeRecipientAddress(address)")),address(stakingPool)));
+      
+      //test the fake contract to verify state change
+      FakeSSVNetwork fakeSSVNetwork = new FakeSSVNetwork();
+      frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "SSVNetwork")), address(fakeSSVNetwork));
+
+      vm.prank(contOwner);
+      stakingPool.callSSVNetwork(abi.encodeWithSelector(bytes4(keccak256("setFeeRecipientAddress(address)")),address(stakingPool)));
+      
+      address feeRecip = fakeSSVNetwork.feeRecipient(address(stakingPool));
+
+      assertEq(feeRecip, address(stakingPool), "feeRecip not set in fake contract");
     }
 
 }
