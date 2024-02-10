@@ -34,6 +34,7 @@ contract StakingPoolTest is Test {
     FrensPoolShareTokenURI public frensPoolShareTokenURI;
     FrensStorage public frensStorage;
     StakingPoolFactory public stakingPoolFactory;
+    StakingPool public stakingPoolImplementation;
     StakingPool public stakingPool;
     StakingPool public stakingPool2;
     FrensPoolShare public frensPoolShare;
@@ -41,6 +42,7 @@ contract StakingPoolTest is Test {
     FrensLogo public frensLogo;
     PmFont public pmFont;
     Waves public waves;
+    
 
     //mainnet
     address payable public depCont = payable(0x00000000219ab540356cBB839Cbe05303d7705Fa);
@@ -131,16 +133,25 @@ contract StakingPoolTest is Test {
       );
       //deploy Waves
       waves = new Waves();
-      //initialise Font
+      //initialise Waves
       frensStorage.setAddress(
           keccak256(abi.encodePacked("contract.address", "Waves")),
           address(waves)
+      );
+      //deploy StakingPool
+      stakingPoolImplementation = new StakingPool();
+      //initialise Font
+      frensStorage.setAddress(
+          keccak256(abi.encodePacked("contract.address", "StakingPool")),
+          address(stakingPoolImplementation)
       );
 
       //set contracts as deployed
 
 
       frensStorage.setUint(keccak256(abi.encodePacked("protocol.fee.percent")), 5);
+
+
      
       //create staking pool through proxy contract
       (address pool) = stakingPoolFactory.create(contOwner, false/*, false, 0, 32000000000000000000*/);

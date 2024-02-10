@@ -30,6 +30,7 @@ contract MiscTest is Test {
     FrensPoolShareTokenURI public frensPoolShareTokenURI;
     FrensStorage public frensStorage;
     StakingPoolFactory public stakingPoolFactory;
+    StakingPool public stakingPoolImplementation;
     StakingPool public stakingPool;
     StakingPool public stakingPool2;
     FrensPoolShare public frensPoolShare;
@@ -169,6 +170,13 @@ contract MiscTest is Test {
         frensStorage.setAddress(
             keccak256(abi.encodePacked("contract.address", "Waves")),
             address(waves)
+        );
+        //deploy StakingPool
+        stakingPoolImplementation = new StakingPool();
+        //initialise Font
+        frensStorage.setAddress(
+            keccak256(abi.encodePacked("contract.address", "StakingPool")),
+            address(stakingPoolImplementation)
         );
         //set contracts as deployed
 

@@ -2,8 +2,14 @@
 pragma solidity 0.8.20;
 
 import "./IFrensArt.sol";
+import "./IFrensStorage.sol";
 
 interface IStakingPool {
+
+    function initialize(
+        address owner_,
+        bool validatorLocked_,
+        IFrensStorage frensStorage_) external;
 
     function pubKey() external view returns(bytes memory);
 
@@ -54,5 +60,9 @@ interface IStakingPool {
     ) external;
 
     function stake() external;
+
+    function setArt(IFrensArt newArtContract) external;
+
+    function callSSVNetwork(bytes memory data) external;
 
 }

@@ -28,6 +28,7 @@ contract StakingPoolTest is Test {
     FrensPoolShareTokenURI public frensPoolShareTokenURI;
     FrensStorage public frensStorage;
     StakingPoolFactory public stakingPoolFactory;
+    StakingPool public stakingPoolImplementation;
     StakingPool public stakingPool;
     StakingPool public stakingPool2;
     FrensPoolShare public frensPoolShare;
@@ -103,6 +104,13 @@ contract StakingPoolTest is Test {
       frensArt = new FrensArt(frensStorage);
       //initialise art
       frensStorage.setAddress(keccak256(abi.encodePacked("contract.address", "FrensArt")), address(frensArt));
+      //deploy StakingPool
+      stakingPoolImplementation = new StakingPool();
+      //initialise Font
+      frensStorage.setAddress(
+          keccak256(abi.encodePacked("contract.address", "StakingPool")),
+          address(stakingPoolImplementation)
+      );
       //set contracts as deployed
      
       //create staking pool through proxy contract

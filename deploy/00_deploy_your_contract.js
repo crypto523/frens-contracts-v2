@@ -58,6 +58,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   var PmFontOld = 0;
   var FrensLogoOld = 0;
   var WavesOld = 0;
+  var StakingPoolOld = 0;
 
   try{
     FrensStorageOld = await ethers.getContract("FrensStorage", deployer);
@@ -101,6 +102,10 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
   try{
     WavesOld = await ethers.getContract("Waves", deployer);
+  } catch(e) {}
+
+  try{
+    StakingPoolOld = await ethers.getContract("StakingPool", deployer);
   } catch(e) {}
 
   
@@ -419,17 +424,28 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     await deploy("StakingPool", {//need abi
       // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
       from: deployer,
-      args: [
-        "0x42f58dd8528c302eeC4dCbC71159bA737908D6Fa",
-        true,
-        FrensStorage.address
-      ],
+      // args: [
+      //   "0x42f58dd8528c302eeC4dCbC71159bA737908D6Fa",
+      //   true,
+      //   FrensStorage.address
+      // ],
       log: true,
       waitConfirmations: 5,
     });
  // }
 
   const StakingPool = await ethers.getContract("StakingPool", deployer);
+
+  if(StakingPoolOld == 0 || reinitialiseEverything){
+    const StakingPoolHash = ethers.utils.solidityKeccak256(["string", "string"], ["contract.address", "StakingPool"]);
+    const StakingPoolInit = await FrensStorage.setAddress(StakingPoolHash, StakingPool.address);
+    await StakingPoolInit.wait();
+    console.log('\x1b[33m%s\x1b[0m', "StakingPool initialised", StakingPool.address);
+  } else if(StakingPoolOld.address != StakingPool.address){
+    const StakingPoolHash = ethers.utils.solidityKeccak256(["string", "string"], ["contract.address", "StakingPool"]);
+    const StakingPoolInit = await FrensStorage.setAddress(StakingPoolHash, StakingPool.address);
+    await StakingPoolInit.wait();
+    console.log('\x1b[36m%s\x1b[0m', "StakingPool updated", StakingPool.address);
 
   // const newPool = await StakingPoolFactory.create("0xa53A6fE2d8Ad977aD926C485343Ba39f32D3A3F6"/*, false, 0, 32000000000000000000n*/);
   
