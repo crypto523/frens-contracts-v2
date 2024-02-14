@@ -25,6 +25,7 @@ import "../../contracts/interfaces/IDepositContract.sol";
 import "../../contracts/interfaces/IFrensArt.sol";
 import "./TestHelper.sol";
 import "./FakeSSVNetwork.sol";
+import "./FunToken.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 
@@ -42,6 +43,7 @@ contract StakingPoolTest is Test {
     FrensLogo public frensLogo;
     PmFont public pmFont;
     Waves public waves;
+    FunToken public funToken;
     
 
     //mainnet
@@ -146,7 +148,7 @@ contract StakingPoolTest is Test {
           address(stakingPoolImplementation)
       );
 
-      //set contracts as deployed
+      funToken = new FunToken();
 
 
       frensStorage.setUint(keccak256(abi.encodePacked("protocol.fee.percent")), 5);
@@ -577,7 +579,7 @@ function testFees(uint32 x, uint32 y) public {
     function testSSVTokenAllowance() public {
       ERC20 SSVTokie = ERC20(SSVToken);
       uint allowance = SSVTokie.allowance(address(stakingPool), address(SSVNetwork));
-      assertEq(allowance, type(uint256).max, "not correct ssv token allowance");
+      assertEq(allowance, type(uint256).max, "not correct ssv token allowance"); 
     }
 
     function testSetFeeRecipient() public {
@@ -595,6 +597,20 @@ function testFees(uint32 x, uint32 y) public {
       address feeRecip = fakeSSVNetwork.feeRecipient(address(stakingPool));
 
       assertEq(feeRecip, address(stakingPool), "feeRecip not set in fake contract");
+    }
+
+    function testTransferToken() public {
+      assertEq(funToken.balanceOf(address(stakingPool)), 0);
+      assertEq(funToken.balanceOf(contOwner), 0);
+      funToken.mint(address(stakingPool), 12345678);
+      assertEq(funToken.balanceOf(address(stakingPool)), 12345678);
+      assertEq(funToken.balanceOf(contOwner), 0);
+      vm.prank(contOwner);
+      stakingPool.transferToken(address(funToken), contOwner, 12345678);
+      assertEq(funToken.balanceOf(address(stakingPool)), 0);
+      assertEq(funToken.balanceOf(contOwner), 12345678);
+
+
     }
 
 }

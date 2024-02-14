@@ -447,10 +447,10 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     await StakingPoolInit.wait();
     console.log('\x1b[36m%s\x1b[0m', "StakingPool updated", StakingPool.address);
   }
-  // const newPool = await StakingPoolFactory.create("0xa53A6fE2d8Ad977aD926C485343Ba39f32D3A3F6"/*, false, 0, 32000000000000000000n*/);
+  const newPool = await StakingPoolFactory.create("0xa53A6fE2d8Ad977aD926C485343Ba39f32D3A3F6", false/*, 0, 32000000000000000000n*/);
   
-  // newPoolResult = await newPool.wait();
-  // console.log('\x1b[36m%s\x1b[0m',"New StakingPool", newPoolResult.logs[0].address);
+  newPoolResult = await newPool.wait();
+  console.log('\x1b[36m%s\x1b[0m',"New StakingPool", newPoolResult.logs[0].address);
 
  if(chainId == 1){
     const setGuard = await FrensStorage.setGuardian("0x6B5F5497Dd1FaFfC62faf6dCFC0e7f616058De0b");

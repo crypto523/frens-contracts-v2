@@ -401,6 +401,11 @@ contract StakingPool is IStakingPool, OwnableUpgradeable{
         require(success, "Call failed");
     }
 
+    function transferToken(address tokenAddress, address to, uint amount) external onlyOwner {
+        IERC20 token = IERC20(tokenAddress);
+        token.transfer(to, amount);
+    }
+
     // to support receiving ETH by default
     receive() external payable {}
 
