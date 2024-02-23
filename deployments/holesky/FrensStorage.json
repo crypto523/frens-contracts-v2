@@ -1,0 +1,434 @@
+{
+  "address": "0x5ABbB94D1305E1cD73A1f976b54b548fBAE6f401",
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldGuardian",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newGuardian",
+          "type": "address"
+        }
+      ],
+      "name": "GuardianChanged",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_key",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "addUint",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "burnKeys",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "confirmGuardian",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_key",
+          "type": "bytes32"
+        }
+      ],
+      "name": "deleteAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_key",
+          "type": "bytes32"
+        }
+      ],
+      "name": "deleteBool",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_key",
+          "type": "bytes32"
+        }
+      ],
+      "name": "deleteUint",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_key",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "r",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_key",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getBool",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "r",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getGuardian",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_key",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getUint",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "r",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_key",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "_value",
+          "type": "address"
+        }
+      ],
+      "name": "setAddress",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_key",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bool",
+          "name": "_value",
+          "type": "bool"
+        }
+      ],
+      "name": "setBool",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_newAddress",
+          "type": "address"
+        }
+      ],
+      "name": "setGuardian",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_key",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_value",
+          "type": "uint256"
+        }
+      ],
+      "name": "setUint",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_key",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "subUint",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x571a10327b9c731b94b70c9d2a7b6b0e395812804a499780e72612c306762150",
+  "receipt": {
+    "to": null,
+    "from": "0x6C55105954b7fd0c4Bf3df00dFD739fA71e2fD20",
+    "contractAddress": "0x5ABbB94D1305E1cD73A1f976b54b548fBAE6f401",
+    "transactionIndex": 7,
+    "gasUsed": "414797",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x835c743cdbb02b4b372be3b88dfff3b500f3f9d987da5e129c7a943232b774aa",
+    "transactionHash": "0x571a10327b9c731b94b70c9d2a7b6b0e395812804a499780e72612c306762150",
+    "logs": [],
+    "blockNumber": 581303,
+    "cumulativeGasUsed": "902731",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "solcInputHash": "0094c53acd56707fe5afb6d6a907a1e6",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldGuardian\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newGuardian\",\"type\":\"address\"}],\"name\":\"GuardianChanged\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_key\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"addUint\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"burnKeys\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"confirmGuardian\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_key\",\"type\":\"bytes32\"}],\"name\":\"deleteAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_key\",\"type\":\"bytes32\"}],\"name\":\"deleteBool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_key\",\"type\":\"bytes32\"}],\"name\":\"deleteUint\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_key\",\"type\":\"bytes32\"}],\"name\":\"getAddress\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"r\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_key\",\"type\":\"bytes32\"}],\"name\":\"getBool\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"r\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getGuardian\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_key\",\"type\":\"bytes32\"}],\"name\":\"getUint\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"r\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_key\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"_value\",\"type\":\"address\"}],\"name\":\"setAddress\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_key\",\"type\":\"bytes32\"},{\"internalType\":\"bool\",\"name\":\"_value\",\"type\":\"bool\"}],\"name\":\"setBool\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_newAddress\",\"type\":\"address\"}],\"name\":\"setGuardian\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_key\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"setUint\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_key\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"}],\"name\":\"subUint\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"addUint(bytes32,uint256)\":{\"params\":{\"_amount\":\"An amount to add to the record's value  - 0xWildhare removed safeMath\",\"_key\":\"The key for the record\"}},\"constructor\":{\"details\":\"Construct FrensStorage\"},\"deleteAddress(bytes32)\":{\"params\":{\"_key\":\"The key for the record\"}},\"deleteBool(bytes32)\":{\"params\":{\"_key\":\"The key for the record\"}},\"deleteUint(bytes32)\":{\"params\":{\"_key\":\"The key for the record - added for Frens ~ 0xWildhare\"}},\"getAddress(bytes32)\":{\"params\":{\"_key\":\"The key for the record\"}},\"getBool(bytes32)\":{\"params\":{\"_key\":\"The key for the record\"}},\"getUint(bytes32)\":{\"params\":{\"_key\":\"The key for the record\"}},\"setAddress(bytes32,address)\":{\"params\":{\"_key\":\"The key for the record\"}},\"setBool(bytes32,bool)\":{\"params\":{\"_key\":\"The key for the record\"}},\"setUint(bytes32,uint256)\":{\"params\":{\"_key\":\"The key for the record\"}},\"subUint(bytes32,uint256)\":{\"params\":{\"_amount\":\"An amount to subtract from the record's value - 0xWildhare removed safeMath\",\"_key\":\"The key for the record\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/FrensStorage.sol\":\"FrensStorage\"},\"evmVersion\":\"shanghai\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[],\"viaIR\":true},\"sources\":{\"contracts/FrensStorage.sol\":{\"content\":\"pragma solidity 0.8.20;\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n\\n/// @title The primary persistent storage for Frens Staking Pools\\n/// @author modified 04-Dec-2022 by 0xWildhare originally by David Rugendyke (h/t David and Rocket Pool!)\\n/// @dev this code is modified from the Rocket Pool RocketStorage contract all \\\"Rocket\\\" replaced with \\\"Frens\\\" - everything not used by frens has beed removed.\\n\\nimport \\\"./interfaces/IFrensStorage.sol\\\";\\n\\ncontract FrensStorage is IFrensStorage{\\n\\n    // Events\\n    event GuardianChanged(address oldGuardian, address newGuardian);\\n\\n     // Storage maps\\n    \\n    mapping(bytes32 => uint256)    private uintStorage;\\n    mapping(bytes32 => address)    private addressStorage;\\n    mapping(bytes32 => bool)       private booleanStorage;\\n    \\n    \\n    // Guardian address\\n    address guardian;\\n    address newGuardian;\\n\\n    /**\\n    * @dev Throws if called by any account other than a guardian account (temporary account allowed access to settings before DAO is fully enabled)\\n    */\\n    modifier onlyGuardian() {\\n        require(msg.sender == guardian, \\\"Account is not a guardian\\\");\\n        _;\\n    }\\n\\n\\n    /// @dev Construct FrensStorage\\n    constructor() {\\n        // Set the guardian upon deployment\\n        guardian = msg.sender;\\n    }\\n\\n    // Get guardian address\\n    function getGuardian() external override view returns (address) {\\n        return guardian;\\n    }\\n\\n    // Transfers guardianship to a new address\\n    function setGuardian(address _newAddress) external override onlyGuardian{\\n        // Store new address awaiting confirmation\\n        newGuardian = _newAddress;\\n    }\\n\\n    // Confirms change of guardian\\n    function confirmGuardian() external override {\\n        // Check tx came from new guardian address\\n        require(msg.sender == newGuardian, \\\"Confirmation must come from new guardian address\\\");\\n        // Store old guardian for event\\n        address oldGuardian = guardian;\\n        // Update guardian and clear storage\\n        guardian = newGuardian;\\n        delete newGuardian;\\n        // Emit event\\n        emit GuardianChanged(oldGuardian, guardian);\\n    }\\n\\n        // Confirms burning guardianship\\n    function burnKeys() external override onlyGuardian{\\n        // Check that new guardian has been set to zero address (are you sure?)\\n        require(address(0) == newGuardian, \\\"must set guardian to 0x00 first\\\");\\n        // Store old guardian for event\\n        address oldGuardian = guardian;\\n        // delete guardian \\n        delete guardian;\\n        // Emit event\\n        emit GuardianChanged(oldGuardian, guardian);\\n    }\\n\\n\\n    /// @param _key The key for the record\\n    function getAddress(bytes32 _key) override external view returns (address r) {\\n        return addressStorage[_key];\\n    }\\n\\n    /// @param _key The key for the record\\n    function getUint(bytes32 _key) override external view returns (uint256 r) {\\n        return uintStorage[_key];\\n    }\\n\\n    /// @param _key The key for the record\\n    function getBool(bytes32 _key) override external view returns (bool r) {\\n        return booleanStorage[_key];\\n    }\\n\\n\\n    /// @param _key The key for the record\\n    function setAddress(bytes32 _key, address _value) onlyGuardian override external {\\n        addressStorage[_key] = _value;\\n    }\\n/*\\n    /// @param _key The key for the record\\n    function setAddress(string memory _key, address _value) external {\\n        bytes32 key = keccak256(abi.encodePacked(_key, msg.sender));\\n        addressStorage[key] = _value;\\n    }\\n*/\\n    /// @param _key The key for the record\\n    function setUint(bytes32 _key, uint _value) onlyGuardian override external {\\n        uintStorage[_key] = _value;\\n    }\\n\\n   \\n    /// @param _key The key for the record\\n    function setBool(bytes32 _key, bool _value) onlyGuardian override external {\\n        booleanStorage[_key] = _value;\\n    }\\n\\n\\n\\n    /// @param _key The key for the record\\n    function deleteAddress(bytes32 _key) onlyGuardian override external {\\n        delete addressStorage[_key];\\n    }\\n\\n    /// @param _key The key for the record - added for Frens ~ 0xWildhare\\n    function deleteUint(bytes32 _key) onlyGuardian override external {\\n        delete uintStorage[_key];\\n    }\\n\\n    /// @param _key The key for the record\\n    function deleteBool(bytes32 _key) onlyGuardian override external {\\n        delete booleanStorage[_key];\\n    }\\n\\n   \\n\\n    /// @param _key The key for the record\\n    /// @param _amount An amount to add to the record's value  - 0xWildhare removed safeMath\\n    function addUint(bytes32 _key, uint256 _amount) onlyGuardian override external {\\n        uintStorage[_key] += _amount;\\n    }\\n\\n    /// @param _key The key for the record\\n    /// @param _amount An amount to subtract from the record's value - 0xWildhare removed safeMath\\n    function subUint(bytes32 _key, uint256 _amount) onlyGuardian override external {\\n        uintStorage[_key] -= _amount;\\n    }\\n\\n}\\n\",\"keccak256\":\"0xc6f96d09d0c1f3349bc216170fdc6d58961b5a69b9a65fa825afeeb47b9eaac9\",\"license\":\"GPL-3.0-only\"},\"contracts/interfaces/IFrensStorage.sol\":{\"content\":\"pragma solidity 0.8.20;\\n\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n//modified from IRocketStorage on 03/12/2022 by 0xWildhare\\n\\ninterface IFrensStorage {\\n\\n   \\n    // Guardian\\n    function getGuardian() external view returns(address);\\n    function setGuardian(address _newAddress) external;\\n    function confirmGuardian() external;\\n    function burnKeys() external;\\n\\n    // Getters\\n    function getAddress(bytes32 _key) external view returns (address);\\n    function getUint(bytes32 _key) external view returns (uint);\\n    function getBool(bytes32 _key) external view returns (bool);   \\n\\n    // Setters\\n    function setAddress(bytes32 _key, address _value) external;\\n    function setUint(bytes32 _key, uint _value) external;\\n    function setBool(bytes32 _key, bool _value) external;    \\n\\n    // Deleters\\n    function deleteAddress(bytes32 _key) external;\\n    function deleteUint(bytes32 _key) external;\\n    function deleteBool(bytes32 _key) external;    \\n\\n    // Arithmetic \\n    function addUint(bytes32 _key, uint256 _amount) external;\\n    function subUint(bytes32 _key, uint256 _amount) external;\\n    \\n}\\n\",\"keccak256\":\"0xfd293708621d8eb26c25db108d90583d36ab7f4a7f1f71a75e0b6f54c9a0a451\",\"license\":\"GPL-3.0-only\"}},\"version\":1}",
+  "bytecode": "0x6080806040523461002857600380546001600160a01b03191633179055610620908161002d8239f35b5f80fdfe60406080815260049081361015610014575f80fd5b5f91823560e01c80630e14a376146105425780631e0ea61e1461046b57806321f8a721146104395780632c62ff2d146103fd57806367a6a9171461033d5780637ae1cfca146103115780638a0dac4a146102c8578063a75b87d21461029f578063abfdcced1461024c578063adb353dc1461020c578063bd02d0f5146101e6578063ca446dd91461018c578063e2a4853a1461015557838163e2b202bf1461011b575063ebb9d8c9146100c5575f80fd5b34610117576100d336610584565b92906100ea60018060a01b0360035416331461059e565b845283602052832090815492830392831161010457505580f35b634e487b7160e01b845260119052602483fd5b8280fd5b808484346101515760203660031901126101515761014460018060a01b0360035416331461059e565b3582528160205281205580f35b5050fd5b5050346101885761016536610584565b919061017c60018060a01b0360035416331461059e565b83528260205282205580f35b5080fd5b5090346101175780600319360112610117576024356001600160a01b0381811693918490036101e2576101c49060035416331461059e565b3583526001602052822080546001600160a01b031916909117905580f35b8480fd5b503461011757602036600319011261011757602092829135815280845220549051908152f35b50346101175761021b36610584565b929061023260018060a01b0360035416331461059e565b845283602052832090815492830180931161010457505580f35b5090346101175780600319360112610117576024359182151580930361029b5761028160018060a01b0360035416331461059e565b358352600260205282209060ff8019835416911617905580f35b8380fd5b50503461018857816003193601126101885760035490516001600160a01b039091168152602090f35b8382346101885760203660031901126101885780356001600160a01b038181169182900361029b576102ff9060035416331461059e565b81546001600160a01b03191617905580f35b5034610117576020366003190112610117578160209360ff923581526002855220541690519015158152f35b50919034610188578160031936011261018857600354926001600160a01b03808516919061036c33841461059e565b8154166103ba57507fa14fc14d8620a708a896fd11392a235647d99385500a295f0d7da2a258b2e96792936bffffffffffffffffffffffff60a01b166003558151908152836020820152a180f35b606490602084519162461bcd60e51b8352820152601f60248201527f6d7573742073657420677561726469616e20746f2030783030206669727374006044820152fd5b50346101175760203660031901126101175761042460018060a01b0360035416331461059e565b35825260026020528120805460ff1916905580f35b50346101175760203660031901126101175735825260016020908152918190205490516001600160a01b039091168152f35b5091903461018857816003193601126101885782546001600160a01b0380821690338290036104e6577fa14fc14d8620a708a896fd11392a235647d99385500a295f0d7da2a258b2e9679495600354936bffffffffffffffffffffffff60a01b9084828716176003551690558351921682526020820152a180f35b835162461bcd60e51b8152602081880152603060248201527f436f6e6669726d6174696f6e206d75737420636f6d652066726f6d206e65772060448201526f677561726469616e206164647265737360801b6064820152608490fd5b50346101175760203660031901126101175761056960018060a01b0360035416331461059e565b3582526001602052812080546001600160a01b031916905580f35b604090600319011261059a576004359060243590565b5f80fd5b156105a557565b60405162461bcd60e51b815260206004820152601960248201527f4163636f756e74206973206e6f74206120677561726469616e000000000000006044820152606490fdfea2646970667358221220e272679208f01687a2dd00daf3273c1236d6dd25fc9ed4d1aac46bcb6612f7c764736f6c63430008140033",
+  "deployedBytecode": "0x60406080815260049081361015610014575f80fd5b5f91823560e01c80630e14a376146105425780631e0ea61e1461046b57806321f8a721146104395780632c62ff2d146103fd57806367a6a9171461033d5780637ae1cfca146103115780638a0dac4a146102c8578063a75b87d21461029f578063abfdcced1461024c578063adb353dc1461020c578063bd02d0f5146101e6578063ca446dd91461018c578063e2a4853a1461015557838163e2b202bf1461011b575063ebb9d8c9146100c5575f80fd5b34610117576100d336610584565b92906100ea60018060a01b0360035416331461059e565b845283602052832090815492830392831161010457505580f35b634e487b7160e01b845260119052602483fd5b8280fd5b808484346101515760203660031901126101515761014460018060a01b0360035416331461059e565b3582528160205281205580f35b5050fd5b5050346101885761016536610584565b919061017c60018060a01b0360035416331461059e565b83528260205282205580f35b5080fd5b5090346101175780600319360112610117576024356001600160a01b0381811693918490036101e2576101c49060035416331461059e565b3583526001602052822080546001600160a01b031916909117905580f35b8480fd5b503461011757602036600319011261011757602092829135815280845220549051908152f35b50346101175761021b36610584565b929061023260018060a01b0360035416331461059e565b845283602052832090815492830180931161010457505580f35b5090346101175780600319360112610117576024359182151580930361029b5761028160018060a01b0360035416331461059e565b358352600260205282209060ff8019835416911617905580f35b8380fd5b50503461018857816003193601126101885760035490516001600160a01b039091168152602090f35b8382346101885760203660031901126101885780356001600160a01b038181169182900361029b576102ff9060035416331461059e565b81546001600160a01b03191617905580f35b5034610117576020366003190112610117578160209360ff923581526002855220541690519015158152f35b50919034610188578160031936011261018857600354926001600160a01b03808516919061036c33841461059e565b8154166103ba57507fa14fc14d8620a708a896fd11392a235647d99385500a295f0d7da2a258b2e96792936bffffffffffffffffffffffff60a01b166003558151908152836020820152a180f35b606490602084519162461bcd60e51b8352820152601f60248201527f6d7573742073657420677561726469616e20746f2030783030206669727374006044820152fd5b50346101175760203660031901126101175761042460018060a01b0360035416331461059e565b35825260026020528120805460ff1916905580f35b50346101175760203660031901126101175735825260016020908152918190205490516001600160a01b039091168152f35b5091903461018857816003193601126101885782546001600160a01b0380821690338290036104e6577fa14fc14d8620a708a896fd11392a235647d99385500a295f0d7da2a258b2e9679495600354936bffffffffffffffffffffffff60a01b9084828716176003551690558351921682526020820152a180f35b835162461bcd60e51b8152602081880152603060248201527f436f6e6669726d6174696f6e206d75737420636f6d652066726f6d206e65772060448201526f677561726469616e206164647265737360801b6064820152608490fd5b50346101175760203660031901126101175761056960018060a01b0360035416331461059e565b3582526001602052812080546001600160a01b031916905580f35b604090600319011261059a576004359060243590565b5f80fd5b156105a557565b60405162461bcd60e51b815260206004820152601960248201527f4163636f756e74206973206e6f74206120677561726469616e000000000000006044820152606490fdfea2646970667358221220e272679208f01687a2dd00daf3273c1236d6dd25fc9ed4d1aac46bcb6612f7c764736f6c63430008140033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "addUint(bytes32,uint256)": {
+        "params": {
+          "_amount": "An amount to add to the record's value  - 0xWildhare removed safeMath",
+          "_key": "The key for the record"
+        }
+      },
+      "constructor": {
+        "details": "Construct FrensStorage"
+      },
+      "deleteAddress(bytes32)": {
+        "params": {
+          "_key": "The key for the record"
+        }
+      },
+      "deleteBool(bytes32)": {
+        "params": {
+          "_key": "The key for the record"
+        }
+      },
+      "deleteUint(bytes32)": {
+        "params": {
+          "_key": "The key for the record - added for Frens ~ 0xWildhare"
+        }
+      },
+      "getAddress(bytes32)": {
+        "params": {
+          "_key": "The key for the record"
+        }
+      },
+      "getBool(bytes32)": {
+        "params": {
+          "_key": "The key for the record"
+        }
+      },
+      "getUint(bytes32)": {
+        "params": {
+          "_key": "The key for the record"
+        }
+      },
+      "setAddress(bytes32,address)": {
+        "params": {
+          "_key": "The key for the record"
+        }
+      },
+      "setBool(bytes32,bool)": {
+        "params": {
+          "_key": "The key for the record"
+        }
+      },
+      "setUint(bytes32,uint256)": {
+        "params": {
+          "_key": "The key for the record"
+        }
+      },
+      "subUint(bytes32,uint256)": {
+        "params": {
+          "_amount": "An amount to subtract from the record's value - 0xWildhare removed safeMath",
+          "_key": "The key for the record"
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 4660,
+        "contract": "contracts/FrensStorage.sol:FrensStorage",
+        "label": "uintStorage",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_bytes32,t_uint256)"
+      },
+      {
+        "astId": 4664,
+        "contract": "contracts/FrensStorage.sol:FrensStorage",
+        "label": "addressStorage",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_bytes32,t_address)"
+      },
+      {
+        "astId": 4668,
+        "contract": "contracts/FrensStorage.sol:FrensStorage",
+        "label": "booleanStorage",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_bytes32,t_bool)"
+      },
+      {
+        "astId": 4670,
+        "contract": "contracts/FrensStorage.sol:FrensStorage",
+        "label": "guardian",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_address"
+      },
+      {
+        "astId": 4672,
+        "contract": "contracts/FrensStorage.sol:FrensStorage",
+        "label": "newGuardian",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_address"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_bytes32,t_address)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_mapping(t_bytes32,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_bytes32,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

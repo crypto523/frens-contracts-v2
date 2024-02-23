@@ -28,6 +28,7 @@ contract StakingPoolTest is Test {
     FrensPoolShareTokenURI public frensPoolShareTokenURI;
     FrensStorage public frensStorage;
     StakingPoolFactory public stakingPoolFactory;
+    StakingPool public stakingPoolImplementation;
     StakingPool public stakingPool;
     StakingPool public stakingPool2;
     FrensPoolShare public frensPoolShare;
@@ -37,7 +38,10 @@ contract StakingPoolTest is Test {
     address payable public depCont = payable(0x00000000219ab540356cBB839Cbe05303d7705Fa);
     //goerli
     //address payable public depCont = payable(0xff50ed3d0ec03aC01D4C79aAd74928BFF48a7b2b);
-    address public ssvRegistryAddress = 0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04;
+    
+    
+    address public SSVNetwork = 0xDD9BC35aE942eF0cFa76930954a156B3fF30a4E1;
+    address public SSVToken = 0x9D65fF81a3c488d585bBfb0Bfe3c7707c7917f54;
     address public ENSAddress = 0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e;
 
     IDepositContract depositContract = IDepositContract(depCont);
@@ -55,9 +59,21 @@ contract StakingPoolTest is Test {
        function setUp() public {
       //deploy storage
       frensStorage = new FrensStorage();
-      //initialise SSVRegistry
-      frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "SSVRegistry")), ssvRegistryAddress);
-      //initialise deposit Contract
+      //initialise SSVNetwork
+        frensStorage.setAddress(
+            keccak256(
+                abi.encodePacked("external.contract.address", "SSVNetwork")
+            ),
+            SSVNetwork
+        );
+        //initialize ssv token
+        frensStorage.setAddress(
+            keccak256(
+                abi.encodePacked("external.contract.address", "SSVToken")
+            ),
+            SSVToken
+        );
+        //initialise deposit Contract
       frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "DepositContract")), depCont);
       //initialise ENS 
       frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "ENS")), ENSAddress);
@@ -88,6 +104,13 @@ contract StakingPoolTest is Test {
       frensArt = new FrensArt(frensStorage);
       //initialise art
       frensStorage.setAddress(keccak256(abi.encodePacked("contract.address", "FrensArt")), address(frensArt));
+      //deploy StakingPool
+      stakingPoolImplementation = new StakingPool();
+      //initialise Font
+      frensStorage.setAddress(
+          keccak256(abi.encodePacked("contract.address", "StakingPool")),
+          address(stakingPoolImplementation)
+      );
       //set contracts as deployed
      
       //create staking pool through proxy contract

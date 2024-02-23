@@ -5,12 +5,13 @@ pragma solidity 0.8.20;
 ///@author 0xWildhare and Frens team
 ///@dev allows user to create a new staking pool
 
-import "./StakingPool.sol";
+import "./interfaces/IStakingPool.sol";
 import "./interfaces/IStakingPoolFactory.sol";
 import "./interfaces/IFrensPoolShare.sol";
 import "./interfaces/IFrensArt.sol";
 import "./interfaces/IFrensStorage.sol";
 import "@openzeppelin/contracts/access/IAccessControl.sol";
+import "@openzeppelin/contracts/proxy/Clones.sol";
 
 contract StakingPoolFactory is IStakingPoolFactory{
     event Create(
@@ -23,8 +24,8 @@ contract StakingPoolFactory is IStakingPoolFactory{
     IFrensStorage frensStorage;
 
     constructor(IFrensStorage frensStorage_) {
-       frensStorage = frensStorage_;
-       frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
+        frensStorage = frensStorage_;
+        frensPoolShare = IFrensPoolShare(frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensPoolShare"))));
     }
 
     ///@dev creates a new pool
@@ -37,15 +38,17 @@ contract StakingPoolFactory is IStakingPoolFactory{
         returns (
             address
         )
-    {
-        StakingPool stakingPool = new StakingPool(
-            _owner,
-            _validatorLocked,
-            frensStorage
+    {   
+        address implementation = frensStorage.getAddress(keccak256(abi.encodePacked("contract.address","StakingPool")));
+        address instance = Clones.clone(
+            implementation
         );
+        
+        IStakingPool(instance).initialize(_owner, _validatorLocked, frensStorage);
+
         // allow this stakingpool to mint shares in our NFT contract
-        IAccessControl(address(frensPoolShare)).grantRole(keccak256("MINTER_ROLE"),address(stakingPool));
-        emit Create(address(stakingPool), msg.sender, address(this));
-        return (address(stakingPool));
+        IAccessControl(address(frensPoolShare)).grantRole(keccak256("MINTER_ROLE"),address(instance));
+        emit Create(address(instance), msg.sender, address(this));
+        return (address(instance));
     }
 }

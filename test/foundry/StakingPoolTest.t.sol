@@ -24,6 +24,9 @@ import "../../contracts/interfaces/IStakingPoolFactory.sol";
 import "../../contracts/interfaces/IDepositContract.sol";
 import "../../contracts/interfaces/IFrensArt.sol";
 import "./TestHelper.sol";
+import "./FakeSSVNetwork.sol";
+import "./FunToken.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 
 contract StakingPoolTest is Test {
@@ -32,6 +35,7 @@ contract StakingPoolTest is Test {
     FrensPoolShareTokenURI public frensPoolShareTokenURI;
     FrensStorage public frensStorage;
     StakingPoolFactory public stakingPoolFactory;
+    StakingPool public stakingPoolImplementation;
     StakingPool public stakingPool;
     StakingPool public stakingPool2;
     FrensPoolShare public frensPoolShare;
@@ -39,12 +43,18 @@ contract StakingPoolTest is Test {
     FrensLogo public frensLogo;
     PmFont public pmFont;
     Waves public waves;
+    FunToken public funToken;
+    
 
     //mainnet
     address payable public depCont = payable(0x00000000219ab540356cBB839Cbe05303d7705Fa);
     //goerli
     //address payable public depCont = payable(0xff50ed3d0ec03aC01D4C79aAd74928BFF48a7b2b);
-    address public ssvRegistryAddress = 0xb9e155e65B5c4D66df28Da8E9a0957f06F11Bc04;
+    
+    
+    address public SSVNetwork = 0xDD9BC35aE942eF0cFa76930954a156B3fF30a4E1;
+    address public SSVToken = 0x9D65fF81a3c488d585bBfb0Bfe3c7707c7917f54;
+    //address public ssvNetwork = 0xC3CD9A0aE89Fff83b71b58b6512D43F8a41f363D; // goerli
     address public ENSAddress = 0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e;
 
     IDepositContract depositContract = IDepositContract(depCont);
@@ -62,8 +72,22 @@ contract StakingPoolTest is Test {
     function setUp() public {
       //deploy storage
       frensStorage = new FrensStorage();
+      //initialise SSVNetwork
+        frensStorage.setAddress(
+            keccak256(
+                abi.encodePacked("external.contract.address", "SSVNetwork")
+            ),
+            SSVNetwork
+        );
+        //initialize ssv token
+        frensStorage.setAddress(
+            keccak256(
+                abi.encodePacked("external.contract.address", "SSVToken")
+            ),
+            SSVToken
+        );
       //initialise SSVRegistry
-      frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "SSVRegistry")), ssvRegistryAddress);
+      frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "SSVNetwork")), SSVNetwork);
       //initialise deposit Contract
       frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "DepositContract")), depCont);
       //initialise ENS 
@@ -111,16 +135,25 @@ contract StakingPoolTest is Test {
       );
       //deploy Waves
       waves = new Waves();
-      //initialise Font
+      //initialise Waves
       frensStorage.setAddress(
           keccak256(abi.encodePacked("contract.address", "Waves")),
           address(waves)
       );
+      //deploy StakingPool
+      stakingPoolImplementation = new StakingPool();
+      //initialise Font
+      frensStorage.setAddress(
+          keccak256(abi.encodePacked("contract.address", "StakingPool")),
+          address(stakingPoolImplementation)
+      );
 
-      //set contracts as deployed
+      funToken = new FunToken();
 
 
       frensStorage.setUint(keccak256(abi.encodePacked("protocol.fee.percent")), 5);
+
+
      
       //create staking pool through proxy contract
       (address pool) = stakingPoolFactory.create(contOwner, false/*, false, 0, 32000000000000000000*/);
@@ -333,7 +366,7 @@ contract StakingPoolTest is Test {
         assertApproxEqAbs(frensClaimBalance, bobShare, 2, "frensClaim balance pre-claim wrong");
         
         */
-        string memory state = stakingPool.getState();
+        //string memory state = stakingPool.getState();
         if(aliceShare == 1) aliceShare = 0;
         if(bobShare == 1) bobShare =0;
         
@@ -346,7 +379,7 @@ contract StakingPoolTest is Test {
         uint bobBalanceExpected = bobBalance + bobShare;
         //no claim for bob yet
         assertEq(bobBalance, address(bob).balance, "bobBalance pre-claim wrong");
-       if(address(stakingPool).balance <= 100) {
+        if(address(stakingPool).balance <= 100) {
           vm.expectRevert("must be greater than 100 wei to claim");
           stakingPool.claim(1);
         } else {
@@ -541,6 +574,43 @@ function testFees(uint32 x, uint32 y) public {
       IFrensArt newFrensArt = IFrensArt(address(frensArt));
       hoax(contOwner);
       stakingPool.setArt(IFrensArt(newFrensArt));
+    }
+
+    function testSSVTokenAllowance() public {
+      ERC20 SSVTokie = ERC20(SSVToken);
+      uint allowance = SSVTokie.allowance(address(stakingPool), address(SSVNetwork));
+      assertEq(allowance, type(uint256).max, "not correct ssv token allowance"); 
+    }
+
+    function testSetFeeRecipient() public {
+      //check that it does not throw an error on the actual contract
+      vm.prank(contOwner);
+      stakingPool.callSSVNetwork(abi.encodeWithSelector(bytes4(keccak256("setFeeRecipientAddress(address)")),address(stakingPool)));
+      
+      //test the fake contract to verify state change
+      FakeSSVNetwork fakeSSVNetwork = new FakeSSVNetwork();
+      frensStorage.setAddress(keccak256(abi.encodePacked("external.contract.address", "SSVNetwork")), address(fakeSSVNetwork));
+
+      vm.prank(contOwner);
+      stakingPool.callSSVNetwork(abi.encodeWithSelector(bytes4(keccak256("setFeeRecipientAddress(address)")),address(stakingPool)));
+      
+      address feeRecip = fakeSSVNetwork.feeRecipient(address(stakingPool));
+
+      assertEq(feeRecip, address(stakingPool), "feeRecip not set in fake contract");
+    }
+
+    function testTransferToken() public {
+      assertEq(funToken.balanceOf(address(stakingPool)), 0);
+      assertEq(funToken.balanceOf(contOwner), 0);
+      funToken.mint(address(stakingPool), 12345678);
+      assertEq(funToken.balanceOf(address(stakingPool)), 12345678);
+      assertEq(funToken.balanceOf(contOwner), 0);
+      vm.prank(contOwner);
+      stakingPool.transferToken(address(funToken), contOwner, 12345678);
+      assertEq(funToken.balanceOf(address(stakingPool)), 0);
+      assertEq(funToken.balanceOf(contOwner), 12345678);
+
+
     }
 
 }

@@ -5,7 +5,8 @@ pragma solidity 0.8.20;
 ///@author 0xWildhare and the FRENS team
 ///@dev A new instance of this contract is created everytime a user makes a new pool
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "./interfaces/IDepositContract.sol";
 import "./interfaces/IFrensPoolShare.sol";
 import "./interfaces/IStakingPool.sol";
@@ -13,7 +14,7 @@ import "./interfaces/IFrensArt.sol";
 import "./interfaces/IFrensOracle.sol";
 import "./interfaces/IFrensStorage.sol";
 
-contract StakingPool is IStakingPool, Ownable{
+contract StakingPool is IStakingPool, OwnableUpgradeable{
     event Stake(address depositContractAddress, address caller);
     event DepositToPool(uint amount, address depositer, uint id);
     event AddToDeposit(uint id, uint ammount);
@@ -118,16 +119,17 @@ contract StakingPool is IStakingPool, Ownable{
     IFrensStorage public frensStorage;
     IDepositContract public depositContract;
 
-    /**@dev when the pool is deploied by the factory, the owner, art contract, 
+    /**@dev when the pool is initalised by the factory, the owner, art contract, 
     *storage contract, and if the validator is locked are all set. 
     *The pool state is set according to whether or not the validator is locked.
     */
-    constructor(
+    function initialize(
         address owner_,
         bool validatorLocked_,
         IFrensStorage frensStorage_
-    ) {
+    ) public initializer() {
         require(owner_ != address(0), "FRENS contract error no owner address set");
+        __Ownable_init(owner_);
         require(address(frensStorage_) != address(0), "FRENS contract error no storage address set");
         frensStorage = frensStorage_;
         address artAddress = frensStorage.getAddress(keccak256(abi.encodePacked("contract.address", "FrensArt")));
@@ -149,6 +151,13 @@ contract StakingPool is IStakingPool, Ownable{
         } else {
             currentState = PoolState.acceptingDeposits;
         }
+        
+        address ssvTokenAddress = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "SSVToken")));
+        require(ssvTokenAddress != address(0), "FRENS contract error no SSV token contract set");        
+        address ssvNetwork = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "SSVNetwork")));
+        require(ssvNetwork != address(0), "FRENS contract error no SSV network contract address set");        
+        IERC20(ssvTokenAddress).approve(ssvNetwork,type(uint256).max);
+
         _transferOwnership(owner_);
     }
 
@@ -367,7 +376,7 @@ contract StakingPool is IStakingPool, Ownable{
     function owner()
         public
         view
-        override(IStakingPool, Ownable)
+        override(IStakingPool, OwnableUpgradeable)
         returns (address)
     {
         return super.owner();
@@ -384,6 +393,17 @@ contract StakingPool is IStakingPool, Ownable{
         string memory newArt = newFrensArt.renderTokenById(0);
         require(bytes(newArt).length != 0, "invalid art contract");
         artForPool = newArtContract;
+    }
+
+    function callSSVNetwork(bytes memory data) external onlyOwner {
+        address ssvNetwork = frensStorage.getAddress(keccak256(abi.encodePacked("external.contract.address", "SSVNetwork")));
+        (bool success, ) = ssvNetwork.call(data);
+        require(success, "Call failed");
+    }
+
+    function transferToken(address tokenAddress, address to, uint amount) external onlyOwner {
+        IERC20 token = IERC20(tokenAddress);
+        token.transfer(to, amount);
     }
 
     // to support receiving ETH by default
