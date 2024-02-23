@@ -1,6 +1,6 @@
 # FRENS smart contracts
 
-## Instalation
+## Installation 
 
 Instal forge: https://book.getfoundry.sh/getting-started/installation
 
